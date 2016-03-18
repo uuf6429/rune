@@ -51,7 +51,6 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      * @param array $productFieldValues
      * @param array $expectedRuleIDs
      * @param array $expectedErrors
-     * 
      * @dataProvider sampleValuesDataProvider
      */
     public function testRuleEngine($withBadRules, $productFieldValues, $expectedRuleIDs, $expectedErrors)
@@ -63,7 +62,14 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             $fields = $this->getFields();
 
             $action = new CallbackAction(
-                function (Evaluator $eval, AbstractContext $context, AbstractRule $rule) use ($productName, &$matchingRuleIDs) {
+                function (
+                    Evaluator $eval,
+                    AbstractContext $context,
+                    AbstractRule $rule
+                ) use (
+                    $productName,
+                    &$matchingRuleIDs
+                ) {
                     $matchingRuleIDs[$productName][] = $rule->getID();
                 }
             );
@@ -232,13 +238,13 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                 'expectedErrors' => [
                     'RuntimeException encountered while processing rule 5 '
                     . '(Bad Rule - Result Type) within ' . DynamicContext::class
-					. ': The condition result f'
+                    . ': The condition result f'
                     . 'or rule 5 (Bad Rule - Result Type) should be boolea'
                     . 'n, not string.',
                     'Symfony\Component\ExpressionLanguage\SyntaxError enco'
                     . 'untered while processing rule 6 (Bad Rule - Snytax '
                     . 'Error) within ' . DynamicContext::class
-					. ': Unexpected character "=" around position 5.',
+                    . ': Unexpected character "=" around position 5.',
                 ],
             ],
         ];

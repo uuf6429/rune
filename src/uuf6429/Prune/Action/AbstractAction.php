@@ -10,7 +10,6 @@ abstract class AbstractAction
     /**
      * Do something with regards to triggering rule using data from context,
      * optionally using evaluator for further processing.
-     * 
      * @param Evaluator $eval
      * @param AbstractContext $context
      * @param AbstractRule $rule

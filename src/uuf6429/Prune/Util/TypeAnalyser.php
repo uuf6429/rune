@@ -1,6 +1,8 @@
 <?php
 namespace uuf6429\Prune\Util;
 
+use \kamermans\Reflection\DocBlock;
+
 class TypeAnalyser
 {
     protected $simpleTypes = [
@@ -53,7 +55,7 @@ class TypeAnalyser
     }
 
     /**
-     * @param string $type
+     * @param string $name
      */
     protected function analyseClassOrInterface($name)
     {
@@ -62,7 +64,7 @@ class TypeAnalyser
 
         $reflector = new \ReflectionClass($name);
 
-        $docb = new DocBlockParser($reflector->getDocComment());
+        $docb = new DocBlock($reflector);
         $hint = $docb->getComment();
         $link = $docb->getTag('link', '');
 
@@ -93,6 +95,7 @@ class TypeAnalyser
      */
     protected function parseDocBlockPropOrParam($line)
     {
+        $result = null;
         $regex = '/^([\\w\\|\\\\]+)\\s+(\\$\\w+)\\s*(.*)$/';
         if (preg_match($regex, trim($line), $result)) {
             $types = explode('|', $result[1]);
@@ -131,7 +134,7 @@ class TypeAnalyser
      */
     protected function propertyToTypeInfoMember(\ReflectionProperty $property)
     {
-        $docb = new DocBlockParser($property->getDocComment());
+        $docb = new DocBlock($property);
         $hint = $docb->getComment();
         $link = $docb->getTag('link', '');
         $types = explode('|', $docb->getTag('var', ''));
@@ -175,7 +178,7 @@ class TypeAnalyser
             return null;
         }
 
-        $docb = new DocBlockParser($method->getDocComment());
+        $docb = new DocBlock($method);
         $hint = $docb->getComment();
         $link = $docb->getTag('link', '');
 
@@ -220,7 +223,10 @@ class TypeAnalyser
         }
 
         $signature = sprintf(
-            '<div class="cm-signature"><span class="type">%s</span> <span class="name">%s</span>(<span class="args">%s</span>)</span></div>',
+            '<div class="cm-signature">'
+                    . '<span class="type">%s</span> <span class="name">%s</span>'
+                    . '(<span class="args">%s</span>)</span>'
+                . '</div>',
             $return,
             $method->name,
             implode(

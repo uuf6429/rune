@@ -21,8 +21,8 @@
         "fabpot/php-cs-fixer": "^1.11"
 	},
 	"autoload": {
-        "psr-4": {
-			"uuf6429\\Prune\\": "src/"
+        "psr-0": {
+			"uuf6429\\Prune": "src/"
         }
 	}
 }

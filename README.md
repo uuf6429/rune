@@ -1,12 +1,12 @@
 Introduction
 ============
 
-This module is an implementation of a Business Rule Engine (a type of Business Process Automation software) for SellerCenter.
+This library is an implementation of a Business Rule Engine (a type of Business Process Automation software).
 
 Usage
 =====
 
-The module is made up of these parts:
+The library is made up of several parts:
 
 - Action - an object that performs an action when a rule condition is true. Actions in general can be reused.
 - Context - an object that provides data to the rule engine and action to work with.
@@ -18,44 +18,56 @@ The module is made up of these parts:
 Requirements
 ============
 
-The RuleEngine has a hard dependency on Symfony ExpressionLAnguage component.
-At this point, injecting this component (via DI) doesn't seem to provide any advantages.
+The RuleEngine directly depends on [Symfony Expression Language component](http://symfony.com/doc/current/components/expression_language/).
 
 Example
 =======
 
 ```php
-// load rule data from db and convert each into a know rule model
-$ruleModel = new SellerCenter_Model_TransactionRule();
-$rules = array_map(
-    function($row){
-      return new TransactionGeneratorRule($row);
-    },
-    $ruleModel->getActive()
-);
-
-// load target order from db
-$orderModel = new SellerCenter_Model_Order();
-$order = $orderModel->getByOrderNr('53252');
-
-// load order items associated to order (note: we can be specific and only process particular order items)
-$orderItemModel = new SellerCenter_Model_OrderItem();
-$orderItems = $orderItemModel->getByOrderID($order['id_order']);
-
-// the action to be executed for each matching rule
-$action = new TransactionGeneratorAction();
-
-$contexts = [];
-foreach ($orderItems as $orderItem) {
-    // the context provides information for the rule engine to function properly
-    $context = new TransactionGeneratorContext($action);
-    $context->load($order, $orderItem);
-    $contexts[] = $context;
+class Product {
+	public $name;
+	public $colour;
+	public function __construct($name, $colour) {
+		$this->name = $name;
+		$this->colour = $colour;
+	}
 }
 
-// run context action for all matching rules, for each context
+$rules = [
+	new GenericRule(1, 'Red Products', 'product.colour == "red"'),
+	new GenericRule(1, 'Red Socks', 'product.colour == "red" AND product.name matches "/socks/"'),
+	new GenericRule(1, 'Green Socks', 'product.colour == "green" AND product.name matches "/socks/"'),
+	new GenericRule(1, 'Socks', 'product.name matches "/socks/"'),
+];
+
+$products = [
+	new Product('Bricks', 'red'),
+	new Product('Soft Socks', 'green'),
+	new Product('Sporty Socks', 'yellow'),
+];
+
+$action = new CallbackAction(
+	function ($eval, $context, $rule) {
+		/** @var Product $product */
+		$product = $context->get('product');
+		printf(
+			'Rule %s triggered for %s %s',
+			$rule->getID(),
+			ucwords($product->colour),
+			$product->name
+		);
+	}
+);
+
+$contexts = array_map(
+	function ($product) use ($action) {
+		return new DynamicContext('product', Product::class, null, null, $product);
+	},
+	$products
+);
+
 $engine = new Engine($contexts, $rules);
 $engine->execute();
 
-// Note: Depending on use-case, you might want to use $action again here, for example to retrieve generated transactions. A specialized action can also persist generated transactions to db.
+
 ```

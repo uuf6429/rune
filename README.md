@@ -51,7 +51,7 @@ $action = new CallbackAction(
 		/** @var Product $product */
 		$product = $context->get('product');
 		printf(
-			'Rule %s triggered for %s %s',
+			'Rule %s triggered for %s %s\n',
 			$rule->getID(),
 			ucwords($product->colour),
 			$product->name
@@ -68,6 +68,4 @@ $contexts = array_map(
 
 $engine = new Engine($contexts, $rules);
 $engine->execute();
-
-
 ```

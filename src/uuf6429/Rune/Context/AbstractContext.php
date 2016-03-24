@@ -1,12 +1,12 @@
 <?php
-namespace uuf6429\Prune\Context;
+namespace uuf6429\Rune\Context;
 
-use uuf6429\Prune\Action\AbstractAction;
-use uuf6429\Prune\Rule\AbstractRule;
-use uuf6429\Prune\Util\ContextField;
-use uuf6429\Prune\Util\Evaluator;
-use uuf6429\Prune\Util\TypeAnalyser;
-use uuf6429\Prune\Util\TypeInfo;
+use uuf6429\Rune\Action\AbstractAction;
+use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Util\ContextField;
+use uuf6429\Rune\Util\Evaluator;
+use uuf6429\Rune\Util\TypeAnalyser;
+use uuf6429\Rune\Util\TypeInfo;
 
 /**
  * When implementing your own context:

@@ -1,5 +1,5 @@
 <?php
-namespace uuf6429\Prune\Rule;
+namespace uuf6429\Rune\Rule;
 
 class GenericRule extends AbstractRule
 {

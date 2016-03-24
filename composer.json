@@ -1,9 +1,9 @@
 {
-	"name": "uuf6429/prune",
+	"name": "uuf6429/rune",
 	"type": "library",
 	"description": "PHP Rule Engine.",
 	"keywords": ["rule", "engine", "expression", "uuf6429"],
-	"homepage": "http://github.com/uuf6429/prune",
+	"homepage": "http://github.com/uuf6429/rune",
 	"license": "MIT",
 	"authors": [
 		{
@@ -22,7 +22,7 @@
 	},
 	"autoload": {
         "psr-0": {
-			"uuf6429\\Prune": "src/"
+			"uuf6429\\Rune": "src/"
         }
 	}
 }

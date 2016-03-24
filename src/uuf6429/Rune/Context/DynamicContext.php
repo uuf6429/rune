@@ -1,8 +1,8 @@
 <?php
-namespace uuf6429\Prune\Context;
+namespace uuf6429\Rune\Context;
 
-use uuf6429\Prune\Action\AbstractAction;
-use uuf6429\Prune\Util\ContextField;
+use uuf6429\Rune\Action\AbstractAction;
+use uuf6429\Rune\Util\ContextField;
 
 /**
  * Sure, a dynamic context means fields are variable... but it also means no

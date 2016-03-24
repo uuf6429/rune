@@ -1,8 +1,8 @@
 <?php
-namespace uuf6429\Prune\Util;
+namespace uuf6429\Rune\Util;
 
-use uuf6429\Prune\Context\AbstractContext;
-use uuf6429\Prune\Rule\AbstractRule;
+use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Rule\AbstractRule;
 
 class ContextRulePair
 {

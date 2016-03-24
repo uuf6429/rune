@@ -1,9 +1,9 @@
 <?php
-namespace uuf6429\Prune\Action;
+namespace uuf6429\Rune\Action;
 
-use uuf6429\Prune\Context\AbstractContext;
-use uuf6429\Prune\Rule\AbstractRule;
-use uuf6429\Prune\Util\Evaluator;
+use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Util\Evaluator;
 
 abstract class AbstractAction
 {

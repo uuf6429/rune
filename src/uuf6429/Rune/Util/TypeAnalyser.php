@@ -1,5 +1,5 @@
 <?php
-namespace uuf6429\Prune\Util;
+namespace uuf6429\Rune\Util;
 
 use \kamermans\Reflection\DocBlock;
 

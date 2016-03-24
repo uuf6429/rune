@@ -1,14 +1,14 @@
 <?php
-namespace uuf6429\Prune;
+namespace uuf6429\Rune;
 
-use uuf6429\Prune\Action\CallbackAction;
-use uuf6429\Prune\Context\AbstractContext;
-use uuf6429\Prune\Context\DynamicContext;
-use uuf6429\Prune\Rule\AbstractRule;
-use uuf6429\Prune\Rule\GenericRule;
-use uuf6429\Prune\Util\ContextField;
-use uuf6429\Prune\Util\ContextRuleException;
-use uuf6429\Prune\Util\Evaluator;
+use uuf6429\Rune\Action\CallbackAction;
+use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Context\DynamicContext;
+use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Rule\GenericRule;
+use uuf6429\Rune\Util\ContextField;
+use uuf6429\Rune\Util\ContextRuleException;
+use uuf6429\Rune\Util\Evaluator;
 
 class EngineTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,11 +1,11 @@
 <?php
-namespace uuf6429\Prune;
+namespace uuf6429\Rune;
 
-use uuf6429\Prune\Context\AbstractContext;
-use uuf6429\Prune\Rule\AbstractRule;
-use uuf6429\Prune\Util\ContextRuleException;
-use uuf6429\Prune\Util\ContextRulePair;
-use uuf6429\Prune\Util\Evaluator;
+use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Util\ContextRuleException;
+use uuf6429\Rune\Util\ContextRulePair;
+use uuf6429\Rune\Util\Evaluator;
 
 class Engine
 {

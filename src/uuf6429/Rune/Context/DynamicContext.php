@@ -15,7 +15,7 @@ class DynamicContext extends AbstractContext
     /**
      * @var ContextField[]
      */
-    private $fields;
+    private $fields = [];
 
     /**
      * @param AbstractAction|null $action
@@ -24,7 +24,10 @@ class DynamicContext extends AbstractContext
     public function __construct($action = null, $fields = [])
     {
         parent::__construct($action);
-        $this->fields = $fields;
+        foreach($fields as $field){
+            /** @var ContextField $field */
+            $this->fields[$field->getName()] = $field;
+        }
     }
 
     /**

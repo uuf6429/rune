@@ -58,6 +58,17 @@ abstract class AbstractContext
     }
 
     /**
+     * @param string $fieldName
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getValue($fieldName, $default = null) {
+        $fields = $this->getFields();
+        return isset($fields[$fieldName])
+            ? $fields[$fieldName]->getValue() : $default;
+    }
+
+    /**
      * @return ContextField[]
      */
     public function getFields()
@@ -66,11 +77,13 @@ abstract class AbstractContext
     }
 
     /**
+     * @param TypeAnalyser|null $analyser
      * @return TypeInfo[string]
      */
-    public function getTypeInfo()
+    public function getTypeInfo($analyser = null)
     {
-        $analyser = new TypeAnalyser();
+        $analyser = $analyser ?: new TypeAnalyser();
+
         foreach ($this->getFields() as $field) {
             foreach ($field->getTypes() as $type) {
                 $analyser->analyse($type);

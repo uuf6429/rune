@@ -15,11 +15,6 @@ The library is made up of several parts:
   For complicated scenarios, you might want to extend the rule (by extending Rule\AbstractRule), otherwise Rule\Generic should be enough.
 - RuleEngine - the object that connects the others together to function.
 
-Requirements
-============
-
-The RuleEngine directly depends on [Symfony Expression Language component](http://symfony.com/doc/current/components/expression_language/).
-
 Example
 =======
 

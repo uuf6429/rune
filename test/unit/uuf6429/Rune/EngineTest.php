@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune;
 
 use uuf6429\Rune\Action\CallbackAction;
@@ -47,7 +48,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param bool $withBadRules
+     * @param bool  $withBadRules
      * @param array $productFieldValues
      * @param array $expectedRuleIDs
      * @param array $expectedErrors
@@ -114,7 +115,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0' ],
+                    'Product 1' => ['0'],
                 ],
                 'expectedErrors' => [],
             ],
@@ -129,7 +130,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0' ],
+                    'Product 1' => ['0'],
                 ],
                 'expectedErrors' => [],
             ],
@@ -145,8 +146,8 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0' ],
-                    'Product 2' => [ '0', '4' ],
+                    'Product 1' => ['0'],
+                    'Product 2' => ['0', '4'],
                 ],
                 'expectedErrors' => [],
             ],
@@ -161,7 +162,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0', '2' ],
+                    'Product 1' => ['0', '2'],
                 ],
                 'expectedErrors' => [],
             ],
@@ -176,7 +177,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0', '1', '3' ],
+                    'Product 1' => ['0', '1', '3'],
                 ],
                 'expectedErrors' => [],
             ],
@@ -191,7 +192,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0', '1', '4' ],
+                    'Product 1' => ['0', '1', '4'],
                 ],
                 'expectedErrors' => [],
             ],
@@ -216,9 +217,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0', '4' ],
-                    'Product 2' => [ '0' ],
-                    'Product 3' => [ '0', '4' ],
+                    'Product 1' => ['0', '4'],
+                    'Product 2' => ['0'],
+                    'Product 3' => ['0', '4'],
                 ],
                 'expectedErrors' => [],
             ],
@@ -233,18 +234,18 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedRuleIDs' => [
-                    'Product 1' => [ '0' ],
+                    'Product 1' => ['0'],
                 ],
                 'expectedErrors' => [
                     'RuntimeException encountered while processing rule 5 '
-                    . '(Bad Rule - Result Type) within ' . DynamicContext::class
-                    . ': The condition result f'
-                    . 'or rule 5 (Bad Rule - Result Type) should be boolea'
-                    . 'n, not string.',
+                    .'(Bad Rule - Result Type) within '.DynamicContext::class
+                    .': The condition result f'
+                    .'or rule 5 (Bad Rule - Result Type) should be boolea'
+                    .'n, not string.',
                     'Symfony\Component\ExpressionLanguage\SyntaxError enco'
-                    . 'untered while processing rule 6 (Bad Rule - Snytax '
-                    . 'Error) within ' . DynamicContext::class
-                    . ': Unexpected character "=" around position 5.',
+                    .'untered while processing rule 6 (Bad Rule - Snytax '
+                    .'Error) within '.DynamicContext::class
+                    .': Unexpected character "=" around position 5.',
                 ],
             ],
         ];

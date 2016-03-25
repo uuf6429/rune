@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Util;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;

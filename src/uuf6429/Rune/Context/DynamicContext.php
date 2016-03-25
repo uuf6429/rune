@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Action\AbstractAction;
@@ -19,13 +20,13 @@ class DynamicContext extends AbstractContext
 
     /**
      * @param AbstractAction|null $action
-     * @param ContextFields[] $fields
+     * @param ContextFields[]     $fields
      */
     public function __construct($action = null, $fields = [])
     {
         parent::__construct($action);
-        foreach($fields as $field){
-            /** @var ContextField $field */
+        foreach ($fields as $field) {
+            /* @var ContextField $field */
             $this->fields[$field->getName()] = $field;
         }
     }
@@ -39,7 +40,7 @@ class DynamicContext extends AbstractContext
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getFieldList()
     {
@@ -47,7 +48,7 @@ class DynamicContext extends AbstractContext
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getValueList()
     {

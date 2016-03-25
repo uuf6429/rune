@@ -1,7 +1,7 @@
 <?php
+
 namespace uuf6429\Rune\Util;
 
-use uuf6429\Rune\Util\ContextField;
 use Symfony\Component\ExpressionLanguage\Expression;
 
 class Evaluator

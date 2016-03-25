@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Rule;
 
 class GenericRule extends AbstractRule
@@ -31,7 +32,7 @@ class GenericRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getID()
     {
@@ -39,7 +40,7 @@ class GenericRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -47,7 +48,7 @@ class GenericRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getCondition()
     {

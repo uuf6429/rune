@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Util;
 
 use uuf6429\Rune\Context\AbstractContext;
@@ -18,7 +19,7 @@ class ContextRulePair
 
     /**
      * @param AbstractContext $context
-     * @param AbstractRule $rule
+     * @param AbstractRule    $rule
      */
     public function __construct(AbstractContext $context, AbstractRule $rule)
     {

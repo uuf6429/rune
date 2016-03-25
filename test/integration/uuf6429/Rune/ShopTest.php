@@ -1,10 +1,10 @@
 <?php
+
 namespace uuf6429\Rune;
 
-use uuf6429\Rune\Engine;
 use uuf6429\Rune\Rule\GenericRule;
 
-class SimpleEngineTest extends \PHPUnit_Framework_TestCase
+class ShopTest extends \PHPUnit_Framework_TestCase
 {
     public function testSimpleEngine()
     {
@@ -15,7 +15,7 @@ class SimpleEngineTest extends \PHPUnit_Framework_TestCase
             'Rule 4 (Socks) triggered for Green Soft Socks.',
             'Rule 4 (Socks) triggered for Yellow Sporty Socks.',
             'Rule 4 (Toys) triggered for Lego Blocks.',
-        ]) . PHP_EOL);
+        ]).PHP_EOL);
 
         $engine = new Engine($this->getContexts($this->getAction()), $this->getRules());
         $engine->execute();
@@ -43,6 +43,7 @@ class SimpleEngineTest extends \PHPUnit_Framework_TestCase
     protected function getProducts()
     {
         $cp = $this->getCategoryProvider();
+
         return [
             new Model\Product(1, 'Bricks', 'red', 3, $cp),
             new Model\Product(2, 'Soft Socks', 'green', 4, $cp),
@@ -50,11 +51,12 @@ class SimpleEngineTest extends \PHPUnit_Framework_TestCase
             new Model\Product(4, 'Lego Blocks', '', 3, $cp),
         ];
     }
-    
+
     /**
      * @return Model\Category[]
      */
-    protected function getCategories(){
+    protected function getCategories()
+    {
         return [
             new Model\Category(1, 'Root', 0),
             new Model\Category(2, 'Root\\Clothes', 1),
@@ -63,36 +65,40 @@ class SimpleEngineTest extends \PHPUnit_Framework_TestCase
             new Model\Category(5, 'Root\\Clothes\\Jackets', 2),
         ];
     }
-    
+
     /**
      * @return callable
      */
-    protected function getCategoryProvider(){
+    protected function getCategoryProvider()
+    {
         return [$this, 'getCategory'];
     }
-    
+
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Model\Category|null
      */
-    public function getCategory($id){
-        foreach($this->getCategories() as $category){
-            if($category->id == $id){
+    public function getCategory($id)
+    {
+        foreach ($this->getCategories() as $category) {
+            if ($category->id == $id) {
                 return $category;
             }
         }
-        
-        return null;
+
+        return;
     }
 
     /**
      * @param Action\AbstractAction $action
+     *
      * @return Context\AbstractContext[]
      */
     protected function getContexts($action)
     {
         return array_map(
-            function ($product) use($action) {
+            function ($product) use ($action) {
                 return new Context\ProductContext($action, $product);
             },
             $this->getProducts()
@@ -102,7 +108,8 @@ class SimpleEngineTest extends \PHPUnit_Framework_TestCase
     /**
      * @return Action\AbstractAction
      */
-    protected function getAction() {
+    protected function getAction()
+    {
         return new Action\PrintAction();
     }
 }

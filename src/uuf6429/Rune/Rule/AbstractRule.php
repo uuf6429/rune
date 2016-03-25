@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Rule;
 
 abstract class AbstractRule

@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Util;
 
 class ContextRuleException extends \RuntimeException
@@ -10,8 +11,8 @@ class ContextRuleException extends \RuntimeException
 
     /**
      * @param ContextRulePair $contextRule
-     * @param string|null $message
-     * @param int $code
+     * @param string|null     $message
+     * @param int             $code
      * @param \Exception|null $previous
      */
     public function __construct(
@@ -26,7 +27,7 @@ class ContextRuleException extends \RuntimeException
                 $contextRule->getRule()->getID(),
                 $contextRule->getRule()->getName(),
                 get_class($contextRule->getContext()),
-                (is_object($previous) ? (': ' . $previous->getMessage()) : '')
+                (is_object($previous) ? (': '.$previous->getMessage()) : '')
             );
         }
 

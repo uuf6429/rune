@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Util;
 
 class TypeInfoMember
@@ -24,10 +25,10 @@ class TypeInfoMember
     public $link;
 
     /**
-     * @param string $name
+     * @param string   $name
      * @param string[] $types
-     * @param string $hint
-     * @param string $link
+     * @param string   $hint
+     * @param string   $link
      */
     public function __construct($name, $types, $hint = '', $link = '')
     {

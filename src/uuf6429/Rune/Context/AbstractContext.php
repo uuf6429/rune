@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Action\AbstractAction;
@@ -59,11 +60,14 @@ abstract class AbstractContext
 
     /**
      * @param string $fieldName
-     * @param mixed $default
+     * @param mixed  $default
+     *
      * @return mixed
      */
-    public function getValue($fieldName, $default = null) {
+    public function getValue($fieldName, $default = null)
+    {
         $fields = $this->getFields();
+
         return isset($fields[$fieldName])
             ? $fields[$fieldName]->getValue() : $default;
     }
@@ -78,6 +82,7 @@ abstract class AbstractContext
 
     /**
      * @param TypeAnalyser|null $analyser
+     *
      * @return TypeInfo[string]
      */
     public function getTypeInfo($analyser = null)
@@ -94,7 +99,7 @@ abstract class AbstractContext
     }
 
     /**
-     * @param Evaluator $eval
+     * @param Evaluator    $eval
      * @param AbstractRule $rule
      */
     public function execute(Evaluator $eval, AbstractRule $rule)

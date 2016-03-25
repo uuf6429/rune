@@ -1,9 +1,10 @@
 <?php
+
 namespace uuf6429\Rune\Action;
 
-use \uuf6429\Rune\Context\AbstractContext;
-use \uuf6429\Rune\Rule\AbstractRule;
-use \uuf6429\Rune\Util\Evaluator;
+use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Util\Evaluator;
 
 /**
  * The "quick 'n dirty" action.
@@ -18,7 +19,8 @@ class CallbackAction extends AbstractAction
 
     /**
      * The callback will receive the following arguments:
-     * (Evaluator $eval, AbstractContext $context, AbstractRule $rule)
+     * (Evaluator $eval, AbstractContext $context, AbstractRule $rule).
+     *
      * @param callable $callback
      */
     public function __construct(callable $callback)
@@ -27,7 +29,7 @@ class CallbackAction extends AbstractAction
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function execute(Evaluator $eval, AbstractContext $context, AbstractRule $rule)
     {

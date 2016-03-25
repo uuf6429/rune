@@ -1,4 +1,5 @@
 <?php
+
 namespace uuf6429\Rune;
 
 use uuf6429\Rune\Context\AbstractContext;
@@ -31,12 +32,12 @@ class Engine
 
     /**
      * @param AbstractContext|AbstractContext[] $contexts
-     * @param AbstractRule[] $rules
+     * @param AbstractRule[]                    $rules
      */
     public function __construct($contexts, $rules)
     {
         if (!is_array($contexts)) {
-            $contexts = [ $contexts ];
+            $contexts = [$contexts];
         }
 
         $this->contexts = $contexts;

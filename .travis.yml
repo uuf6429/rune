@@ -15,7 +15,7 @@ php:
 install: composer update --prefer-dist
 
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -t :7f9174e9-a953-4631-b0d3-e1388fe1620f
+  - bash <(curl -s https://codecov.io/bash) -t 7f9174e9-a953-4631-b0d3-e1388fe1620f

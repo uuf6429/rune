@@ -1,10 +1,18 @@
+Rune
+====
+
+A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.
+
 Introduction
-============
+------------
+
+[![Build Status](https://travis-ci.com/uuf6429/rune.svg?token=x4iDoZNEE7xwqHqGpu82&branch=master)](https://travis-ci.com/uuf6429/rune)
+[![codecov.io](https://codecov.io/github/uuf6429/rune/coverage.svg?token=Bu2nK2Kq77&branch=master)](https://codecov.io/github/uuf6429/rune?branch=master)
 
 This library is an implementation of a Business Rule Engine (a type of Business Process Automation software).
 
 Usage
-=====
+-----
 
 The library is made up of several parts:
 
@@ -16,7 +24,7 @@ The library is made up of several parts:
 - RuleEngine - the object that connects the others together to function.
 
 Example
-=======
+-------
 
 ```php
 class Product {

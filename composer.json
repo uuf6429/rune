@@ -24,5 +24,13 @@
         "psr-0": {
 			"uuf6429\\Rune": "src/"
         }
+	},
+	"autoload-dev": {
+		"psr-0": {
+			"uuf6429\\Rune": [
+				"test/unit",
+				"test/integration"
+			]
+		}
 	}
 }

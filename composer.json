@@ -21,15 +21,16 @@
         "fabpot/php-cs-fixer": "^1.11"
 	},
 	"autoload": {
-        "psr-0": {
-			"uuf6429\\Rune": "src/"
+        "psr-4": {
+			"uuf6429\\Rune\\": "src/Rune",
+			"uuf6429\\Rune\\Example\\": "example"
         }
 	},
 	"autoload-dev": {
-		"psr-0": {
-			"uuf6429\\Rune": [
-				"test/unit",
-				"test/integration"
+		"psr-4": {
+			"uuf6429\\Rune\\": [
+				"test/unit/Rune",
+				"test/integration/Rune"
 			]
 		}
 	}

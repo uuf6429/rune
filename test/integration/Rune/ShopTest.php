@@ -2,7 +2,9 @@
 
 namespace uuf6429\Rune;
 
-use uuf6429\Rune\Rule\GenericRule;
+use uuf6429\Rune\Example\Action;
+use uuf6429\Rune\Example\Context;
+use uuf6429\Rune\Example\Model;
 
 class ShopTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,11 +31,11 @@ class ShopTest extends \PHPUnit_Framework_TestCase
     protected function getRules()
     {
         return [
-            new GenericRule(1, 'Red Products', 'product.colour == "red"'),
-            new GenericRule(2, 'Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'),
-            new GenericRule(3, 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
-            new GenericRule(4, 'Socks', '(product.name matches "/socks/i") > 0'),
-            new GenericRule(4, 'Toys', '(product.category.name matches "/Toys/") > 0'),
+            new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"'),
+            new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'),
+            new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
+            new Rule\GenericRule(4, 'Socks', '(product.name matches "/socks/i") > 0'),
+            new Rule\GenericRule(4, 'Toys', '(product.category.name matches "/Toys/") > 0'),
         ];
     }
 

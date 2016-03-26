@@ -1,10 +1,11 @@
 <?php
 
-namespace uuf6429\Rune\Action;
+namespace uuf6429\Rune\example\Action;
 
-use uuf6429\Rune\Util\Evaluator;
+use uuf6429\Rune\Action\AbstractAction;
 use uuf6429\Rune\Context\AbstractContext;
 use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Util\Evaluator;
 
 class PrintAction extends AbstractAction
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace uuf6429\Rune\Model;
+namespace uuf6429\Rune\example\Model;
+
+use uuf6429\Rune\Model\AbstractModel;
 
 class Category extends AbstractModel
 {

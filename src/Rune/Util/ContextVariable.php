@@ -10,7 +10,7 @@ namespace uuf6429\Rune\Util;
  * demand there.  Make sure that the class has an @property to document this
  * behaviour (this will help type hinting).
  */
-class ContextField
+class ContextVariable
 {
     /**
      * @var string

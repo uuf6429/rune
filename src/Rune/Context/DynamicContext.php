@@ -3,7 +3,7 @@
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Action\AbstractAction;
-use uuf6429\Rune\Util\ContextField;
+use uuf6429\Rune\Util\ContextVariable;
 
 /**
  * Sure, a dynamic context means fields are variable... but it also means no
@@ -14,25 +14,25 @@ use uuf6429\Rune\Util\ContextField;
 class DynamicContext extends AbstractContext
 {
     /**
-     * @var ContextField[]
+     * @var ContextVariable[]
      */
     private $fields = [];
 
     /**
      * @param AbstractAction|null $action
-     * @param ContextFields[]     $fields
+     * @param ContextVariables[]  $fields
      */
     public function __construct($action = null, $fields = [])
     {
         parent::__construct($action);
         foreach ($fields as $field) {
-            /* @var ContextField $field */
+            /* @var ContextVariable $field */
             $this->fields[$field->getName()] = $field;
         }
     }
 
     /**
-     * @return ContextField[]
+     * @return ContextVariable[]
      */
     public function getFields()
     {

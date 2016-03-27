@@ -7,21 +7,21 @@ use uuf6429\Rune\Context\AbstractContext;
 use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Rule\AbstractRule;
 use uuf6429\Rune\Rule\GenericRule;
-use uuf6429\Rune\Util\ContextField;
+use uuf6429\Rune\Util\ContextVariable;
 use uuf6429\Rune\Util\ContextRuleException;
 use uuf6429\Rune\Util\Evaluator;
 
 class EngineTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @return ContextField[]
+     * @return ContextVariable[]
      */
     protected function getFields()
     {
         return [
-            new ContextField('COLOR', 'string'),
-            new ContextField('SIZE', 'string'),
-            new ContextField('IS_SUPPORTED', 'boolean'),
+            new ContextVariable('COLOR', 'string'),
+            new ContextVariable('SIZE', 'string'),
+            new ContextVariable('IS_SUPPORTED', 'boolean'),
         ];
     }
 

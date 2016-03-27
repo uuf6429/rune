@@ -4,7 +4,7 @@ namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Action\AbstractAction;
 use uuf6429\Rune\Rule\AbstractRule;
-use uuf6429\Rune\Util\ContextField;
+use uuf6429\Rune\Util\ContextVariable;
 use uuf6429\Rune\Util\Evaluator;
 use uuf6429\Rune\Util\TypeAnalyser;
 use uuf6429\Rune\Util\TypeInfo;
@@ -27,7 +27,7 @@ abstract class AbstractContext
     protected $action;
 
     /**
-     * @var ContextField[]
+     * @var ContextVariable[]
      */
     private $fields = [];
 
@@ -73,7 +73,7 @@ abstract class AbstractContext
     }
 
     /**
-     * @return ContextField[]
+     * @return ContextVariable[]
      */
     public function getFields()
     {
@@ -110,7 +110,7 @@ abstract class AbstractContext
     }
 
     /**
-     * @return ContextField[]
+     * @return ContextVariable[]
      */
     abstract protected function getFieldList();
 

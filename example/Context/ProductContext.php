@@ -4,7 +4,7 @@ namespace uuf6429\Rune\example\Context;
 
 use uuf6429\Rune\Context\AbstractContext;
 use uuf6429\Rune\Example\Model\Product;
-use uuf6429\Rune\Util\ContextField;
+use uuf6429\Rune\Util\ContextVariable;
 
 class ProductContext extends AbstractContext
 {
@@ -26,7 +26,7 @@ class ProductContext extends AbstractContext
     protected function getFieldList()
     {
         return [
-            new ContextField('product', Product::class),
+            new ContextVariable('product', Product::class),
         ];
     }
 

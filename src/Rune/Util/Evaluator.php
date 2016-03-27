@@ -7,7 +7,7 @@ use Symfony\Component\ExpressionLanguage\Expression;
 class Evaluator
 {
     /**
-     * @var ContextField[]
+     * @var ContextVariable[]
      */
     protected $fields;
 
@@ -27,7 +27,7 @@ class Evaluator
     }
 
     /**
-     * @param ContextField[] $fields
+     * @param ContextVariable[] $fields
      */
     public function setFields($fields)
     {

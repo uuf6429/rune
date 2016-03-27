@@ -84,6 +84,11 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             $contexts[] = new DynamicContext($action, $fields);
         }
 
+        if (count($contexts) == 1) {
+            // try single-context scenario
+            $contexts = $contexts[0];
+        }
+
         $engine = new Engine($contexts, $this->getRules($withBadRules));
         $engine->execute();
 
@@ -96,7 +101,11 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             $engine->getErrors()
         );
 
-        $this->assertEquals($expectedErrors, $errorMesgs);
+        if (empty($expectedErrors)) {
+            $this->assertFalse($engine->hasErrors(), 'Engine should not have caused errors');
+        } else {
+            $this->assertEquals($expectedErrors, $errorMesgs, 'Engine errors were not as expected.');
+        }
     }
 
     /**

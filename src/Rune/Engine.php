@@ -57,11 +57,19 @@ class Engine
     }
 
     /**
-     * @return \ContextRuleException
+     * @return \ContextRuleException[]
      */
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return !empty($this->errors);
     }
 
     /**

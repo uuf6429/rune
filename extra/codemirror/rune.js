@@ -13,7 +13,6 @@
 ;
 (function($) {
     var self = this,
-        className = 'ExpressionLanguageHighlighter',
         staticCounter = 0,
         autocompleteIgnoredKeys = {
             "8": "backspace",
@@ -67,20 +66,26 @@
         },
         
         /**
-         * @param element string|jQuery
+         * @param elements string|jQuery
          * @param options
          */
-        ExpressionLanguageHighlighter = self.features[className] = function($elements, options) {
+        RuneEditor = function(elements, options) {
             var me = this;
-            me.options = self.Helper.mergeFeatureOptions(className, me.defaultOptions, options);
-            me.$elements = $($elements);
-            var mode = 'expressionlanguage-' + ++staticCounter;
+            me.options = $.extend(true, {}, me.defaultOptions, options);
+            me.$elements = $(elements);
+            var mode = 'rune-explang-' + ++staticCounter;
             me.initHighlightHint(mode);
             me.initHighlightMode(mode);
             me.initialize(mode);
         };
+		
+	$.fn.RuneEditor = function(options) {
+		return this.each(function() {
+			new RuneEditor(this, options || {});
+		});
+	};
 
-    ExpressionLanguageHighlighter.prototype = {
+    RuneEditor.prototype = {
         defaultOptions: {
             tokens: {
                 constants: [
@@ -556,4 +561,4 @@
             return members;
         }
     };
-}).call(App, jQuery);
+})(jQuery);

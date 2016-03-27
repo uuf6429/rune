@@ -3,7 +3,7 @@
 namespace uuf6429\Rune\example\Context;
 
 use uuf6429\Rune\Context\AbstractContext;
-use uuf6429\Rune\Model\Product;
+use uuf6429\Rune\Example\Model\Product;
 use uuf6429\Rune\Util\ContextField;
 
 class ProductContext extends AbstractContext

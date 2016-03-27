@@ -5,7 +5,7 @@ namespace uuf6429\Rune\example\Model;
 use uuf6429\Rune\Model\AbstractModel;
 
 /**
- * @property Category $category
+ * @property uuf6429\Rune\Example\Model\Category $category
  */
 class Product extends AbstractModel
 {
@@ -44,7 +44,7 @@ class Product extends AbstractModel
     /**
      * @return Category
      */
-    public function getCategory()
+    protected function getCategory()
     {
         $call = $this->categoryProvider;
 

@@ -59,12 +59,14 @@ class ShopTest extends \PHPUnit_Framework_TestCase
      */
     protected function getCategories()
     {
+        $cp = $this->getCategoryProvider();
+
         return [
-            new Model\Category(1, 'Root', 0),
-            new Model\Category(2, 'Root\\Clothes', 1),
-            new Model\Category(3, 'Root\\Toys', 1),
-            new Model\Category(4, 'Root\\Clothes\\Underwear', 2),
-            new Model\Category(5, 'Root\\Clothes\\Jackets', 2),
+            new Model\Category(1, 'Root', 0, $cp),
+            new Model\Category(2, 'Root\\Clothes', 1, $cp),
+            new Model\Category(3, 'Root\\Toys', 1, $cp),
+            new Model\Category(4, 'Root\\Clothes\\Underwear', 2, $cp),
+            new Model\Category(5, 'Root\\Clothes\\Jackets', 2, $cp),
         ];
     }
 

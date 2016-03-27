@@ -8,7 +8,6 @@ use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Rule\AbstractRule;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Util\ContextVariable;
-use uuf6429\Rune\Util\ContextRuleException;
 use uuf6429\Rune\Util\Evaluator;
 
 class EngineTest extends \PHPUnit_Framework_TestCase
@@ -26,6 +25,8 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param bool $withBrokenRules
+     *
      * @return AbstractRule[]
      */
     protected function getRules($withBrokenRules = false)
@@ -48,16 +49,13 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param bool  $withBadRules
      * @param array $productFieldValues
-     * @param array $expectedRuleIDs
-     * @param array $expectedErrors
-     * @dataProvider sampleValuesDataProvider
+     *
+     * @return AbstractContext[]
      */
-    public function testRuleEngine($withBadRules, $productFieldValues, $expectedRuleIDs, $expectedErrors)
+    protected function getContexts($productFieldValues)
     {
         $contexts = [];
-        $matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
 
         foreach ($productFieldValues as $productName => $fieldValues) {
             $fields = $this->getFields();
@@ -68,10 +66,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     AbstractContext $context,
                     AbstractRule $rule
                 ) use (
-                    $productName,
-                    &$matchingRuleIDs
+                    $productName
                 ) {
-                    $matchingRuleIDs[$productName][] = $rule->getID();
+                    $this->matchingRuleIDs[$productName][] = $rule->getID();
                 }
             );
 
@@ -89,13 +86,28 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             $contexts = $contexts[0];
         }
 
+        return $contexts;
+    }
+
+    /**
+     * @param bool  $withBadRules
+     * @param array $productFieldValues
+     * @param array $expectedRuleIDs
+     * @param array $expectedErrors
+     * @dataProvider sampleValuesDataProvider
+     */
+    public function testRuleEngine($withBadRules, $productFieldValues, $expectedRuleIDs, $expectedErrors)
+    {
+        $this->matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
+        $contexts = $this->getContexts($productFieldValues);
+
         $engine = new Engine($contexts, $this->getRules($withBadRules));
         $engine->execute();
 
-        $this->assertEquals($expectedRuleIDs, $matchingRuleIDs);
+        $this->assertEquals($expectedRuleIDs, $this->matchingRuleIDs);
 
         $errorMesgs = array_map(
-            function (ContextRuleException $exception) {
+            function (\Exception $exception) {
                 return $exception->getMessage();
             },
             $engine->getErrors()
@@ -246,15 +258,117 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 1' => ['0'],
                 ],
                 'expectedErrors' => [
-                    'RuntimeException encountered while processing rule 5 '
-                    .'(Bad Rule - Result Type) within '.DynamicContext::class
-                    .': The condition result f'
-                    .'or rule 5 (Bad Rule - Result Type) should be boolea'
-                    .'n, not string.',
-                    'Symfony\Component\ExpressionLanguage\SyntaxError enco'
-                    .'untered while processing rule 6 (Bad Rule - Snytax '
-                    .'Error) within '.DynamicContext::class
-                    .': Unexpected character "=" around position 5.',
+                    'The condition result for rule 5 (Bad Rule - Result Type) '
+                    .'should be boolean, not string.',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFailureModeScenariopProductFieldValues()
+    {
+        return [
+            'Product 1' => [
+                'COLOR' => 'red',
+            ],
+            'Product 2' => [
+                'COLOR' => 'green',
+            ],
+            'Product 3' => [
+                'COLOR' => 'blue',
+            ],
+        ];
+    }
+
+    /**
+     * @return AbstractRule[]
+     */
+    protected function getFailureModeScenariopRules()
+    {
+        return [
+            new GenericRule(1, 'Good Rule 1', 'COLOR == "red"'),
+            new GenericRule(2, 'Bad Rule', 'COLOR == black'),
+            new GenericRule(3, 'Good Rule 2', 'COLOR == "red" or COLOR == "blue"'),
+        ];
+    }
+
+    /**
+     * @param int   $failureMode
+     * @param array $expectedRuleIDs
+     * @param array $expectedErrors
+     * @dataProvider sampleValuesFailureModeDataProvider
+     */
+    public function testRuleEngineFailureModes($failureMode, $expectedRuleIDs, $expectedErrors)
+    {
+        $productFieldValues = $this->getFailureModeScenariopProductFieldValues();
+        $this->matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
+        $contexts = $this->getContexts($productFieldValues);
+
+        $engine = new Engine($contexts, $this->getFailureModeScenariopRules(), $failureMode);
+        $engine->execute();
+
+        $this->assertEquals($expectedRuleIDs, $this->matchingRuleIDs);
+
+        $errorMesgs = array_map(
+            function (\Exception $exception) {
+                return $exception->getMessage();
+            },
+            $engine->getErrors()
+        );
+
+        $this->assertEquals($expectedErrors, $errorMesgs, 'Engine errors were not as expected.');
+    }
+
+    /**
+     * @return array
+     */
+    public function sampleValuesFailureModeDataProvider()
+    {
+        return [
+            'test engine failure' => [
+                'failureMode' => Engine::ON_ERROR_FAIL_ENGINE,
+                'expectedRuleIDs' => [
+                    'Product 1' => [1],
+                    'Product 2' => [],
+                    'Product 3' => [],
+                ],
+                'expectedErrors' => [
+                    'Variable "black" is not valid around position 10.',
+                ],
+            ],
+            'test context failure' => [
+                'failureMode' => Engine::ON_ERROR_FAIL_CONTEXT,
+                'expectedRuleIDs' => [
+                    'Product 1' => [1],
+                    'Product 2' => [],
+                    'Product 3' => [],
+                ],
+                'expectedErrors' => [
+                    'Variable "black" is not valid around position 10.',
+                    'Variable "black" is not valid around position 10.',
+                    'Variable "black" is not valid around position 10.',
+                ],
+            ],
+            'test rule failure' => [
+                'failureMode' => Engine::ON_ERROR_FAIL_RULE,
+                'expectedRuleIDs' => [
+                    'Product 1' => [1, 3],
+                    'Product 2' => [],
+                    'Product 3' => [3],
+                ],
+                'expectedErrors' => [
+                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+                    .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
+                    .': Variable "black" is not valid around position 10.',
+                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+                    .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
+                    .': Variable "black" is not valid around position 10.',
+                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+                    .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
+                    .': Variable "black" is not valid around position 10.',
                 ],
             ],
         ];

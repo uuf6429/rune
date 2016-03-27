@@ -10,6 +10,10 @@ use uuf6429\Rune\Util\Evaluator;
 
 class Engine
 {
+    const ON_ERROR_FAIL_RULE = 1;
+    const ON_ERROR_FAIL_CONTEXT = 2;
+    const ON_ERROR_FAIL_ENGINE = 3;
+
     /**
      * @var AbstractContext[]
      */
@@ -31,10 +35,16 @@ class Engine
     protected $eval;
 
     /**
+     * @var int
+     */
+    protected $failMode;
+
+    /**
      * @param AbstractContext|AbstractContext[] $contexts
      * @param AbstractRule[]                    $rules
+     * @param string                            $failMode See ON_ERROR_FAIL_* constants.
      */
-    public function __construct($contexts, $rules)
+    public function __construct($contexts, $rules, $failMode = self::ON_ERROR_FAIL_ENGINE)
     {
         if (!is_array($contexts)) {
             $contexts = [$contexts];
@@ -42,13 +52,25 @@ class Engine
 
         $this->contexts = $contexts;
         $this->rules = $rules;
+        $this->failMode = $failMode;
+
         $this->eval = new Evaluator();
     }
 
     public function execute()
     {
-        $this->errors = [];
-        $matches = $this->findMatches();
+        $matches = [];
+        $this->clearErrors();
+
+        try {
+            $this->findMatches($matches);
+        } catch (\Exception $ex) {
+            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
+                throw $ex;
+            } else {
+                $this->errors[] = $ex;
+            }
+        }
 
         // TODO implement this some time in the future
         //$this->validateMatches($matches);
@@ -72,41 +94,81 @@ class Engine
         return !empty($this->errors);
     }
 
-    /**
-     * @return ContextRulePair[]
-     */
-    protected function findMatches()
+    protected function clearErrors()
     {
-        $result = [];
+        $this->errors = [];
+    }
 
-        foreach ($this->contexts as $context) {
+    /**
+     * @param ContextRulePair[] $result
+     */
+    protected function findMatches(&$result)
+    {
+        try {
+            foreach ($this->contexts as $context) {
+                $this->findMatchesForContext($result, $context);
+            }
+        } catch (\Exception $ex) {
+            if ($this->failMode > self::ON_ERROR_FAIL_ENGINE) {
+                throw $ex;
+            } else {
+                $this->errors[] = $ex;
+            }
+        }
+    }
+
+    /**
+     * @param ContextRulePair[] $result
+     * @param AbstractContext   $context
+     */
+    protected function findMatchesForContext(&$result, $context)
+    {
+        try {
             $this->eval->setFields($context->getFields());
 
             foreach ($this->rules as $rule) {
-                try {
-                    $cond = $rule->getCondition();
-                    $match = ($cond === '') ? true : $this->eval->evaluate($rule->getCondition());
-
-                    if (!is_bool($match)) {
-                        throw new \RuntimeException(sprintf(
-                            'The condition result for rule %s (%s) should be boolean, not %s.',
-                            $rule->getID(),
-                            $rule->getName(),
-                            gettype($match)
-                        ));
-                    }
-
-                    if ($match) {
-                        $result[] = new ContextRulePair($context, $rule);
-                    }
-                } catch (\Exception $ex) {
-                    $pair = new ContextRulePair($context, $rule);
-                    $this->errors[] = new ContextRuleException($pair, null, $ex);
-                }
+                $this->findMatchesForContextRule($result, $context, $rule);
+            }
+        } catch (\Exception $ex) {
+            if ($this->failMode > self::ON_ERROR_FAIL_CONTEXT) {
+                throw $ex;
+            } else {
+                $this->errors[] = $ex;
             }
         }
+    }
 
-        return $result;
+    /**
+     * @param ContextRulePair[] $result
+     * @param AbstractContext   $context
+     * @param AbstractRule      $rule
+     */
+    protected function findMatchesForContextRule(&$result, $context, $rule)
+    {
+        try {
+            $cond = $rule->getCondition();
+            $match = ($cond === '') ? true : $this->eval->evaluate($rule->getCondition());
+
+            if (!is_bool($match)) {
+                throw new \RuntimeException(sprintf(
+                    'The condition result for rule %s (%s) should be boolean, not %s.',
+                    $rule->getID(),
+                    $rule->getName(),
+                    gettype($match)
+                ));
+            }
+
+            if ($match) {
+                $result[] = new ContextRulePair($context, $rule);
+            }
+        } catch (\Exception $ex) {
+            if ($this->failMode > self::ON_ERROR_FAIL_RULE) {
+                throw $ex;
+            } else {
+                $pair = new ContextRulePair($context, $rule);
+                $this->errors[] = new ContextRuleException($pair, null, $ex);
+            }
+        }
     }
 
     /**

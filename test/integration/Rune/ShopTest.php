@@ -12,11 +12,14 @@ class ShopTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectOutputString(implode(PHP_EOL, [
             'Rule 1 (Red Products) triggered for Red Bricks.',
-            'Rule 4 (Toys) triggered for Red Bricks.',
+            'Rule 5 (Toys) triggered for Red Bricks.',
             'Rule 3 (Green Socks) triggered for Green Soft Socks.',
             'Rule 4 (Socks) triggered for Green Soft Socks.',
+            'Rule 6 (Clothes) triggered for Green Soft Socks.',
             'Rule 4 (Socks) triggered for Yellow Sporty Socks.',
-            'Rule 4 (Toys) triggered for Lego Blocks.',
+            'Rule 6 (Clothes) triggered for Yellow Sporty Socks.',
+            'Rule 5 (Toys) triggered for Lego Blocks.',
+            'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
         ]).PHP_EOL);
 
         $engine = new Engine($this->getContexts($this->getAction()), $this->getRules());
@@ -34,8 +37,9 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"'),
             new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'),
             new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
-            new Rule\GenericRule(4, 'Socks', '(product.name matches "/socks/i") > 0'),
-            new Rule\GenericRule(4, 'Toys', '(product.category.name matches "/Toys/") > 0'),
+            new Rule\GenericRule(4, 'Socks', 'product.category.is("Socks")'),
+            new Rule\GenericRule(5, 'Toys', 'product.category.is("Toys")'),
+            new Rule\GenericRule(6, 'Clothes', 'product.category.is("Clothes")'),
         ];
     }
 
@@ -48,9 +52,10 @@ class ShopTest extends \PHPUnit_Framework_TestCase
 
         return [
             new Model\Product(1, 'Bricks', 'red', 3, $cp),
-            new Model\Product(2, 'Soft Socks', 'green', 4, $cp),
-            new Model\Product(3, 'Sporty Socks', 'yellow', 4, $cp),
+            new Model\Product(2, 'Soft Socks', 'green', 6, $cp),
+            new Model\Product(3, 'Sporty Socks', 'yellow', 6, $cp),
             new Model\Product(4, 'Lego Blocks', '', 3, $cp),
+            new Model\Product(6, 'Adidas Jacket', 'black', 5, $cp),
         ];
     }
 
@@ -63,10 +68,11 @@ class ShopTest extends \PHPUnit_Framework_TestCase
 
         return [
             new Model\Category(1, 'Root', 0, $cp),
-            new Model\Category(2, 'Root\\Clothes', 1, $cp),
-            new Model\Category(3, 'Root\\Toys', 1, $cp),
-            new Model\Category(4, 'Root\\Clothes\\Underwear', 2, $cp),
-            new Model\Category(5, 'Root\\Clothes\\Jackets', 2, $cp),
+            new Model\Category(2, 'Clothes', 1, $cp),
+            new Model\Category(3, 'Toys', 1, $cp),
+            new Model\Category(4, 'Underwear', 2, $cp),
+            new Model\Category(5, 'Jackets', 2, $cp),
+            new Model\Category(6, 'Socks', 4, $cp),
         ];
     }
 

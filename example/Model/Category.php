@@ -45,4 +45,22 @@ class Category extends AbstractModel
 
         return $call($this->parentId);
     }
+
+    /**
+     * Returns true if category name or any of its parents are identical to $name.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function is($name)
+    {
+        if (strtolower($this->name) == strtolower($name)) {
+            return true;
+        } elseif ($this->parent != null) {
+            return $this->parent->is($name);
+        } else {
+            return false;
+        }
+    }
 }

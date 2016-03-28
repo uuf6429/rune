@@ -44,7 +44,7 @@ class Engine
      * @param AbstractRule[]                    $rules
      * @param string                            $failMode See ON_ERROR_FAIL_* constants.
      */
-    public function __construct($contexts, $rules, $failMode = self::ON_ERROR_FAIL_ENGINE)
+    public function __construct($contexts, $rules, $failMode = self::ON_ERROR_FAIL_CONTEXT)
     {
         if (!is_array($contexts)) {
             $contexts = [$contexts];

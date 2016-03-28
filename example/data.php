@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'failureMode' => 2,
     'rules' => [
         ['Red Products', 'product.colour == "red"'],
         ['Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'],

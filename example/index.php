@@ -28,7 +28,7 @@ $data = array_merge(
     require __DIR__.'/data.php',
     array_map(
         function ($group) {
-            return array_filter(
+            return !is_array($group) ? $group : array_filter(
                 array_values($group),
                 function ($data) {
                     return array_filter($data);
@@ -133,9 +133,21 @@ $products = array_map(
                     </fieldset>
                 </div>
                 &nbsp;
-                <div class="row text-center">
-                    <input type="submit" class="btn btn-primary btn-lg" value="Execute"/>
-                    <a class="btn btn-link" href="<?php echo APP_ROOT; ?>">Reset Changes</a>
+                <div class="row">
+                    <div class="col-md-4 form-group-sm form-inline">
+                        <label class="control-label" for="failureMode">Failure Level:&nbsp;</label>
+                        <select class="form-control " name="failureMode"><?php
+                            foreach ([3 => 'Engine', 2 => 'Context', 1 => 'Rule'] as $i => $text) {
+                                echo '<option value="'.$i.'"'
+                                        .($i == $data['failureMode'] ? ' selected="selected"' : '').
+                                    '>'.$text.'</option>';
+                            }
+                        ?></select>
+                    </div>
+                    <div class="col-md-8 text-center">
+                        <input type="submit" class="btn btn-primary btn-lg" value="Execute"/>
+                        <a class="btn btn-link" href="<?php echo APP_ROOT; ?>">Reset Changes</a>
+                    </div>
                 </div>
                 &nbsp;
             </form>
@@ -154,7 +166,7 @@ $products = array_map(
                     );
 
                     echo 'Result:'.PHP_EOL;
-                    $engine = new Rune\Engine($contexts, $rules);
+                    $engine = new Rune\Engine($contexts, $rules, $data['failureMode']);
                     $engine->execute();
 
                     echo PHP_EOL.'Errors: '.PHP_EOL;

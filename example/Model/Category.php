@@ -53,12 +53,12 @@ class Category extends AbstractModel
      *
      * @return bool
      */
-    public function is($name)
+    public function in($name)
     {
         if (strtolower($this->name) == strtolower($name)) {
             return true;
         } elseif ($this->parent != null) {
-            return $this->parent->is($name);
+            return $this->parent->in($name);
         } else {
             return false;
         }

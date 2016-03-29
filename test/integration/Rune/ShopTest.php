@@ -37,9 +37,9 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"'),
             new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'),
             new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
-            new Rule\GenericRule(4, 'Socks', 'product.category.is("Socks")'),
-            new Rule\GenericRule(5, 'Toys', 'product.category.is("Toys")'),
-            new Rule\GenericRule(6, 'Clothes', 'product.category.is("Clothes")'),
+            new Rule\GenericRule(4, 'Socks', 'product.category.in("Socks")'),
+            new Rule\GenericRule(5, 'Toys', 'product.category.in("Toys")'),
+            new Rule\GenericRule(6, 'Clothes', 'product.category.in("Clothes")'),
         ];
     }
 

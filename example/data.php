@@ -7,7 +7,7 @@ return [
         ['Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'],
         ['Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'],
         ['Socks', '(product.name matches "/socks/i") > 0'],
-        ['Toys', 'product.category.is("Toys")'],
+        ['Toys', 'product.category.in("Toys")'],
     ],
     'categories' => [
         ['Root', null],

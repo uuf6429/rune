@@ -96,15 +96,22 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      * @param array $expectedErrors
      * @dataProvider sampleValuesDataProvider
      */
-    public function testRuleEngine($withBadRules, $productFieldValues, $expectedRuleIDs, $expectedErrors)
-    {
+    public function testRuleEngine(
+        $withBadRules,
+        $productFieldValues,
+        $expectedRuleIDs,
+        $expectedErrors,
+        $expectedResult
+    ) {
         $this->matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
         $contexts = $this->getContexts($productFieldValues);
 
         $engine = new Engine();
-        $engine->execute($contexts, $this->getRules($withBadRules));
+        $result = $engine->execute($contexts, $this->getRules($withBadRules));
 
         $this->assertEquals($expectedRuleIDs, $this->matchingRuleIDs);
+
+        $this->assertSame($result, $expectedResult);
 
         $errorMesgs = array_map(
             function (\Exception $exception) {
@@ -139,6 +146,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 1' => ['0'],
                 ],
                 'expectedErrors' => [],
+                'expectedResult' => 1,
             ],
 
             'no matches (except empty condition)' => [
@@ -154,6 +162,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 1' => ['0'],
                 ],
                 'expectedErrors' => [],
+                'expectedResult' => 1,
             ],
 
             'simple match' => [
@@ -171,6 +180,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 2' => ['0', '4'],
                 ],
                 'expectedErrors' => [],
+                'expectedResult' => 3,
             ],
 
             'alternating match' => [
@@ -186,6 +196,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 1' => ['0', '2'],
                 ],
                 'expectedErrors' => [],
+                'expectedResult' => 2,
             ],
 
             'multiple matches - common fields' => [
@@ -201,6 +212,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 1' => ['0', '1', '3'],
                 ],
                 'expectedErrors' => [],
+                'expectedResult' => 3,
             ],
 
             'multiple matches - unrelated fields' => [
@@ -216,6 +228,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 1' => ['0', '1', '4'],
                 ],
                 'expectedErrors' => [],
+                'expectedResult' => 3,
             ],
 
             'multiple matches - same field' => [
@@ -243,6 +256,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 3' => ['0', '4'],
                 ],
                 'expectedErrors' => [],
+                'expectedResult' => 5,
             ],
 
             'trigger errors' => [
@@ -258,9 +272,12 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 1' => ['0'],
                 ],
                 'expectedErrors' => [
-                    'The condition result for rule 5 (Bad Rule - Result Type) '
-                    .'should be boolean, not string.',
+                    'RuntimeException encountered while processing rule 5 '
+                    .'(Bad Rule - Result Type) within '.DynamicContext::class
+                    .': The condition result for rule 5 (Bad Rule - Result '
+                    .'Type) should be boolean, not string.',
                 ],
+                'expectedResult' => 1,
             ],
         ];
     }
@@ -331,12 +348,14 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             'test engine failure' => [
                 'failureMode' => Engine::ON_ERROR_FAIL_ENGINE,
                 'expectedRuleIDs' => [
-                    'Product 1' => [1],
+                    'Product 1' => [],
                     'Product 2' => [],
                     'Product 3' => [],
                 ],
                 'expectedErrors' => [
-                    'Variable "black" is not valid around position 10.',
+                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+                    .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
+                    .': Variable "black" is not valid around position 10.',
                 ],
             ],
             'test context failure' => [
@@ -347,9 +366,15 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Product 3' => [],
                 ],
                 'expectedErrors' => [
-                    'Variable "black" is not valid around position 10.',
-                    'Variable "black" is not valid around position 10.',
-                    'Variable "black" is not valid around position 10.',
+                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+                    .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
+                    .': Variable "black" is not valid around position 10.',
+                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+                    .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
+                    .': Variable "black" is not valid around position 10.',
+                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+                    .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
+                    .': Variable "black" is not valid around position 10.',
                 ],
             ],
             'test rule failure' => [

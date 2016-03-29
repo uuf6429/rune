@@ -33,6 +33,8 @@ class Engine
      * @param AbstractContext|AbstractContext[] $contexts
      * @param AbstractRule[]                    $rules
      * @param string                            $failMode See ON_ERROR_FAIL_* constants.
+     * 
+     * @return int|false
      */
     public function execute($contexts, $rules, $failMode = self::ON_ERROR_FAIL_CONTEXT)
     {
@@ -47,18 +49,18 @@ class Engine
 
         try {
             $this->findMatches($matches, $contexts, $rules);
+
+            // TODO implement this some time in the future
+            //$this->validateMatches($matches);
+
+            $this->executeMatches($matches);
         } catch (\Exception $ex) {
-            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
-                throw $ex;
-            } else {
-                $this->errors[] = $ex;
-            }
+            $this->addError($ex);
+
+            return false;
         }
 
-        // TODO implement this some time in the future
-        //$this->validateMatches($matches);
-
-        $this->executeMatches($matches);
+        return count($matches);
     }
 
     /**
@@ -114,10 +116,10 @@ class Engine
                 $this->findMatchesForContext($result, $context, $rules);
             }
         } catch (\Exception $ex) {
-            if ($this->failMode > self::ON_ERROR_FAIL_ENGINE) {
+            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
                 throw $ex;
             } else {
-                $this->errors[] = $ex;
+                $this->addError($ex);
             }
         }
     }
@@ -136,10 +138,10 @@ class Engine
                 $this->findMatchesForContextRule($result, $context, $rule);
             }
         } catch (\Exception $ex) {
-            if ($this->failMode > self::ON_ERROR_FAIL_CONTEXT) {
+            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
                 throw $ex;
             } else {
-                $this->errors[] = $ex;
+                $this->addError($ex);
             }
         }
     }
@@ -168,11 +170,14 @@ class Engine
                 $result[] = new ContextRulePair($context, $rule);
             }
         } catch (\Exception $ex) {
-            if ($this->failMode > self::ON_ERROR_FAIL_RULE) {
+            $pair = new ContextRulePair($context, $rule);
+            $ex = new ContextRuleException($pair, null, $ex);
+
+            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE
+                || $this->failMode === self::ON_ERROR_FAIL_CONTEXT) {
                 throw $ex;
             } else {
-                $pair = new ContextRulePair($context, $rule);
-                $this->errors[] = new ContextRuleException($pair, null, $ex);
+                $this->addError($ex);
             }
         }
     }
@@ -188,7 +193,11 @@ class Engine
                 $this->getEvaluator()->setFields($context->getFields());
                 $context->execute($this->getEvaluator(), $match->getRule());
             } catch (\Exception $ex) {
-                $this->errors[] = new ContextRuleException($match, null, $ex);
+                if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
+                    throw $ex;
+                } else {
+                    $this->addError(new ContextRuleException($match, null, $ex));
+                }
             }
         }
     }

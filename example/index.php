@@ -166,8 +166,8 @@ $products = array_map(
                     );
 
                     echo 'Result:'.PHP_EOL;
-                    $engine = new Rune\Engine($contexts, $rules, $data['failureMode']);
-                    $engine->execute();
+                    $engine = new Rune\Engine();
+                    $engine->execute($contexts, $rules, $data['failureMode']);
 
                     echo PHP_EOL.'Errors: '.PHP_EOL;
                     echo $engine->hasErrors() ? implode(PHP_EOL, $engine->getErrors()) : '<i>None</i>';

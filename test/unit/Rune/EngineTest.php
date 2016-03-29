@@ -101,8 +101,8 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         $this->matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
         $contexts = $this->getContexts($productFieldValues);
 
-        $engine = new Engine($contexts, $this->getRules($withBadRules));
-        $engine->execute();
+        $engine = new Engine();
+        $engine->execute($contexts, $this->getRules($withBadRules));
 
         $this->assertEquals($expectedRuleIDs, $this->matchingRuleIDs);
 
@@ -307,8 +307,8 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         $this->matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
         $contexts = $this->getContexts($productFieldValues);
 
-        $engine = new Engine($contexts, $this->getFailureModeScenariopRules(), $failureMode);
-        $engine->execute();
+        $engine = new Engine();
+        $engine->execute($contexts, $this->getFailureModeScenariopRules(), $failureMode);
 
         $this->assertEquals($expectedRuleIDs, $this->matchingRuleIDs);
 

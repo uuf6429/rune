@@ -22,8 +22,8 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
         ]).PHP_EOL);
 
-        $engine = new Engine($this->getContexts($this->getAction()), $this->getRules());
-        $engine->execute();
+        $engine = new Engine();
+        $engine->execute($this->getContexts($this->getAction()), $this->getRules());
 
         $this->assertSame('', implode(PHP_EOL, $engine->getErrors()), 'RuleEngine should not generate errors.');
     }

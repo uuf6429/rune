@@ -15,24 +15,14 @@ class Engine
     const ON_ERROR_FAIL_ENGINE = 3;
 
     /**
-     * @var AbstractContext[]
-     */
-    protected $contexts;
-
-    /**
-     * @var AbstractRule[]
-     */
-    protected $rules;
-
-    /**
-     * @var \ContextRuleException[]
+     * @var \Exception[]
      */
     protected $errors;
 
     /**
      * @var Evaluator
      */
-    protected $eval;
+    protected $evaluator;
 
     /**
      * @var int
@@ -44,26 +34,19 @@ class Engine
      * @param AbstractRule[]                    $rules
      * @param string                            $failMode See ON_ERROR_FAIL_* constants.
      */
-    public function __construct($contexts, $rules, $failMode = self::ON_ERROR_FAIL_CONTEXT)
+    public function execute($contexts, $rules, $failMode = self::ON_ERROR_FAIL_CONTEXT)
     {
         if (!is_array($contexts)) {
             $contexts = [$contexts];
         }
 
-        $this->contexts = $contexts;
-        $this->rules = $rules;
         $this->failMode = $failMode;
 
-        $this->eval = new Evaluator();
-    }
-
-    public function execute()
-    {
         $matches = [];
         $this->clearErrors();
 
         try {
-            $this->findMatches($matches);
+            $this->findMatches($matches, $contexts, $rules);
         } catch (\Exception $ex) {
             if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
                 throw $ex;
@@ -76,6 +59,18 @@ class Engine
         //$this->validateMatches($matches);
 
         $this->executeMatches($matches);
+    }
+
+    /**
+     * @return Evaluator
+     */
+    protected function getEvaluator()
+    {
+        if (!$this->evaluator) {
+            $this->evaluator = new Evaluator();
+        }
+
+        return $this->evaluator;
     }
 
     /**
@@ -100,13 +95,23 @@ class Engine
     }
 
     /**
-     * @param ContextRulePair[] $result
+     * @param \Exception $error
      */
-    protected function findMatches(&$result)
+    protected function addError(\Exception $error)
+    {
+        $this->errors[] = $error;
+    }
+
+    /**
+     * @param ContextRulePair[] $result
+     * @param AbstractContext[] $contexts
+     * @param AbstractRule[]    $rules
+     */
+    protected function findMatches(&$result, $contexts, $rules)
     {
         try {
-            foreach ($this->contexts as $context) {
-                $this->findMatchesForContext($result, $context);
+            foreach ($contexts as $context) {
+                $this->findMatchesForContext($result, $context, $rules);
             }
         } catch (\Exception $ex) {
             if ($this->failMode > self::ON_ERROR_FAIL_ENGINE) {
@@ -120,13 +125,14 @@ class Engine
     /**
      * @param ContextRulePair[] $result
      * @param AbstractContext   $context
+     * @param AbstractRule[]    $rules
      */
-    protected function findMatchesForContext(&$result, $context)
+    protected function findMatchesForContext(&$result, $context, $rules)
     {
         try {
-            $this->eval->setFields($context->getFields());
+            $this->getEvaluator()->setFields($context->getFields());
 
-            foreach ($this->rules as $rule) {
+            foreach ($rules as $rule) {
                 $this->findMatchesForContextRule($result, $context, $rule);
             }
         } catch (\Exception $ex) {
@@ -147,7 +153,7 @@ class Engine
     {
         try {
             $cond = $rule->getCondition();
-            $match = ($cond === '') ? true : $this->eval->evaluate($rule->getCondition());
+            $match = ($cond === '') ? true : $this->getEvaluator()->evaluate($rule->getCondition());
 
             if (!is_bool($match)) {
                 throw new \RuntimeException(sprintf(
@@ -179,8 +185,8 @@ class Engine
         foreach ($matches as $match) {
             try {
                 $context = $match->getContext();
-                $this->eval->setFields($context->getFields());
-                $context->execute($this->eval, $match->getRule());
+                $this->getEvaluator()->setFields($context->getFields());
+                $context->execute($this->getEvaluator(), $match->getRule());
             } catch (\Exception $ex) {
                 $this->errors[] = new ContextRuleException($match, null, $ex);
             }

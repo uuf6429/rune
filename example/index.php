@@ -221,8 +221,25 @@ $products = array_map(
                     setupTable = function(table, data, rowGenerator){
                         var $table = $(table),
                             $tbody = $table.find('tbody:last'),
+                            updateEmptyRows = function(){
+                                $tbody
+                                    .find('tr')
+                                    .filter(function(){
+                                        var empty = true;
+                                        $(this).find('input, textarea, select').each(function(){
+                                            if($(this).val()){
+                                                empty = false;
+                                                return false;
+                                            }
+                                        });
+                                        return empty;
+                                    })
+                                    .remove();
+                                addRow();
+                            },
                             addRow = function(rowData){
-                                rowGenerator($tbody, rowData || {});
+                                var $tr = rowGenerator($tbody, rowData || {});
+                                $tr.find('input, textarea, select').on('change, blur', updateEmptyRows);
                             };
                         if(!$tbody.length){
                             $tbody = $('<tbody/>');
@@ -238,13 +255,15 @@ $products = array_map(
                     '#categories',
                     <?php echo $json_categories; ?>,
                     function($tbody, data){
-                        var rowIndex = ++rowCounter;
+                        var rowIndex = ++rowCounter,
+                            $tr = $('<tr/>');
                         $tbody.append(
-                            $('<tr/>').append(
+                            $tr.append(
                                 $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]" class="form-control" placeholder="Category Name"/>').val(data[0] || '')),
                                 $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]" class="form-control" placeholder="Parent Category ID"/>').val(data[1] || ''))
                             )
                         );
+                        return $tr;
                     }
                 );
 
@@ -253,14 +272,16 @@ $products = array_map(
                     '#products',
                     <?php echo $json_products; ?>,
                     function($tbody, data){
-                        var rowIndex = ++rowCounter;
+                        var rowIndex = ++rowCounter,
+                            $tr = $('<tr/>');
                         $tbody.append(
-                            $('<tr/>').append(
+                            $tr.append(
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Product Name"/>').val(data[0] || '')),
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Product Colour"/>').val(data[1] || '')),
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Category ID"/>').val(data[2] || ''))
                             )
                         );
+                        return $tr;
                     }
                 );
 
@@ -276,6 +297,7 @@ $products = array_map(
                         $tbody.append($tr);
                         $tr.append($nameCell, $condCell);
                         $condCell.find('input').RuneEditor(runeEditorOptions);
+                        return $tr;
                     }
                 );
             });

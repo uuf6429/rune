@@ -175,39 +175,47 @@ $products = array_map(
                 ?></pre>
             </fieldset>
         </div>
-            
+        
+        <?php
+
+        $context = new Rune\Example\Context\ProductContext();
+        $json_tokens = json_encode([
+            'operators' => [
+                '+', '-', '*', '/', '%', '**',                              // arithmetic
+                '&', '|', '^',                                              // bitwise
+                '==', '===', '!=', '!==', '<', '>', '<=', '>=', 'matches',  // comparison
+                'not', '!', 'and', '&&', 'or', '||',                        // logical
+                '~',                                                        // concatentation
+                'in', 'not in',                                             // array
+                '..',                                                       // range
+                '?', '?:', ':',                                             // ternary
+            ],
+            'variables' => array_map(
+                function ($variable) {
+                    return array(
+                        'name' => $variable->getName(),
+                        'types' => $variable->getTypes(),
+                        'hint' => $variable->getInfo(),
+                        'link' => $variable->getLink(),
+                    );
+                },
+                array_values($context->getVariables())
+            ),
+            'typeinfo' => $context->getTypeInfo(),
+        ]);
+
+        $json_categories = json_encode($data['categories']);
+        $json_products = json_encode($data['products']);
+        $json_rules = json_encode($data['rules']);
+
+        ?>
+        
         <script>
             $(document).ready(function(){
                 var rowCounter = 0,
                 // default rune editor settings
                     runeEditorOptions = {
-                        tokens: <?php
-                            $context = new Rune\Example\Context\ProductContext();
-                            echo json_encode([
-                                'operators' => [
-                                    '+', '-', '*', '/', '%', '**',                              // arithmetic
-                                    '&', '|', '^',                                              // bitwise
-                                    '==', '===', '!=', '!==', '<', '>', '<=', '>=', 'matches',  // comparison
-                                    'not', '!', 'and', '&&', 'or', '||',                        // logical
-                                    '~',                                                        // concatentation
-                                    'in', 'not in',                                             // array
-                                    '..',                                                       // range
-                                    '?', '?:', ':',                                              // ternary
-                                ],
-                                'variables' => array_map(
-                                    function ($field) {
-                                        return array(
-                                            'name' => $field->getName(),
-                                            'types' => $field->getTypes(),
-                                            'hint' => $field->getInfo(),
-                                            'link' => $field->getLink(),
-                                        );
-                                    },
-                                    array_values($context->getFields())
-                                ),
-                                'typeinfo' => $context->getTypeInfo(),
-                            ]);
-                        ?>
+                        tokens: <?php echo $json_tokens; ?>
                     },
                 // a simple data table populator
                     setupTable = function(table, data, rowGenerator){
@@ -228,7 +236,7 @@ $products = array_map(
                 // category table
                 setupTable(
                     '#categories',
-                    <?php echo json_encode($data['categories']); ?>,
+                    <?php echo $json_categories; ?>,
                     function($tbody, data){
                         var rowIndex = ++rowCounter;
                         $tbody.append(
@@ -243,7 +251,7 @@ $products = array_map(
                 // products table
                 setupTable(
                     '#products',
-                    <?php echo json_encode($data['products']); ?>,
+                    <?php echo $json_products; ?>,
                     function($tbody, data){
                         var rowIndex = ++rowCounter;
                         $tbody.append(
@@ -259,7 +267,7 @@ $products = array_map(
                 // rules table
                 setupTable(
                     '#rules',
-                    <?php echo json_encode($data['rules']); ?>,
+                    <?php echo $json_rules; ?>,
                     function($tbody, data){
                         var rowIndex = ++rowCounter,
                             $tr = $('<tr/>'),

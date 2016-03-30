@@ -9,7 +9,7 @@ class Evaluator
     /**
      * @var ContextVariable[]
      */
-    protected $fields;
+    protected $variables;
 
     /**
      * @var mixed[string]
@@ -27,14 +27,14 @@ class Evaluator
     }
 
     /**
-     * @param ContextVariable[] $fields
+     * @param ContextVariable[] $variables
      */
-    public function setFields($fields)
+    public function setVariables($variables)
     {
         $this->values = [];
-        $this->fields = $fields;
-        foreach ($fields as $field) {
-            $this->values[$field->getName()] = $field->getValue();
+        $this->variables = $variables;
+        foreach ($variables as $variable) {
+            $this->values[$variable->getName()] = $variable->getValue();
         }
     }
 

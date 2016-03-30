@@ -38,10 +38,10 @@ class ContextVariable
     protected $value;
 
     /**
-     * @param string          $name  Field name (used in expressions).
-     * @param string|string[] $types Field data types and/or classes (see: http://goo.gl/IKJhKW).
-     * @param string          $info  Documentation for the field (for type hinting).
-     * @param string          $link  URL with more field info.
+     * @param string          $name  Name (used in expressions).
+     * @param string|string[] $types Data types and/or classes (see: http://goo.gl/IKJhKW).
+     * @param string          $info  Documentation for this item (for type hinting).
+     * @param string          $link  URL with more info.
      * @param mixed           $value
      */
     public function __construct($name, $types, $info = '', $link = '', $value = null)

@@ -12,8 +12,8 @@ use uuf6429\Rune\Util\TypeInfo;
 /**
  * When implementing your own context:
  * - override the constructor for DI but make sure to call parent!
- * - implement getFieldList() to return an array of fields available to context.
- * - implement getValueList() to return an array of (field-name => field-value),
+ * - implement getVariableList() to return an array of variables available to context.
+ * - implement getValueList() to return an array of (var-name => var-value),
  *   possibly using data injected via constructor.
  * IMPORTANT: Keep into consideration that context can be used for read-only
  * purposes and therefore no data is provided to constructor!
@@ -29,7 +29,7 @@ abstract class AbstractContext
     /**
      * @var ContextVariable[]
      */
-    private $fields = [];
+    private $variables = [];
 
     /**
      * @param AbstractAction|null $action
@@ -37,47 +37,47 @@ abstract class AbstractContext
     public function __construct($action = null)
     {
         $this->action = $action;
-        $fields = $this->getFieldList();
+        $variables = $this->getVariableList();
         $values = $this->getValueList();
 
-        foreach ($fields as $field) {
-            $fieldName = $field->getName();
+        foreach ($variables as $variable) {
+            $name = $variable->getName();
 
-            if (isset($values[$fieldName])) {
-                $field->setValue($values[$fieldName]);
+            if (isset($values[$name])) {
+                $variable->setValue($values[$name]);
             }
 
-            if (isset($this->fields[$fieldName])) {
+            if (isset($this->variables[$name])) {
                 throw new \LogicException(sprintf(
-                    'Field named %s already added to field list.',
-                    $fieldName
+                    'Variable named %s already added to list.',
+                    $name
                 ));
             }
 
-            $this->fields[$fieldName] = $field;
+            $this->variables[$name] = $variable;
         }
     }
 
     /**
-     * @param string $fieldName
+     * @param string $name
      * @param mixed  $default
      *
      * @return mixed
      */
-    public function getValue($fieldName, $default = null)
+    public function getValue($name, $default = null)
     {
-        $fields = $this->getFields();
+        $variables = $this->getVariables();
 
-        return isset($fields[$fieldName])
-            ? $fields[$fieldName]->getValue() : $default;
+        return isset($variables[$name])
+            ? $variables[$name]->getValue() : $default;
     }
 
     /**
      * @return ContextVariable[]
      */
-    public function getFields()
+    public function getVariables()
     {
-        return $this->fields;
+        return $this->variables;
     }
 
     /**
@@ -89,8 +89,8 @@ abstract class AbstractContext
     {
         $analyser = $analyser ?: new TypeAnalyser();
 
-        foreach ($this->getFields() as $field) {
-            foreach ($field->getTypes() as $type) {
+        foreach ($this->getVariables() as $variable) {
+            foreach ($variable->getTypes() as $type) {
                 $analyser->analyse($type);
             }
         }
@@ -112,7 +112,7 @@ abstract class AbstractContext
     /**
      * @return ContextVariable[]
      */
-    abstract protected function getFieldList();
+    abstract protected function getVariableList();
 
     /**
      * @return mixed[string]

@@ -6,7 +6,7 @@ use uuf6429\Rune\Action\AbstractAction;
 use uuf6429\Rune\Util\ContextVariable;
 
 /**
- * Sure, a dynamic context means fields are variable... but it also means no
+ * Sure, a dynamic context sounds very flexible... but it also means no
  * support for type-hinting, both from the source code perspective as well as
  * the frontend expression/calculation UI perspective.
  * Usage of this class is discouraged.
@@ -16,33 +16,33 @@ class DynamicContext extends AbstractContext
     /**
      * @var ContextVariable[]
      */
-    private $fields = [];
+    private $variables = [];
 
     /**
      * @param AbstractAction|null $action
-     * @param ContextVariables[]  $fields
+     * @param ContextVariables[]  $variables
      */
-    public function __construct($action = null, $fields = [])
+    public function __construct($action = null, $variables = [])
     {
         parent::__construct($action);
-        foreach ($fields as $field) {
-            /* @var ContextVariable $field */
-            $this->fields[$field->getName()] = $field;
+        foreach ($variables as $variable) {
+            /* @var ContextVariable $variable */
+            $this->variables[$variable->getName()] = $variable;
         }
     }
 
     /**
      * @return ContextVariable[]
      */
-    public function getFields()
+    public function getVariables()
     {
-        return $this->fields;
+        return $this->variables;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getFieldList()
+    protected function getVariableList()
     {
         return [];
     }

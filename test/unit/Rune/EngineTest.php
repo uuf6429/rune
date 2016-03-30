@@ -15,7 +15,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     /**
      * @return ContextVariable[]
      */
-    protected function getFields()
+    protected function getVariables()
     {
         return [
             new ContextVariable('COLOR', 'string'),
@@ -49,16 +49,16 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $productFieldValues
+     * @param array $productData
      *
      * @return AbstractContext[]
      */
-    protected function getContexts($productFieldValues)
+    protected function getContexts($productData)
     {
         $contexts = [];
 
-        foreach ($productFieldValues as $productName => $fieldValues) {
-            $fields = $this->getFields();
+        foreach ($productData as $productName => $productValues) {
+            $variables = $this->getVariables();
 
             $action = new CallbackAction(
                 function (
@@ -72,13 +72,13 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-            foreach ($fields as $field) {
-                if (isset($fieldValues[$field->getName()])) {
-                    $field->setValue($fieldValues[$field->getName()]);
+            foreach ($variables as $variable) {
+                if (isset($productValues[$variable->getName()])) {
+                    $variable->setValue($productValues[$variable->getName()]);
                 }
             }
 
-            $contexts[] = new DynamicContext($action, $fields);
+            $contexts[] = new DynamicContext($action, $variables);
         }
 
         if (count($contexts) == 1) {
@@ -91,20 +91,20 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool  $withBadRules
-     * @param array $productFieldValues
+     * @param array $productData
      * @param array $expectedRuleIDs
      * @param array $expectedErrors
      * @dataProvider sampleValuesDataProvider
      */
     public function testRuleEngine(
         $withBadRules,
-        $productFieldValues,
+        $productData,
         $expectedRuleIDs,
         $expectedErrors,
         $expectedResult
     ) {
-        $this->matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
-        $contexts = $this->getContexts($productFieldValues);
+        $this->matchingRuleIDs = array_fill_keys(array_keys($productData), []);
+        $contexts = $this->getContexts($productData);
 
         $engine = new Engine();
         $result = $engine->execute($contexts, $this->getRules($withBadRules));
@@ -135,7 +135,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         return [
             'empty condition' => [
                 'withBadRules' => false,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'COLOR' => 'red',
                         'SIZE' => 'XS',
@@ -151,7 +151,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
             'no matches (except empty condition)' => [
                 'withBadRules' => false,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'COLOR' => 'red',
                         'SIZE' => 'XS',
@@ -167,7 +167,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
             'simple match' => [
                 'withBadRules' => false,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'IS_SUPPORTED' => true,
                     ],
@@ -185,7 +185,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
             'alternating match' => [
                 'withBadRules' => false,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'COLOR' => 'green',
                         'SIZE' => 'XXL',
@@ -199,9 +199,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => 2,
             ],
 
-            'multiple matches - common fields' => [
+            'multiple matches - common variables' => [
                 'withBadRules' => false,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'COLOR' => 'blue',
                         'SIZE' => 'S',
@@ -215,9 +215,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => 3,
             ],
 
-            'multiple matches - unrelated fields' => [
+            'multiple matches - unrelated variables' => [
                 'withBadRules' => false,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'COLOR' => 'blue',
                         'SIZE' => 'M',
@@ -231,9 +231,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => 3,
             ],
 
-            'multiple matches - same field' => [
+            'multiple matches - same variable' => [
                 'withBadRules' => false,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'COLOR' => 'red',
                         'SIZE' => 'M',
@@ -261,7 +261,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
             'trigger errors' => [
                 'withBadRules' => true,
-                'productFieldValues' => [
+                'productData' => [
                     'Product 1' => [
                         'COLOR' => 'red',
                         'SIZE' => 'M',
@@ -285,7 +285,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    protected function getFailureModeScenariopProductFieldValues()
+    protected function getFailureModeScenariopProductData()
     {
         return [
             'Product 1' => [
@@ -320,9 +320,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      */
     public function testRuleEngineFailureModes($failureMode, $expectedRuleIDs, $expectedErrors)
     {
-        $productFieldValues = $this->getFailureModeScenariopProductFieldValues();
-        $this->matchingRuleIDs = array_fill_keys(array_keys($productFieldValues), []);
-        $contexts = $this->getContexts($productFieldValues);
+        $productData = $this->getFailureModeScenariopProductData();
+        $this->matchingRuleIDs = array_fill_keys(array_keys($productData), []);
+        $contexts = $this->getContexts($productData);
 
         $engine = new Engine();
         $engine->execute($contexts, $this->getFailureModeScenariopRules(), $failureMode);

@@ -23,7 +23,7 @@ class ProductContext extends AbstractContext
         parent::__construct($action);
     }
 
-    protected function getFieldList()
+    protected function getVariableList()
     {
         return [
             new ContextVariable('product', Product::class),

@@ -327,7 +327,7 @@
                     me.getSuggestedMembers(MATCHERS, MAX_ROWS, list, addedTokens, curPath);
                 } else {
                     // handle simple values
-                    me.getSuggestedFields(MATCHERS, MAX_ROWS, list, addedTokens, curWord);
+                    me.getSuggestedVariables(MATCHERS, MAX_ROWS, list, addedTokens, curWord);
                 }
 
                 return me.initHintsTooltip({
@@ -406,7 +406,7 @@
                 pathLast = searchPath.slice(-1),
                 members = [];
 
-            // handle first item in path (field)
+            // handle first item in path (variable)
             $.each(me.options.tokens.variables, function(i1, variable) {
                 if (variable.name === pathFirst) {
                     members = me.getTypesMembers(variable.types);
@@ -480,15 +480,15 @@
             });
         },
         
-        getSuggestedFields: function(matchers, maxResults, prevResults, prevResultTokens, searchQuery) {
+        getSuggestedVariables: function(matchers, maxResults, prevResults, prevResultTokens, searchQuery) {
             var me = this;
             
-            var fields = [];
+            var variables = [];
             $.each(matchers, function(i1, matcher) {
                 $.each(['constants', 'variables', 'functions' ], function(i2, tokensKey) {
                     $.each(me.options.tokens[tokensKey], function(i3, token) {
                         if (matcher(token.name, searchQuery)) {
-                            fields.push(token);
+                            variables.push(token);
                         }
                     });
 
@@ -498,13 +498,13 @@
                 return prevResults.length < maxResults;
             });
 
-            // add matching fields to suggested items
+            // add matching variables to suggested items
             var count = prevResults.length;
-            for (var key in fields) {
+            for (var key in variables) {
                 if(++count >= maxResults){
                     break;
                 }
-                var token = fields[key];
+                var token = variables[key];
                 if (prevResultTokens.indexOf(token.name) === -1) {
                     prevResults.push({
                         text: token.name,

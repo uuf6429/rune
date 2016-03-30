@@ -132,7 +132,7 @@ class Engine
     protected function findMatchesForContext(&$result, $context, $rules)
     {
         try {
-            $this->getEvaluator()->setFields($context->getFields());
+            $this->getEvaluator()->setVariables($context->getVariables());
 
             foreach ($rules as $rule) {
                 $this->findMatchesForContextRule($result, $context, $rule);
@@ -190,7 +190,7 @@ class Engine
         foreach ($matches as $match) {
             try {
                 $context = $match->getContext();
-                $this->getEvaluator()->setFields($context->getFields());
+                $this->getEvaluator()->setVariables($context->getVariables());
                 $context->execute($this->getEvaluator(), $match->getRule());
             } catch (\Exception $ex) {
                 if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {

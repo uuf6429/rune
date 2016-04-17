@@ -2,9 +2,9 @@
 
 namespace uuf6429\Rune;
 
-use uuf6429\Rune\Example\Action;
-use uuf6429\Rune\Example\Context;
-use uuf6429\Rune\Example\Model;
+use uuf6429\Rune\example\Action;
+use uuf6429\Rune\example\Context;
+use uuf6429\Rune\example\Model;
 
 class ShopTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,12 +20,19 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             'Rule 6 (Clothes) triggered for Yellow Sporty Socks.',
             'Rule 5 (Toys) triggered for Lego Blocks.',
             'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
-        ]) . PHP_EOL);
+        ]).PHP_EOL);
 
+        $errors = [];
         $engine = new Engine();
-        $engine->execute($this->getContexts($this->getAction()), $this->getRules());
+        $action = new Action\PrintAction();
 
-        $this->assertSame('', implode(PHP_EOL, $engine->getErrors()), 'RuleEngine should not generate errors.');
+        foreach ($this->getProducts() as $product) {
+            $context = new Context\ProductContext($product);
+            $engine->execute($context, $this->getRules(), $action);
+            $errors += $engine->getErrors();
+        }
+
+        $this->assertSame('', implode(PHP_EOL, $errors), 'RuleEngine should not generate errors.');
     }
 
     /**
@@ -98,28 +105,5 @@ class ShopTest extends \PHPUnit_Framework_TestCase
         }
 
         return;
-    }
-
-    /**
-     * @param Action\AbstractAction $action
-     *
-     * @return Context\ContextInterface[]
-     */
-    protected function getContexts($action)
-    {
-        return array_map(
-            function ($product) use ($action) {
-                return new Context\ProductContext($action, $product);
-            },
-            $this->getProducts()
-        );
-    }
-
-    /**
-     * @return Action\AbstractAction
-     */
-    protected function getAction()
-    {
-        return new Action\PrintAction();
     }
 }

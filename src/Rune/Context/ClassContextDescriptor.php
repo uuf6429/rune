@@ -7,6 +7,8 @@ use uuf6429\Rune\Util\TypeInfoMember;
 
 class ClassContextDescriptor extends AbstractContextDescriptor
 {
+    const CONTEXT_DESCRIPTOR_METHOD = 'getContextDescriptor';
+
     /**
      * @var ClassContext
      */
@@ -34,15 +36,13 @@ class ClassContextDescriptor extends AbstractContextDescriptor
      */
     public function getFunctions()
     {
-        $inheritedMethods = get_class_methods(ContextInterface::class);
-
         $result = [];
 
         $names = array_filter(
             get_class_methods($this->context),
-            function ($name) use ($inheritedMethods) {
+            function ($name) {
                 return substr($name, 0, 2) != '__'
-                    && !in_array($name, $inheritedMethods);
+                    && $name != self::CONTEXT_DESCRIPTOR_METHOD;
             }
         );
 
@@ -72,7 +72,12 @@ class ClassContextDescriptor extends AbstractContextDescriptor
             $class = get_class($this->context);
             $analyser->analyse($class, false);
             $types = $analyser->getTypes();
-            $this->memberTypeInfo = isset($types[$class]) ? $types[$class]->members : [];
+            $this->memberTypeInfo = array_filter(
+                isset($types[$class]) ? $types[$class]->members : [],
+                function (TypeInfoMember $member) {
+                    return $member->name != self::CONTEXT_DESCRIPTOR_METHOD;
+                }
+            );
         }
 
         return $this->memberTypeInfo;

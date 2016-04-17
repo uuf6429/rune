@@ -22,52 +22,79 @@ The library is made up of several parts:
   For complicated scenarios, you might want to extend the rule (by extending Rule\AbstractRule), otherwise Rule\Generic should be enough.
 - RuleEngine - the object that connects the others together to function.
 
+Screenshot
+----------
+
+A screen shot for the sample that is provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
+![Screenshot](http://i.imgur.com/UxOsE54.png)
+
 Example
 -------
 
 ```php
-class Product {
+// A class whose instances will be available inside rule engine.
+class Product extends AbstractModel {
+	/** @var string */
 	public $name;
+
+	/** @var string */
 	public $colour;
+
+	/**
+     * @param string $name
+     * @param string $colour
+     */
 	public function __construct($name, $colour) {
 		$this->name = $name;
 		$this->colour = $colour;
 	}
 }
 
+// A class that represents the rule engine execution context.
+class ProductContext extends ClassContext {
+	/** @var Product */
+	public $product;
+
+	/**
+     * @param Product $product
+     */
+	public function __construct($product) {
+		$this->product = $product;
+	}
+}
+
+// Declare some sample rules.
 $rules = [
 	new GenericRule(1, 'Red Products', 'product.colour == "red"'),
-	new GenericRule(1, 'Red Socks', 'product.colour == "red" AND product.name matches "/socks/"'),
-	new GenericRule(1, 'Green Socks', 'product.colour == "green" AND product.name matches "/socks/"'),
-	new GenericRule(1, 'Socks', 'product.name matches "/socks/"'),
+	new GenericRule(2, 'Red Socks', 'product.colour == "red" AND product.name matches "/socks/"'),
+	new GenericRule(3, 'Green Socks', 'product.colour == "green" AND product.name matches "/socks/"'),
+	new GenericRule(4, 'Socks', 'product.name matches "/socks/"'),
 ];
 
+// Declare available products (to run rules against).
 $products = [
 	new Product('Bricks', 'red'),
 	new Product('Soft Socks', 'green'),
 	new Product('Sporty Socks', 'yellow'),
 ];
 
+// Declare an action to be triggered when a rule matches against a product.
 $action = new CallbackAction(
-	function ($eval, $context, $rule) {
-		/** @var Product $product */
-		$product = $context->get('product');
+	function ($eval, ProductContext $context, $rule) {
 		printf(
 			'Rule %s triggered for %s %s\n',
 			$rule->getID(),
-			ucwords($product->colour),
-			$product->name
+			ucwords($context->product->colour),
+			$context->product->name
 		);
 	}
 );
 
-$contexts = array_map(
-	function ($product) use ($action) {
-		return new DynamicContext('product', Product::class, null, null, $product);
-	},
-	$products
-);
+// Create rule engine.
+$engine = new Engine();
 
-$engine = new Engine($contexts, $rules);
-$engine->execute();
+// Run rules for each product. Note that each product exists in a separate context.
+foreach ($products as $product) {
+	$engine->execute(new ProductContext($product), $rules, $action);
+}
 ```

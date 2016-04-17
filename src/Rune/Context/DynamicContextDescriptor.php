@@ -42,19 +42,43 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getTypeInfo()
+    public function getVariableTypeInfo($analyser = null)
     {
         $result = [];
-
         foreach ($this->context->getVariables() as $name => $value) {
             $type = is_object($value) ? get_class($value) : get_type($value);
             $result[] = new TypeInfoMember($name, [$type]);
         }
 
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctionTypeInfo($analyser = null)
+    {
+        $result = [];
         foreach (array_keys($this->context->getFunctions()) as $name) {
             $result[] = new TypeInfoMember($name, ['callable']);
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDetailedTypeInfo($analyser = null)
+    {
+        $analyser = $analyser ?: new TypeAnalyser();
+
+        $members = $this->getVariableTypeInfo($analyser) + $this->getFunctionTypeInfo($analyser);
+
+        foreach ($members as $member) {
+            $analyser->analyse($member->types);
+        }
+
+        return $analyser->getTypes();
     }
 }

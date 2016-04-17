@@ -3,12 +3,11 @@
 namespace uuf6429\Rune\example\Context;
 
 use uuf6429\Rune\Context\ClassContext;
-use uuf6429\Rune\Example\Model\Product;
 
 class ProductContext extends ClassContext
 {
     /**
-     * @var Product
+     * @var uuf6429\Rune\Example\Model\Product
      */
     public $product;
 
@@ -23,5 +22,17 @@ class ProductContext extends ClassContext
     public function __toString()
     {
         return ucwords(trim($this->product->colour.' '.$this->product->name));
+    }
+
+    /**
+     * Lowercases some text.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    public function lower($text)
+    {
+        return strtolower($text);
     }
 }

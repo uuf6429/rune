@@ -46,6 +46,10 @@ class Engine
 
         $this->failMode = $failMode;
 
+        $descriptor = $context->getContextDescriptor();
+        $this->getEvaluator()->setVariables($descriptor->getVariables());
+        $this->getEvaluator()->setFunctions($descriptor->getFunctions());
+
         $matches = [];
         $this->clearErrors();
 
@@ -108,14 +112,12 @@ class Engine
 
     /**
      * @param ContextRulePair[] $result
-     * @param ContextInterface   $context
+     * @param ContextInterface  $context
      * @param AbstractRule[]    $rules
      */
     protected function findMatches(&$result, $context, $rules)
     {
         try {
-            $this->getEvaluator()->setContext($context);
-
             foreach ($rules as $rule) {
                 $this->findMatchesForContextRule($result, $context, $rule);
             }
@@ -130,7 +132,7 @@ class Engine
 
     /**
      * @param ContextRulePair[] $result
-     * @param ContextInterface   $context
+     * @param ContextInterface  $context
      * @param AbstractRule      $rule
      */
     protected function findMatchesForContextRule(&$result, $context, $rule)
@@ -173,12 +175,8 @@ class Engine
         $eval = $this->getEvaluator();
         foreach ($matches as $match) {
             try {
-                $rule = $match->getRule();
-                $context = $match->getContext();
-                $eval->setContext($context);
-
                 foreach ($actions as $action) {
-                    $action->execute($eval, $context, $rule);
+                    $action->execute($eval, $match->getContext(), $match->getRule());
                 }
             } catch (\Exception $ex) {
                 if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {

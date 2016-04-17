@@ -19,7 +19,7 @@ class ContextRulePair
 
     /**
      * @param ContextInterface $context
-     * @param AbstractRule    $rule
+     * @param AbstractRule     $rule
      */
     public function __construct(ContextInterface $context, AbstractRule $rule)
     {

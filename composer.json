@@ -23,7 +23,7 @@
 	"autoload": {
         "psr-4": {
 			"uuf6429\\Rune\\": "src/Rune",
-			"uuf6429\\Rune\\Example\\": "example"
+			"uuf6429\\Rune\\example\\": "example"
         }
 	},
 	"autoload-dev": {

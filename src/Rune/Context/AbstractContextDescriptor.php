@@ -2,6 +2,7 @@
 
 namespace uuf6429\Rune\Context;
 
+use uuf6429\Rune\Util\TypeAnalyser;
 use uuf6429\Rune\Util\TypeInfoMember;
 
 abstract class AbstractContextDescriptor
@@ -30,7 +31,23 @@ abstract class AbstractContextDescriptor
     abstract public function getFunctions();
 
     /**
-     * @return TypeInfoMember[] An array of type metadata of all variables and functions available in the context.
+     * @param TypeAnalyser|null $analyser
+     *
+     * @return TypeInfoMember[] An array of type metadata of all variables available in the context.
      */
-    abstract public function getTypeInfo();
+    abstract public function getVariableTypeInfo($analyser = null);
+
+    /**
+     * @param TypeAnalyser|null $analyser
+     *
+     * @return TypeInfoMember[] An array of type metadata of all functions available in the context.
+     */
+    abstract public function getFunctionTypeInfo($analyser = null);
+
+    /**
+     * @param TypeAnalyser|null $analyser
+     *
+     * @return TypeInfoClass[string] An array of type metadata of all types available in the context.
+     */
+    abstract public function getDetailedTypeInfo($analyser = null);
 }

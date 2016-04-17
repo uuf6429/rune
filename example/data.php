@@ -3,7 +3,7 @@
 return [
     'failureMode' => 2,
     'rules' => [
-        ['Red Products', 'product.colour == "red"'],
+        ['Red Products', 'product.colour == lower("red")'],
         ['Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'],
         ['Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'],
         ['Socks', '(product.name matches "/socks/i") > 0'],

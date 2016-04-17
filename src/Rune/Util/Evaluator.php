@@ -3,7 +3,6 @@
 namespace uuf6429\Rune\Util;
 
 use Symfony\Component\ExpressionLanguage\Expression;
-use uuf6429\Rune\Context\ContextInterface;
 
 class Evaluator
 {
@@ -13,9 +12,9 @@ class Evaluator
     protected $exprLang;
 
     /**
-     * @var ContextInterface
+     * @var mixed[string]
      */
-    protected $context;
+    protected $variables;
 
     public function __construct()
     {
@@ -23,11 +22,37 @@ class Evaluator
     }
 
     /**
-     * @param ContextInterface $context
+     * @param mixed[string] $variables
      */
-    public function setContext($context)
+    public function setVariables($variables)
     {
-        $this->context = $context;
+        $this->variables = $variables;
+    }
+
+    /**
+     * @param callable[string] $functions
+     */
+    public function setFunctions($functions)
+    {
+        $this->exprLang->setFunctions($functions);
+    }
+
+    /**
+     * @internal This method should not be called directly.
+     *
+     * @param int    $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int    $errline
+     * @param array  $errcontext
+     *
+     * @throws \ErrorException
+     */
+    public function errorToErrorException($errno, $errstr, $errfile = 'unknown', $errline = 0, $errcontext = [])
+    {
+        if (error_reporting() & $errno) {
+            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        }
     }
 
     /**
@@ -39,14 +64,16 @@ class Evaluator
      */
     public function compile($expression)
     {
-        $this->exprLang->setFunctions(
-            $this->context->getContextDescriptor()->getFunctions()
-        );
+        try {
+            set_error_handler([$this, 'errorToErrorException']);
+            $result = $this->exprLang->compile($expression, array_keys($this->variables));
+            restore_error_handler();
 
-        return $this->exprLang->compile(
-            $expression,
-            array_keys($this->context->getContextDescriptor()->getVariables())
-        );
+            return $result;
+        } catch (Exception $ex) {
+            restore_error_handler();
+            throw $ex;
+        }
     }
 
     /**
@@ -58,13 +85,15 @@ class Evaluator
      */
     public function evaluate($expression)
     {
-        $this->exprLang->setFunctions(
-            $this->context->getContextDescriptor()->getFunctions()
-        );
+        try {
+            set_error_handler([$this, 'errorToErrorException']);
+            $result = $this->exprLang->evaluate($expression, $this->variables);
+            restore_error_handler();
 
-        return $this->exprLang->evaluate(
-            $expression,
-            $this->context->getContextDescriptor()->getVariables()
-        );
+            return $result;
+        } catch (Exception $ex) {
+            restore_error_handler();
+            throw $ex;
+        }
     }
 }

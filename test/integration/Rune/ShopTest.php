@@ -20,7 +20,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             'Rule 6 (Clothes) triggered for Yellow Sporty Socks.',
             'Rule 5 (Toys) triggered for Lego Blocks.',
             'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
-        ]).PHP_EOL);
+        ]) . PHP_EOL);
 
         $engine = new Engine();
         $engine->execute($this->getContexts($this->getAction()), $this->getRules());
@@ -103,7 +103,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
     /**
      * @param Action\AbstractAction $action
      *
-     * @return Context\AbstractContext[]
+     * @return Context\ContextInterface[]
      */
     protected function getContexts($action)
     {

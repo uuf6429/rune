@@ -2,7 +2,7 @@
 
 namespace uuf6429\Rune\Action;
 
-use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\AbstractRule;
 use uuf6429\Rune\Util\Evaluator;
 
@@ -19,7 +19,7 @@ class CallbackAction extends AbstractAction
 
     /**
      * The callback will receive the following arguments:
-     * (Evaluator $eval, AbstractContext $context, AbstractRule $rule).
+     * (Evaluator $eval, ContextInterface $context, AbstractRule $rule).
      *
      * @param callable $callback
      */
@@ -31,7 +31,7 @@ class CallbackAction extends AbstractAction
     /**
      * {@inheritdoc}
      */
-    public function execute(Evaluator $eval, AbstractContext $context, AbstractRule $rule)
+    public function execute(Evaluator $eval, ContextInterface $context, AbstractRule $rule)
     {
         call_user_func($this->callback, $eval, $context, $rule);
     }

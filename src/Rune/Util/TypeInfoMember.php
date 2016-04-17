@@ -37,4 +37,18 @@ class TypeInfoMember
         $this->hint = $hint;
         $this->link = $link;
     }
+
+    /**
+     * @return bool
+     */
+    public function isCallable()
+    {
+        foreach ($this->types as $type) {
+            if (in_array($type, ['callable', 'Closure', 'method'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

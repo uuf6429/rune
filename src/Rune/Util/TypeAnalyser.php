@@ -17,15 +17,40 @@ class TypeAnalyser
     /**
      * List of discovered types, key is the fully qualified type name.
      *
-     * @var TypeInfo[string]
+     * @var TypeInfoClass[string]
      */
     protected $types = [];
 
     /**
-     * @param string $type
+     * Enables deep analysis (recursively analyses class members and their types).
+     * 
+     * @var type
      */
-    public function analyse($type)
+    protected $deep = false;
+
+    /**
+     * @var bool
+     */
+    protected $canInspectReflectionParamType;
+
+    /**
+     * @var bool
+     */
+    protected $canInspectReflectionReturnType;
+
+    public function __construct()
     {
+        $this->canInspectReflectionParamType = method_exists(\ReflectionParameter::class, 'getType');
+        $this->canInspectReflectionReturnType = method_exists(\ReflectionMethod::class, 'getReturnType');
+    }
+
+    /**
+     * @param string $type
+     * @param bool   $deep
+     */
+    public function analyse($type, $deep = true)
+    {
+        $this->deep = $deep;
         $type = $this->normalise($type);
 
         if ($type && !in_array($type, $this->simpleTypes) && !isset($this->types[$type])) {
@@ -33,8 +58,7 @@ class TypeAnalyser
                 case interface_exists($type):
                 case class_exists($type):
                     $this->analyseClassOrInterface($type);
-
-                    return;
+                    break;
 
                 case function_exists($type):
                     throw new \RuntimeException(
@@ -86,7 +110,7 @@ class TypeAnalyser
             )
         );
 
-        $this->types[$name] = new TypeInfo($name, $members, $hint, $link);
+        $this->types[$name] = new TypeInfoClass($name, $members, $hint, $link);
     }
 
     /**
@@ -110,6 +134,24 @@ class TypeAnalyser
         }
 
         return;
+    }
+
+    protected function parseReflectedParams(\ReflectionParameter $param)
+    {
+        $types = [];
+
+        if ($this->canInspectReflectionParamType && (bool) ($type = $param->getType())) {
+            $types[] = (string) $type;
+            if ($type->allowsNull()) {
+                $type[] = 'null';
+            }
+        }
+
+        return [
+            'name' => $param->getName(),
+            'types' => $types,
+            'hint' => '',
+        ];
     }
 
     /**
@@ -145,32 +187,6 @@ class TypeAnalyser
     }
 
     /**
-     * @return bool
-     */
-    protected function canInspectReflectionParamType()
-    {
-        static $canWe = null;
-        if ($canWe === null) {
-            $canWe = method_exists(\ReflectionParameter::class, 'getType');
-        }
-
-        return $canWe;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function canInspectReflectionReturnType()
-    {
-        static $canWe = null;
-        if ($canWe === null) {
-            $canWe = method_exists(\ReflectionMethod::class, 'getReturnType');
-        }
-
-        return $canWe;
-    }
-
-    /**
      * @param \ReflectionMethod $method
      */
     protected function methodToTypeInfoMember(\ReflectionMethod $method)
@@ -188,7 +204,7 @@ class TypeAnalyser
             $return = explode(' ', $docb->getTag('return', 'void'), 2)[0];
         } else {
             // detect return from reflection
-            $return = $this->canInspectReflectionReturnType()
+            $return = $this->canInspectReflectionReturnType
                 ? $method->getReturnType() : '';
         }
 
@@ -201,33 +217,16 @@ class TypeAnalyser
         } else {
             // detect params from reflection
             $params = array_map(
-                function (\ReflectionParameter $param) {
-                    $types = [];
-                    if ($this->canInspectReflectionParamType()) {
-                        $type = $param->getType();
-                        if ($type) {
-                            $types[] = (string) $type;
-                            if ($type->allowsNull()) {
-                                $type[] = 'null';
-                            }
-                        }
-                    }
-
-                    return [
-                        'name' => $param->getName(),
-                        'types' => $types,
-                        'hint' => '',
-                    ];
-                },
+                [$this, 'parseReflectedParams'],
                 $method->getParameters()
             );
         }
 
         $signature = sprintf(
             '<div class="cm-signature">'
-                    .'<span class="type">%s</span> <span class="name">%s</span>'
-                    .'(<span class="args">%s</span>)</span>'
-                .'</div>',
+                    . '<span class="type">%s</span> <span class="name">%s</span>'
+                    . '(<span class="args">%s</span>)</span>'
+                . '</div>',
             $return,
             $method->name,
             implode(
@@ -239,7 +238,7 @@ class TypeAnalyser
                                 '<span class="%s" title="%s"><span class="type">%s</span>$%s</span>',
                                 $param['hint'] ? 'arg hint' : 'arg',
                                 $param['hint'],
-                                count($param['types']) ? (implode('|', $param['types']).' ') : '',
+                                count($param['types']) ? (implode('|', $param['types']) . ' ') : '',
                                 $param['name']
                             );
                         }
@@ -251,7 +250,7 @@ class TypeAnalyser
             )
         );
 
-        return new TypeInfoMember($method->name, ['method'], $signature.$hint, $link);
+        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
     }
 
     /**
@@ -260,7 +259,10 @@ class TypeAnalyser
     protected function handleType($name)
     {
         $name = $this->normalise($name);
-        $this->analyse($name);
+
+        if ($this->deep) {
+            $this->analyse($name);
+        }
 
         return $name;
     }
@@ -297,7 +299,7 @@ class TypeAnalyser
     }
 
     /**
-     * @return TypeInfo[string]
+     * @return TypeInfoClass[string]
      */
     public function getTypes()
     {

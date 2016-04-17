@@ -2,7 +2,7 @@
 
 namespace uuf6429\Rune\Util;
 
-class TypeInfo
+class TypeInfoClass
 {
     /**
      * @var string

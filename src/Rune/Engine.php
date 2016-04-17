@@ -2,7 +2,8 @@
 
 namespace uuf6429\Rune;
 
-use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Action\AbstractAction;
+use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\AbstractRule;
 use uuf6429\Rune\Util\ContextRuleException;
 use uuf6429\Rune\Util\ContextRulePair;
@@ -30,16 +31,17 @@ class Engine
     protected $failMode;
 
     /**
-     * @param AbstractContext|AbstractContext[] $contexts
-     * @param AbstractRule[]                    $rules
-     * @param string                            $failMode See ON_ERROR_FAIL_* constants.
+     * @param ContextInterface                $context
+     * @param AbstractRule[]                  $rules
+     * @param AbstractAction|AbstractAction[] $actions
+     * @param string                          $failMode See ON_ERROR_FAIL_* constants.
      * 
      * @return int|false
      */
-    public function execute($contexts, $rules, $failMode = self::ON_ERROR_FAIL_CONTEXT)
+    public function execute($context, $rules, $actions, $failMode = self::ON_ERROR_FAIL_CONTEXT)
     {
-        if (!is_array($contexts)) {
-            $contexts = [$contexts];
+        if (!is_array($actions)) {
+            $actions = [$actions];
         }
 
         $this->failMode = $failMode;
@@ -48,12 +50,12 @@ class Engine
         $this->clearErrors();
 
         try {
-            $this->findMatches($matches, $contexts, $rules);
+            $this->findMatches($matches, $context, $rules);
 
             // TODO implement this some time in the future
             //$this->validateMatches($matches);
 
-            $this->executeMatches($matches);
+            $this->executeActions($actions, $matches);
         } catch (\Exception $ex) {
             $this->addError($ex);
 
@@ -106,33 +108,13 @@ class Engine
 
     /**
      * @param ContextRulePair[] $result
-     * @param AbstractContext[] $contexts
+     * @param ContextInterface   $context
      * @param AbstractRule[]    $rules
      */
-    protected function findMatches(&$result, $contexts, $rules)
+    protected function findMatches(&$result, $context, $rules)
     {
         try {
-            foreach ($contexts as $context) {
-                $this->findMatchesForContext($result, $context, $rules);
-            }
-        } catch (\Exception $ex) {
-            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
-                throw $ex;
-            } else {
-                $this->addError($ex);
-            }
-        }
-    }
-
-    /**
-     * @param ContextRulePair[] $result
-     * @param AbstractContext   $context
-     * @param AbstractRule[]    $rules
-     */
-    protected function findMatchesForContext(&$result, $context, $rules)
-    {
-        try {
-            $this->getEvaluator()->setVariables($context->getVariables());
+            $this->getEvaluator()->setContext($context);
 
             foreach ($rules as $rule) {
                 $this->findMatchesForContextRule($result, $context, $rule);
@@ -148,7 +130,7 @@ class Engine
 
     /**
      * @param ContextRulePair[] $result
-     * @param AbstractContext   $context
+     * @param ContextInterface   $context
      * @param AbstractRule      $rule
      */
     protected function findMatchesForContextRule(&$result, $context, $rule)
@@ -183,15 +165,21 @@ class Engine
     }
 
     /**
+     * @param AbstractAction[]  $actions
      * @param ContextRulePair[] $matches
      */
-    protected function executeMatches($matches)
+    protected function executeActions($actions, $matches)
     {
+        $eval = $this->getEvaluator();
         foreach ($matches as $match) {
             try {
+                $rule = $match->getRule();
                 $context = $match->getContext();
-                $this->getEvaluator()->setVariables($context->getVariables());
-                $context->execute($this->getEvaluator(), $match->getRule());
+                $eval->setContext($context);
+
+                foreach ($actions as $action) {
+                    $action->execute($eval, $context, $rule);
+                }
             } catch (\Exception $ex) {
                 if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
                     throw $ex;

@@ -15,7 +15,7 @@ abstract class AbstractModel
             return $this->$name;
         }
 
-        $method = 'get'.ucfirst($name);
+        $method = 'get' . ucfirst($name);
 
         if (!method_exists($this, $method)) {
             throw new \RuntimeException(

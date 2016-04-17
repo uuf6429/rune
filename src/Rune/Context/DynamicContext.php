@@ -2,37 +2,53 @@
 
 namespace uuf6429\Rune\Context;
 
-use uuf6429\Rune\Action\AbstractAction;
-use uuf6429\Rune\Util\ContextVariable;
-
 /**
- * Sure, a dynamic context sounds very flexible... but it also means no
- * support for type-hinting, both from the source code perspective as well as
- * the frontend expression/calculation UI perspective.
+ * DynamicContext is very flexible, taking an arbitrary amount of variables and
+ * functions. However, this also means that these must be available at all
+ * times, even when context type metadata is needed (but not actual values).
  * Usage of this class is discouraged.
  */
-class DynamicContext extends AbstractContext
+class DynamicContext implements ContextInterface
 {
     /**
-     * @var ContextVariable[]
+     * @var mixed[string]
      */
     private $variables = [];
 
     /**
-     * @param AbstractAction|null $action
-     * @param ContextVariables[]  $variables
+     * @var callable[string]
      */
-    public function __construct($action = null, $variables = [])
+    private $functions = [];
+
+    /**
+     * @var DynamicContextDescriptor
+     */
+    private $descriptor;
+
+    /**
+     * @param mixed[string]    $variables
+     * @param callable[string] $functions
+     */
+    public function __construct($variables = [], $functions = [])
     {
-        parent::__construct($action);
-        foreach ($variables as $variable) {
-            /* @var ContextVariable $variable */
-            $this->variables[$variable->getName()] = $variable;
-        }
+        $this->variables = $variables;
+        $this->functions = $functions;
     }
 
     /**
-     * @return ContextVariable[]
+     * @return DynamicContextDescriptor
+     */
+    public function getContextDescriptor()
+    {
+        if (!$this->descriptor) {
+            $this->descriptor = new DynamicContextDescriptor($this);
+        }
+
+        return $this->descriptor;
+    }
+
+    /**
+     * @return mixed[string]
      */
     public function getVariables()
     {
@@ -40,18 +56,10 @@ class DynamicContext extends AbstractContext
     }
 
     /**
-     * {@inheritdoc}
+     * @return callable[string]
      */
-    protected function getVariableList()
+    public function getFunctions()
     {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getValueList()
-    {
-        return [];
+        return $this->functions;
     }
 }

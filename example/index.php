@@ -5,7 +5,7 @@
 // Shamelessly copied from silex-skeleton
 if (isset($_SERVER['HTTP_CLIENT_IP'])
     || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-    || !in_array(@$_SERVER['REMOTE_ADDR'], array('127.0.0.1', 'fe80::1', '::1'))
+    || !in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', 'fe80::1', '::1'])
 ) {
     header('HTTP/1.0 403 Forbidden');
     exit('You are not allowed to access this file. Check <code>example/index.php</code> for more information.');
@@ -15,17 +15,17 @@ define('APP_ROOT', '/');
 
 // serve static files
 if (in_array($_SERVER['SCRIPT_NAME'], [
-    APP_ROOT.'extra/codemirror/rune.js',
-    APP_ROOT.'extra/codemirror/rune.css',
+    APP_ROOT . 'extra/codemirror/rune.js',
+    APP_ROOT . 'extra/codemirror/rune.css',
 ])) {
     return false;
 }
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // load default data and override it with $_POST data (do some cleanup here)
 $data = array_merge(
-    require __DIR__.'/data.php',
+    require __DIR__ . '/data.php',
     array_map(
         function ($group) {
             return !is_array($group) ? $group : array_filter(
@@ -138,9 +138,9 @@ $products = array_map(
                         <label class="control-label" for="failureMode">Failure Level:&nbsp;</label>
                         <select class="form-control " name="failureMode"><?php
                             foreach ([3 => 'Engine', 2 => 'Context', 1 => 'Rule'] as $i => $text) {
-                                echo '<option value="'.$i.'"'
-                                        .($i == $data['failureMode'] ? ' selected="selected"' : '').
-                                    '>'.$text.'</option>';
+                                echo '<option value="' . $i . '"'
+                                        . ($i == $data['failureMode'] ? ' selected="selected"' : '') .
+                                    '>' . $text . '</option>';
                             }
                         ?></select>
                     </div>
@@ -156,21 +156,18 @@ $products = array_map(
                 <legend>Rule Engine Result</legend>
                 <pre><?php
 
-                    $action = new Rune\Example\Action\PrintAction();
-
-                    $contexts = array_map(
-                        function ($product) use ($action) {
-                            return new Rune\Example\Context\ProductContext($action, $product);
-                        },
-                        $products
-                    );
-
-                    echo 'Result:'.PHP_EOL;
+                    echo 'Result:' . PHP_EOL;
+                    
                     $engine = new Rune\Engine();
-                    $engine->execute($contexts, $rules, $data['failureMode']);
+                    $action = new Rune\Example\Action\PrintAction();
+                    
+                    foreach($products as $product){
+                        $context = new Rune\Example\Context\ProductContext($product);
+                        $engine->execute($context, $rules, $action, $data['failureMode']);
 
-                    echo PHP_EOL.'Errors: '.PHP_EOL;
-                    echo $engine->hasErrors() ? implode(PHP_EOL, $engine->getErrors()) : '<i>None</i>';
+                        echo PHP_EOL . 'Errors: ' . PHP_EOL;
+                        echo $engine->hasErrors() ? implode(PHP_EOL, $engine->getErrors()) : '<i>None</i>';
+                    }
 
                 ?></pre>
             </fieldset>
@@ -192,12 +189,12 @@ $products = array_map(
             ],
             'variables' => array_map(
                 function ($variable) {
-                    return array(
+                    return [
                         'name' => $variable->getName(),
                         'types' => $variable->getTypes(),
                         'hint' => $variable->getInfo(),
                         'link' => $variable->getLink(),
-                    );
+                    ];
                 },
                 array_values($context->getVariables())
             ),

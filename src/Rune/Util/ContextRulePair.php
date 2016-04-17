@@ -2,13 +2,13 @@
 
 namespace uuf6429\Rune\Util;
 
-use uuf6429\Rune\Context\AbstractContext;
+use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\AbstractRule;
 
 class ContextRulePair
 {
     /**
-     * @var AbstractContext
+     * @var ContextInterface
      */
     protected $context;
 
@@ -18,17 +18,17 @@ class ContextRulePair
     protected $rule;
 
     /**
-     * @param AbstractContext $context
+     * @param ContextInterface $context
      * @param AbstractRule    $rule
      */
-    public function __construct(AbstractContext $context, AbstractRule $rule)
+    public function __construct(ContextInterface $context, AbstractRule $rule)
     {
         $this->context = $context;
         $this->rule = $rule;
     }
 
     /**
-     * @return AbstractContext
+     * @return ContextInterface
      */
     public function getContext()
     {

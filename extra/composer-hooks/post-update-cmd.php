@@ -9,9 +9,9 @@ $can_install = !$trgt_exists || strpos(file_get_contents($file_trgt), $file_head
 
 if ($can_install) {
     if ($trgt_exists && (file_get_contents($file_srsc) == file_get_contents($file_trgt))) {
-        echo 'Pre-commit hook already up-to-date.'.PHP_EOL;
+        echo 'Pre-commit hook already up-to-date.' . PHP_EOL;
     } else {
-        echo 'Installing pre-commit hook...'.PHP_EOL;
+        echo 'Installing pre-commit hook...' . PHP_EOL;
 
         if ($trgt_exists) {
             unlink($file_trgt);
@@ -19,8 +19,8 @@ if ($can_install) {
         copy($file_srsc, $file_trgt);
         chmod($file_trgt, 0777);
 
-        echo '... DONE'.PHP_EOL;
+        echo '... DONE' . PHP_EOL;
     }
 } else {
-    echo 'Pre-commit hook NOT installed.'.PHP_EOL;
+    echo 'Pre-commit hook NOT installed.' . PHP_EOL;
 }

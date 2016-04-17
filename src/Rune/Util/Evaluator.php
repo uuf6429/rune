@@ -3,23 +3,19 @@
 namespace uuf6429\Rune\Util;
 
 use Symfony\Component\ExpressionLanguage\Expression;
+use uuf6429\Rune\Context\ContextInterface;
 
 class Evaluator
 {
     /**
-     * @var ContextVariable[]
-     */
-    protected $variables;
-
-    /**
-     * @var mixed[string]
-     */
-    protected $values;
-
-    /**
      * @var CustomExpressionLanguage
      */
     protected $exprLang;
+
+    /**
+     * @var ContextInterface
+     */
+    protected $context;
 
     public function __construct()
     {
@@ -27,15 +23,11 @@ class Evaluator
     }
 
     /**
-     * @param ContextVariable[] $variables
+     * @param ContextInterface $context
      */
-    public function setVariables($variables)
+    public function setContext($context)
     {
-        $this->values = [];
-        $this->variables = $variables;
-        foreach ($variables as $variable) {
-            $this->values[$variable->getName()] = $variable->getValue();
-        }
+        $this->context = $context;
     }
 
     /**
@@ -47,7 +39,14 @@ class Evaluator
      */
     public function compile($expression)
     {
-        return $this->exprLang->compile($expression, array_keys($this->values));
+        $this->exprLang->setFunctions(
+            $this->context->getContextDescriptor()->getFunctions()
+        );
+
+        return $this->exprLang->compile(
+            $expression,
+            array_keys($this->context->getContextDescriptor()->getVariables())
+        );
     }
 
     /**
@@ -59,6 +58,13 @@ class Evaluator
      */
     public function evaluate($expression)
     {
-        return $this->exprLang->evaluate($expression, $this->values);
+        $this->exprLang->setFunctions(
+            $this->context->getContextDescriptor()->getFunctions()
+        );
+
+        return $this->exprLang->evaluate(
+            $expression,
+            $this->context->getContextDescriptor()->getVariables()
+        );
     }
 }

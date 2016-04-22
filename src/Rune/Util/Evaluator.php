@@ -50,9 +50,8 @@ class Evaluator
      */
     public function errorToErrorException($errno, $errstr, $errfile = 'unknown', $errline = 0, $errcontext = [])
     {
-        if (error_reporting() & $errno) {
-            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-        }
+        restore_error_handler();
+        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 
     /**
@@ -64,16 +63,11 @@ class Evaluator
      */
     public function compile($expression)
     {
-        try {
-            set_error_handler([$this, 'errorToErrorException']);
-            $result = $this->exprLang->compile($expression, array_keys($this->variables));
-            restore_error_handler();
+        set_error_handler([$this, 'errorToErrorException']);
+        $result = $this->exprLang->compile($expression, array_keys($this->variables));
+        restore_error_handler();
 
-            return $result;
-        } catch (Exception $ex) {
-            restore_error_handler();
-            throw $ex;
-        }
+        return $result;
     }
 
     /**
@@ -85,15 +79,10 @@ class Evaluator
      */
     public function evaluate($expression)
     {
-        try {
-            set_error_handler([$this, 'errorToErrorException']);
-            $result = $this->exprLang->evaluate($expression, $this->variables);
-            restore_error_handler();
+        set_error_handler([$this, 'errorToErrorException']);
+        $result = $this->exprLang->evaluate($expression, $this->variables);
+        restore_error_handler();
 
-            return $result;
-        } catch (Exception $ex) {
-            restore_error_handler();
-            throw $ex;
-        }
+        return $result;
     }
 }

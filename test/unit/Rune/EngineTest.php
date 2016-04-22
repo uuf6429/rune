@@ -8,6 +8,9 @@ use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Rule\AbstractRule;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Util\Evaluator;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
+use RuntimeException;
+use ErrorException;
 
 class EngineTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +32,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             $withBrokenRules
             ? [
                 new GenericRule('5', 'Bad Rule - Result Type', 'SIZE'),
-                new GenericRule('6', 'Bad Rule - Snytax Error', 'SIZE =  = "hm'),
+                new GenericRule('6', 'Bad Rule - Syntax Error', 'SIZE =  = "hm'),
+                new GenericRule('7', 'Bad Rule - Property on a Non-Object', 'SIZE.TEST == 12'),
+                new GenericRule('8', 'Bad Rule - Divide by Zero', '50 / 0'),
             ]
             : []
         );
@@ -89,7 +94,8 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             $result += $engine->execute(
                 $this->getContext($productValues),
                 $this->getRules($withBadRules),
-                $this->getAction($productName)
+                $this->getAction($productName),
+                $withBadRules ? Engine::ON_ERROR_FAIL_RULE : Engine::ON_ERROR_FAIL_CONTEXT
             );
             $errors += $engine->getErrors();
         }
@@ -302,10 +308,22 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expectedErrors' => [
-                    'RuntimeException encountered while processing rule 5 '
+                    RuntimeException::class.' encountered while processing rule 5 '
                     .'(Bad Rule - Result Type) within '.DynamicContext::class
                     .': The condition result for rule 5 (Bad Rule - Result '
                     .'Type) should be boolean, not string.',
+
+                    SyntaxError::class.' encountered while processing rule 6 '
+                    .'(Bad Rule - Syntax Error) within '.DynamicContext::class
+                    .': Unexpected character "=" around position 5.',
+
+                    RuntimeException::class.' encountered while processing rule 7 '
+                    .'(Bad Rule - Property on a Non-Object) within '.DynamicContext::class
+                    .': Unable to get a property on a non-object.',
+
+                    ErrorException::class.' encountered while processing rule 8 '
+                    .'(Bad Rule - Divide by Zero) within '.DynamicContext::class
+                    .': Division by zero',
                 ],
                 'expectedResult' => 1,
             ],
@@ -410,9 +428,11 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
                     .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
                     .': Variable "black" is not valid around position 10.',
+
                     'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
                     .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
                     .': Variable "black" is not valid around position 10.',
+
                     'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
                     .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
                     .': Variable "black" is not valid around position 10.',
@@ -429,9 +449,11 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
                     .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
                     .': Variable "black" is not valid around position 10.',
+
                     'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
                     .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
                     .': Variable "black" is not valid around position 10.',
+
                     'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
                     .'while processing rule 2 (Bad Rule) within '.DynamicContext::class
                     .': Variable "black" is not valid around position 10.',

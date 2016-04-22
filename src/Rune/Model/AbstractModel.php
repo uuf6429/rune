@@ -11,18 +11,13 @@ abstract class AbstractModel
      */
     public function __get($name)
     {
-        if (isset($this->$name)) {
-            return $this->$name;
-        }
-
-        $method = 'get' . ucfirst($name);
+        $method = 'get'.ucfirst($name);
 
         if (!method_exists($this, $method)) {
             throw new \RuntimeException(
                 sprintf(
-                    'Method %s was expected in class %s.',
-                    $method,
-                    get_class($this)
+                    'Missing property %s and method %s in class %s.',
+                    $name, $method, get_class($this)
                 )
             );
         }

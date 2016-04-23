@@ -2,6 +2,7 @@
 
 namespace uuf6429\Rune\Context;
 
+use uuf6429\Rune\Util\TypeAnalyser;
 use uuf6429\Rune\Util\TypeInfoMember;
 
 class DynamicContextDescriptor extends AbstractContextDescriptor
@@ -26,17 +27,17 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getVariables()
     {
-        return $this->context->getFunctions();
+        return $this->context->getVariables();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getVariables()
+    public function getFunctions()
     {
-        return $this->context->getVariables();
+        return $this->context->getFunctions();
     }
 
     /**
@@ -46,8 +47,8 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     {
         $result = [];
         foreach ($this->context->getVariables() as $name => $value) {
-            $type = is_object($value) ? get_class($value) : get_type($value);
-            $result[] = new TypeInfoMember($name, [$type]);
+            $type = is_object($value) ? get_class($value) : gettype($value);
+            $result[$name] = new TypeInfoMember($name, [$type]);
         }
 
         return $result;
@@ -60,7 +61,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     {
         $result = [];
         foreach (array_keys($this->context->getFunctions()) as $name) {
-            $result[] = new TypeInfoMember($name, ['callable']);
+            $result[$name] = new TypeInfoMember($name, ['callable']);
         }
 
         return $result;

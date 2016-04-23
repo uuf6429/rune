@@ -5,7 +5,7 @@ namespace uuf6429\Rune\example\Model;
 use uuf6429\Rune\Model\AbstractModel;
 
 /**
- * @property uuf6429\Rune\Example\Model\Category $parent
+ * @property uuf6429\Rune\example\Model\Category $parent
  */
 class Category extends AbstractModel
 {

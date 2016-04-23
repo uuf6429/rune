@@ -75,6 +75,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      * @param array $productData
      * @param array $expectedRules
      * @param array $expectedErrors
+     * 
      * @dataProvider sampleValuesDataProvider
      */
     public function testRuleEngine(
@@ -364,6 +365,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      * @param int   $failureMode
      * @param array $expectedRules
      * @param array $expectedErrors
+     * 
      * @dataProvider sampleValuesFailureModeDataProvider
      */
     public function testRuleEngineFailureModes($failureMode, $expectedRules, $expectedErrors)

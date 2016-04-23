@@ -68,6 +68,10 @@ class TypeAnalyser
                     $this->analyseClassOrInterface($type);
                     break;
 
+                case $type == 'callable':
+                case $type == 'resource':
+                    break;
+
                 case function_exists($type):
                     throw new \RuntimeException(
                         sprintf(
@@ -98,7 +102,7 @@ class TypeAnalyser
         $reflector = new \ReflectionClass($name);
 
         $docb = new DocBlock($reflector);
-        $hint = $docb->getComment();
+        $hint = $docb->getComment() ?: '';
         $link = $docb->getTag('link', '');
 
         $members = array_filter(

@@ -33,21 +33,21 @@ abstract class AbstractContextDescriptor
     /**
      * @param TypeAnalyser|null $analyser
      *
-     * @return TypeInfoMember[] An array of type metadata of all variables available in the context.
+     * @return TypeInfoMember[string] An array of type metadata of all variables available in the context, indexed by member name.
      */
     abstract public function getVariableTypeInfo($analyser = null);
 
     /**
      * @param TypeAnalyser|null $analyser
      *
-     * @return TypeInfoMember[] An array of type metadata of all functions available in the context.
+     * @return TypeInfoMember[string] An array of type metadata of all functions available in the context, indexed by member name.
      */
     abstract public function getFunctionTypeInfo($analyser = null);
 
     /**
      * @param TypeAnalyser|null $analyser
      *
-     * @return TypeInfoClass[string] An array of type metadata of all types available in the context.
+     * @return TypeInfoClass[string] An array of type metadata of all types available in the context, indexed by FQN.
      */
     abstract public function getDetailedTypeInfo($analyser = null);
 }

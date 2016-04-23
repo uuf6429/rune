@@ -43,12 +43,9 @@ class TypeInfoMember
      */
     public function isCallable()
     {
-        foreach ($this->types as $type) {
-            if (in_array($type, ['callable', 'Closure', 'method'])) {
-                return true;
-            }
-        }
+        // Note: __invoke is not supported here... would have been nice of PHP to have an Invokable interface
+        static $callableTypes = ['callable', 'Closure', 'method'];
 
-        return false;
+        return !empty(array_intersect($this->types, $callableTypes));
     }
 }

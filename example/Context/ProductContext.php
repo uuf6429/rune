@@ -7,7 +7,7 @@ use uuf6429\Rune\Context\ClassContext;
 class ProductContext extends ClassContext
 {
     /**
-     * @var uuf6429\Rune\Example\Model\Product
+     * @var uuf6429\Rune\example\Model\Product
      */
     public $product;
 
@@ -19,6 +19,9 @@ class ProductContext extends ClassContext
         $this->product = $product;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return ucwords(trim($this->product->colour.' '.$this->product->name));

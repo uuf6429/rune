@@ -35,6 +35,61 @@ class ShopTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('', implode(PHP_EOL, $errors), 'RuleEngine should not generate errors.');
     }
 
+    public function testExampleTypeInfo()
+    {
+        $context = new Context\ProductContext();
+        $descriptor = $context->getContextDescriptor();
+
+        $this->assertEquals(
+            [
+                'product' => new Util\TypeInfoMember('product', ['uuf6429\Rune\example\Model\Product']),
+            ],
+            $descriptor->getVariableTypeInfo(),
+            'Assert variable type information'
+        );
+
+        $this->assertEquals(
+            [
+                'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
+            ],
+            $descriptor->getFunctionTypeInfo(),
+            'Assert function type information'
+        );
+
+        $this->assertEquals(
+            [
+                'uuf6429\Rune\example\Context\ProductContext' => new Util\TypeInfoClass(
+                    'uuf6429\Rune\example\Context\ProductContext',
+                    [
+                        'product' => new Util\TypeInfoMember('product', ['uuf6429\Rune\example\Model\Product']),
+                        'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
+                        'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
+                    ]
+                ),
+                'uuf6429\Rune\example\Model\Product' => new Util\TypeInfoClass(
+                    'uuf6429\Rune\example\Model\Product',
+                    [
+                        'id' => new Util\TypeInfoMember('id', ['integer']),
+                        'name' => new Util\TypeInfoMember('name', ['string']),
+                        'colour' => new Util\TypeInfoMember('colour', ['string']),
+                        'category' => new Util\TypeInfoMember('category', ['uuf6429\Rune\example\Model\Category']),
+                    ]
+                ),
+                'uuf6429\Rune\example\Model\Category' => new Util\TypeInfoClass(
+                    'uuf6429\Rune\example\Model\Category',
+                    [
+                        'id' => new Util\TypeInfoMember('id', ['integer']),
+                        'name' => new Util\TypeInfoMember('name', ['string']),
+                        'in' => new Util\TypeInfoMember('in', ['method'], '<div class="cm-signature"><span class="type">bool</span> <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span>)</span></div>Returns true if category name or any of its parents are identical to $name.'),
+                        'parent' => new Util\TypeInfoMember('parent', ['uuf6429\Rune\example\Model\Category']),
+                    ]
+                ),
+            ],
+            $descriptor->getDetailedTypeInfo(),
+            'Assert detailed type information'
+        );
+    }
+
     /**
      * @return GenericRule[]
      */

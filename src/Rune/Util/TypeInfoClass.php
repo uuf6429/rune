@@ -12,7 +12,7 @@ class TypeInfoClass
     /**
      * @var TypeInfoMember[]
      */
-    public $members;
+    public $members = [];
 
     /**
      * @var string

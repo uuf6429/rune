@@ -37,4 +37,15 @@ class TypeInfoMember
         $this->hint = $hint;
         $this->link = $link;
     }
+
+    /**
+     * @return bool
+     */
+    public function isCallable()
+    {
+        // Note: __invoke is not supported here... would have been nice of PHP to have an Invokable interface
+        static $callableTypes = ['callable', 'Closure', 'method'];
+
+        return !empty(array_intersect($this->types, $callableTypes));
+    }
 }

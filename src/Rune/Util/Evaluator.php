@@ -7,19 +7,14 @@ use Symfony\Component\ExpressionLanguage\Expression;
 class Evaluator
 {
     /**
-     * @var ContextVariable[]
+     * @var CustomExpressionLanguage
      */
-    protected $variables;
+    protected $exprLang;
 
     /**
      * @var mixed[string]
      */
-    protected $values;
-
-    /**
-     * @var CustomExpressionLanguage
-     */
-    protected $exprLang;
+    protected $variables;
 
     public function __construct()
     {
@@ -27,15 +22,36 @@ class Evaluator
     }
 
     /**
-     * @param ContextVariable[] $variables
+     * @param mixed[string] $variables
      */
     public function setVariables($variables)
     {
-        $this->values = [];
         $this->variables = $variables;
-        foreach ($variables as $variable) {
-            $this->values[$variable->getName()] = $variable->getValue();
-        }
+    }
+
+    /**
+     * @param callable[string] $functions
+     */
+    public function setFunctions($functions)
+    {
+        $this->exprLang->setFunctions($functions);
+    }
+
+    /**
+     * @internal This method should not be called directly.
+     *
+     * @param int    $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param int    $errline
+     * @param array  $errcontext
+     *
+     * @throws \ErrorException
+     */
+    public function errorToErrorException($errno, $errstr, $errfile = 'unknown', $errline = 0, $errcontext = [])
+    {
+        restore_error_handler();
+        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 
     /**
@@ -47,7 +63,11 @@ class Evaluator
      */
     public function compile($expression)
     {
-        return $this->exprLang->compile($expression, array_keys($this->values));
+        set_error_handler([$this, 'errorToErrorException']);
+        $result = $this->exprLang->compile($expression, array_keys($this->variables));
+        restore_error_handler();
+
+        return $result;
     }
 
     /**
@@ -59,6 +79,10 @@ class Evaluator
      */
     public function evaluate($expression)
     {
-        return $this->exprLang->evaluate($expression, $this->values);
+        set_error_handler([$this, 'errorToErrorException']);
+        $result = $this->exprLang->evaluate($expression, $this->variables);
+        restore_error_handler();
+
+        return $result;
     }
 }

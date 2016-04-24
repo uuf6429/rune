@@ -2,7 +2,7 @@
 
 namespace uuf6429\Rune\Util;
 
-class TypeInfo
+class TypeInfoClass
 {
     /**
      * @var string
@@ -12,7 +12,7 @@ class TypeInfo
     /**
      * @var TypeInfoMember[]
      */
-    public $members;
+    public $members = [];
 
     /**
      * @var string

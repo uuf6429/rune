@@ -2,44 +2,40 @@
 
 namespace uuf6429\Rune\example\Context;
 
-use uuf6429\Rune\Context\AbstractContext;
-use uuf6429\Rune\Example\Model\Product;
-use uuf6429\Rune\Util\ContextVariable;
+use uuf6429\Rune\Context\ClassContext;
 
-class ProductContext extends AbstractContext
+class ProductContext extends ClassContext
 {
     /**
-     * @var Product
+     * @var uuf6429\Rune\example\Model\Product
      */
-    protected $product;
+    public $product;
 
     /**
-     * @param AbstractAction|null $action
-     * @param Product|null        $product
+     * @param Product|null $product
      */
-    public function __construct($action = null, $product = null)
+    public function __construct($product = null)
     {
         $this->product = $product;
-        parent::__construct($action);
     }
 
-    protected function getVariableList()
-    {
-        return [
-            new ContextVariable('product', Product::class),
-        ];
-    }
-
-    protected function getValueList()
-    {
-        return [
-            'product' => $this->product,
-        ];
-    }
-
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return !$this->product ? '{{Incomplete Context}}'
-            : ucwords(trim($this->product->colour.' '.$this->product->name));
+        return ucwords(trim($this->product->colour.' '.$this->product->name));
+    }
+
+    /**
+     * Lowercases some text.
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    public function lower($text)
+    {
+        return strtolower($text);
     }
 }

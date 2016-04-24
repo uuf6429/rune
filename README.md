@@ -33,7 +33,8 @@ Example
 
 ```php
 // A class whose instances will be available inside rule engine.
-class Product extends AbstractModel {
+class Product extends AbstractModel
+{
 	/** @var string */
 	public $name;
 
@@ -44,21 +45,24 @@ class Product extends AbstractModel {
      * @param string $name
      * @param string $colour
      */
-	public function __construct($name, $colour) {
+	public function __construct($name, $colour)
+	{
 		$this->name = $name;
 		$this->colour = $colour;
 	}
 }
 
 // A class that represents the rule engine execution context.
-class ProductContext extends ClassContext {
+class ProductContext extends ClassContext
+{
 	/** @var Product */
 	public $product;
 
 	/**
      * @param Product $product
      */
-	public function __construct($product) {
+	public function __construct($product)
+	{
 		$this->product = $product;
 	}
 }
@@ -80,7 +84,8 @@ $products = [
 
 // Declare an action to be triggered when a rule matches against a product.
 $action = new CallbackAction(
-	function ($eval, ProductContext $context, $rule) {
+	function ($eval, ProductContext $context, $rule)
+	{
 		printf(
 			'Rule %s triggered for %s %s\n',
 			$rule->getID(),

@@ -1,8 +1,8 @@
 Rune
 ====
 
-[![Build Status](https://img.shields.io/travis/uuf6429/rune.svg)](https://travis-ci.com/uuf6429/rune)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg?style=flat-square)](https://php.net/)
+[![Build Status](https://api.travis-ci.com/uuf6429/rune.svg?token=x4iDoZNEE7xwqHqGpu82)](https://travis-ci.com/uuf6429/rune)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/nice_r/master/LICENSE)
 [![Coverage](https://img.shields.io/codecov/c/token/Bu2nK2Kq77/github/uuf6429/rune/master.svg)](https://codecov.io/github/uuf6429/rune?branch=master)
 

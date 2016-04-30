@@ -32,7 +32,7 @@
 }
 
 .cm-s-explang span.cm-comment { color: #a86; }
-.cm-s-explang span.cm-keyword { line-height: 1em; font-weight: bold; color: blue; }
+.cm-s-explang span.cm-keyword { line-height: 1em; font-weight: bold; color: #00f; }
 .cm-s-explang span.cm-string { color: #a22; }
 .cm-s-explang span.cm-builtin { line-height: 1em; font-weight: bold; color: #077; }
 .cm-s-explang span.cm-special { line-height: 1em; font-weight: bold; color: #0aa; }
@@ -40,6 +40,8 @@
 .cm-s-explang span.cm-number, .cm-s-explang span.cm-atom { color: #3a3; }
 .cm-s-explang span.cm-meta { color: #555; }
 .cm-s-explang span.cm-link { color: #3a3; }
+.cm-s-explang span.cm-operator { color: #008; }
+.cm-s-explang span.cm-error { border-bottom: 1px dotted red; }
 
 .cm-s-explang .CodeMirror-activeline-background { background: #e8f2ff; }
 .cm-s-explang .CodeMirror-matchingbracket { outline:1px solid grey; color:black !important; }
@@ -100,6 +102,11 @@
 .cm-hint-icon-mixed:before {
 	content: "?";
 	background: #222;
+}
+
+.cm-hint-icon-null:before {
+	content: "N";
+	background: #666; /* null is evil */
 }
 
 .cm-hint-icon-string:before {

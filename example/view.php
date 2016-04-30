@@ -156,7 +156,7 @@
                         $tbody.append(
                             $tr.append(
                                 $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]" class="form-control" placeholder="Category Name"/>').val(data[0] || '')),
-                                $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]" class="form-control" placeholder="Parent Category ID"/>').val(data[1] || ''))
+                                $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]" class="form-control" placeholder="ID"/>').val(data[1] || ''))
                             )
                         );
                         return $tr;
@@ -174,7 +174,7 @@
                             $tr.append(
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Product Name"/>').val(data[0] || '')),
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Product Colour"/>').val(data[1] || '')),
-                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Category ID"/>').val(data[2] || ''))
+                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="ID"/>').val(data[2] || ''))
                             )
                         );
                         return $tr;

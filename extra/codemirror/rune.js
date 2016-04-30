@@ -15,55 +15,59 @@
     var self = this,
         staticCounter = 0,
         autocompleteIgnoredKeys = {
-            "8": "backspace",
-            "9": "tab",
-            "13": "enter",
-            "16": "shift",
-            "17": "ctrl",
-            "18": "alt",
-            "19": "pause",
-            "20": "capslock",
-            "27": "escape",
-            "33": "pageup",
-            "34": "pagedown",
-            "35": "end",
-            "36": "home",
-            "37": "left",
-            "38": "up",
-            "39": "right",
-            "40": "down",
-            "45": "insert",
-            "46": "delete",
-            "91": "left window key",
-            "92": "right window key",
-            "93": "select",
-            "107": "add",
-            "109": "subtract",
-            "110": "decimal point",
-            "111": "divide",
-            "112": "f1",
-            "113": "f2",
-            "114": "f3",
-            "115": "f4",
-            "116": "f5",
-            "117": "f6",
-            "118": "f7",
-            "119": "f8",
-            "120": "f9",
-            "121": "f10",
-            "122": "f11",
-            "123": "f12",
-            "144": "numlock",
-            "145": "scrolllock",
-            "186": "semicolon",
-            "187": "equalsign",
-            "188": "comma",
-            "189": "dash",
-            "191": "slash",
-            "192": "graveaccent",
-            "220": "backslash",
-            "222": "quote"
+            '8': 'backspace',
+            '9': 'tab',
+            '13': 'enter',
+            '16': 'shift',
+            '17': 'ctrl',
+            '18': 'alt',
+            '19': 'pause',
+            '20': 'capslock',
+            '27': 'escape',
+            '33': 'pageup',
+            '34': 'pagedown',
+            '35': 'end',
+            '36': 'home',
+            '37': 'left',
+            '38': 'up',
+            '39': 'right',
+            '40': 'down',
+            '45': 'insert',
+            '46': 'delete',
+            '91': 'left window key',
+            '92': 'right window key',
+            '93': 'select',
+            '107': 'add',
+            '109': 'subtract',
+            '110': 'decimal point',
+            '111': 'divide',
+            '112': 'f1',
+            '113': 'f2',
+            '114': 'f3',
+            '115': 'f4',
+            '116': 'f5',
+            '117': 'f6',
+            '118': 'f7',
+            '119': 'f8',
+            '120': 'f9',
+            '121': 'f10',
+            '122': 'f11',
+            '123': 'f12',
+            '144': 'numlock',
+            '145': 'scrolllock',
+            '186': 'semicolon',
+            '187': 'equalsign',
+            '188': 'comma',
+            '189': 'dash',
+            '191': 'slash',
+            '192': 'graveaccent',
+            '220': 'backslash',
+            '222': 'quote'
         },
+		autocompleteIgnoredTypes = [
+			'string',
+			'comment'
+		],
         
         /**
          * @param elements string|jQuery
@@ -190,9 +194,6 @@
                     $el.after(elt);
                 }, {
                     value: (el.value || el.textContent || el.innerText || el.innerHTML),
-                    extraKeys: {
-                        "Ctrl-Space": "autocomplete"
-                    },
                     readOnly: (readonly ? 'nocursor' : false),
                     theme: 'explang',
                     mode: mode
@@ -210,7 +211,10 @@
                 }
 
                 cm.on('keyup', function(cm, event) {
-                    if (!cm.state.completionActive && typeof(autocompleteIgnoredKeys[event.keyCode.toString()]) === 'undefined') {
+                    if (!cm.state.completionActive
+						&& typeof(autocompleteIgnoredKeys[event.keyCode.toString()]) === 'undefined'
+						&& autocompleteIgnoredTypes.indexOf(cm.getTokenAt(cm.getCursor()).type) === -1
+					) {
                         CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
                     }
                 });
@@ -228,6 +232,11 @@
 
         initHighlightMode: function(mode) {
             var me = this;
+			var errorState = {
+				regex: /[\.\w]+/,
+				token: 'error',
+				next: 'start'
+			};
 
             /** @see https://codemirror.net/demo/simplemode.html */
             var states = {
@@ -241,7 +250,12 @@
                     {
                         regex: /'(?:[^\\]|\\.)*?'/,
                         token: 'string'
-                    }
+                    },
+					// brackets
+					{
+						regex: /[\{\[\(\}\]\)]/,
+						token: 'bracket'
+					}
                 ],
                 comment: [],
                 meta: {}
@@ -260,27 +274,58 @@
             // operators
             if (me.options.tokens.operators.length) {
                 states.start.push({
-                    regex: new RegExp($.map(me.options.tokens.operators, me.escapeRegExp).join('|')),
+                    regex: new RegExp(
+						$.map(
+							me.options.tokens.operators,
+							me.escapeRegExp
+						).join('|')
+					),
                     token: 'operator'
                 });
             }
 
             // variables
             if (me.options.tokens.variables.length) {
-                states.start.push({
-                    regex: new RegExp($.map(me.options.tokens.variables, function(token) {
-                        return me.escapeRegExp(token.name);
-                    }).join('|')),
-                    token: 'variable'
-                });
+				$.each(me.options.tokens.variables, function(i1, variable) {
+					states.start.push({
+						regex: new RegExp(me.escapeRegExp(variable.name)),
+						token: 'variable',
+						next: me.isValidType(variable.types[0] || 'null')
+							? ('type_' + variable.types[0]) : 'start'
+					});
+				});
             }
+			
+			// properties
+			for (var typeName in me.options.tokens.typeinfo) {
+				var state = [];
+				var members = me.options.tokens.typeinfo[typeName].members;
+				
+				for (var memberName in members) {
+					state.push({
+						regex: new RegExp(me.escapeRegExp('.'+memberName)),
+						token: 'property',
+						next: me.isValidType(members[memberName].types[0] || 'null')
+							? ('type_' + members[memberName].types[0]) : 'start'
+					});
+				}
+				state.push(errorState);
+				state.push({next: 'start'});
+				
+				states['type_' + typeName] = state;
+			}
 
             // functions
             if (me.options.tokens.functions.length) {
                 states.start.push({
-                    regex: new RegExp('(' + $.map(me.options.tokens.functions, function(token) {
-                        return me.escapeRegExp(token.name);
-                    }).join('|') + ')\\('),
+                    regex: new RegExp(
+						$.map(
+							me.options.tokens.functions,
+							function(token) {
+								return me.escapeRegExp(token.name);
+							}
+						).join('|')
+					),
                     token: 'function'
                 });
             }
@@ -290,9 +335,16 @@
                 regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,
                 token: 'number'
             });
+			
+			// everything else (unexpected)
+			states.start.push(errorState);
 
             CodeMirror.defineSimpleMode(mode, states);
         },
+
+		isValidType: function(name){
+			return name in this.options.tokens.typeinfo;
+		},
 
         initHighlightHint: function(mode) {
             var me = this;

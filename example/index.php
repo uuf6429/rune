@@ -91,6 +91,20 @@ $context = new Context\ProductContext();
 $descriptor = $context->getContextDescriptor();
 
 $json_tokens = json_encode([
+    'constants' => [
+        [
+            'name' => 'true',
+            'type' => 'boolean',
+        ],
+        [
+            'name' => 'false',
+            'type' => 'boolean',
+        ],
+        [
+            'name' => 'null',
+            'type' => 'null',
+        ],
+    ],
     'operators' => [
         '+', '-', '*', '/', '%', '**',                              // arithmetic
         '&', '|', '^',                                              // bitwise
@@ -101,8 +115,8 @@ $json_tokens = json_encode([
         '..',                                                       // range
         '?', '?:', ':',                                             // ternary
     ],
-    'variables' => $descriptor->getVariableTypeInfo(),
-    'functions' => $descriptor->getFunctionTypeInfo(),
+    'variables' => array_values($descriptor->getVariableTypeInfo()),
+    'functions' => array_values($descriptor->getFunctionTypeInfo()),
     'typeinfo' => $descriptor->getDetailedTypeInfo(),
 ]);
 $json_categories = json_encode($data['categories']);

@@ -25,15 +25,19 @@ The library is made up of several parts:
 Screenshot
 ----------
 
-A screen shot for the sample that is provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
-![Screenshot](http://i.imgur.com/UxOsE54.png)
+The following is a screen shot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
+![Screenshot](http://i.imgur.com/moRfQet.png?1)
 
 Example
 -------
 
+This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the rule engine.
+
 ```php
+namespace uuf6429\Rune;
+
 // A class whose instances will be available inside rule engine.
-class Product extends AbstractModel
+class Product extends Model\AbstractModel
 {
 	/** @var string */
 	public $name;
@@ -41,10 +45,6 @@ class Product extends AbstractModel
 	/** @var string */
 	public $colour;
 
-	/**
-     * @param string $name
-     * @param string $colour
-     */
 	public function __construct($name, $colour)
 	{
 		$this->name = $name;
@@ -53,15 +53,14 @@ class Product extends AbstractModel
 }
 
 // A class that represents the rule engine execution context.
-class ProductContext extends ClassContext
+// Note that public properties will be available in the rule expressions,
+// in this case rules will have access to "product" as a variable (and all of product's public properties).
+class ProductContext extends Context\ClassContext
 {
 	/** @var Product */
 	public $product;
 
-	/**
-     * @param Product $product
-     */
-	public function __construct($product)
+	public function __construct(Product $product)
 	{
 		$this->product = $product;
 	}
@@ -69,10 +68,10 @@ class ProductContext extends ClassContext
 
 // Declare some sample rules.
 $rules = [
-	new GenericRule(1, 'Red Products', 'product.colour == "red"'),
-	new GenericRule(2, 'Red Socks', 'product.colour == "red" AND product.name matches "/socks/"'),
-	new GenericRule(3, 'Green Socks', 'product.colour == "green" AND product.name matches "/socks/"'),
-	new GenericRule(4, 'Socks', 'product.name matches "/socks/"'),
+	new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"'),
+	new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"'),
+	new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"'),
+	new Rule\GenericRule(4, 'Socks', 'product.name matches "/socks/"'),
 ];
 
 // Declare available products (to run rules against).
@@ -83,11 +82,11 @@ $products = [
 ];
 
 // Declare an action to be triggered when a rule matches against a product.
-$action = new CallbackAction(
+$action = new Action\CallbackAction(
 	function ($eval, ProductContext $context, $rule)
 	{
 		printf(
-			'Rule %s triggered for %s %s\n',
+			'Rule %s triggered for %s %s<br/>',
 			$rule->getID(),
 			ucwords($context->product->colour),
 			$context->product->name

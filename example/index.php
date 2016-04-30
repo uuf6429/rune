@@ -26,6 +26,14 @@ if (in_array($_SERVER['SCRIPT_NAME'], [
     return false;
 }
 
+// load simple example
+if (in_array($_SERVER['SCRIPT_NAME'], [
+    APP_ROOT.'simple',
+    APP_ROOT.'simple.php',
+])) {
+    return require_once 'simple.php';
+}
+
 // load default data and override it with $_POST data (do some cleanup here)
 $data = array_merge(
     require __DIR__.'/data.php',

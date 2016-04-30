@@ -64,11 +64,11 @@
             '220': 'backslash',
             '222': 'quote'
         },
-		autocompleteIgnoredTypes = [
-			'string',
-			'comment'
-		],
-        
+        autocompleteIgnoredTypes = [
+            'string',
+            'comment'
+        ],
+
         /**
          * @param elements string|jQuery
          * @param options
@@ -82,12 +82,12 @@
             me.initHighlightMode(mode);
             me.initialize(mode);
         };
-		
-	$.fn.RuneEditor = function(options) {
-		return this.each(function() {
-			new RuneEditor(this, options || {});
-		});
-	};
+
+    $.fn.RuneEditor = function(options) {
+        return this.each(function() {
+            new RuneEditor(this, options || {});
+        });
+    };
 
     RuneEditor.prototype = {
         defaultOptions: {
@@ -195,6 +195,9 @@
                 }, {
                     value: (el.value || el.textContent || el.innerText || el.innerHTML),
                     readOnly: (readonly ? 'nocursor' : false),
+                    extraKeys: {
+                        "Ctrl-Space": "autocomplete"
+                    },
                     theme: 'explang',
                     mode: mode
                 });
@@ -212,9 +215,9 @@
 
                 cm.on('keyup', function(cm, event) {
                     if (!cm.state.completionActive
-						&& typeof(autocompleteIgnoredKeys[event.keyCode.toString()]) === 'undefined'
-						&& autocompleteIgnoredTypes.indexOf(cm.getTokenAt(cm.getCursor()).type) === -1
-					) {
+                        && typeof(autocompleteIgnoredKeys[event.keyCode.toString()]) === 'undefined'
+                        && autocompleteIgnoredTypes.indexOf(cm.getTokenAt(cm.getCursor()).type) === -1
+                    ) {
                         CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
                     }
                 });
@@ -232,11 +235,11 @@
 
         initHighlightMode: function(mode) {
             var me = this;
-			var errorState = {
-				regex: /[\.\w]+/,
-				token: 'error',
-				next: 'start'
-			};
+            var errorState = {
+                regex: /[\.\w]+/,
+                token: 'error',
+                next: 'start'
+            };
 
             /** @see https://codemirror.net/demo/simplemode.html */
             var states = {
@@ -251,11 +254,11 @@
                         regex: /'(?:[^\\]|\\.)*?'/,
                         token: 'string'
                     },
-					// brackets
-					{
-						regex: /[\{\[\(\}\]\)]/,
-						token: 'bracket'
-					}
+                    // brackets
+                    {
+                        regex: /[\{\[\(\}\]\)]/,
+                        token: 'bracket'
+                    }
                 ],
                 comment: [],
                 meta: {}
@@ -275,57 +278,57 @@
             if (me.options.tokens.operators.length) {
                 states.start.push({
                     regex: new RegExp(
-						$.map(
-							me.options.tokens.operators,
-							me.escapeRegExp
-						).join('|')
-					),
+                        $.map(
+                            me.options.tokens.operators,
+                            me.escapeRegExp
+                        ).join('|')
+                    ),
                     token: 'operator'
                 });
             }
 
             // variables
             if (me.options.tokens.variables.length) {
-				$.each(me.options.tokens.variables, function(i1, variable) {
-					states.start.push({
-						regex: new RegExp(me.escapeRegExp(variable.name)),
-						token: 'variable',
-						next: me.isValidType(variable.types[0] || 'null')
-							? ('type_' + variable.types[0]) : 'start'
-					});
-				});
+                $.each(me.options.tokens.variables, function(i1, variable) {
+                    states.start.push({
+                        regex: new RegExp(me.escapeRegExp(variable.name)),
+                        token: 'variable',
+                        next: me.isValidType(variable.types[0])
+                            ? ('type_' + variable.types[0]) : 'start'
+                    });
+                });
             }
-			
-			// properties
-			for (var typeName in me.options.tokens.typeinfo) {
-				var state = [];
-				var members = me.options.tokens.typeinfo[typeName].members;
-				
-				for (var memberName in members) {
-					state.push({
-						regex: new RegExp(me.escapeRegExp('.'+memberName)),
-						token: 'property',
-						next: me.isValidType(members[memberName].types[0] || 'null')
-							? ('type_' + members[memberName].types[0]) : 'start'
-					});
-				}
-				state.push(errorState);
-				state.push({next: 'start'});
-				
-				states['type_' + typeName] = state;
-			}
+
+            // properties
+            for (var typeName in me.options.tokens.typeinfo) {
+                var state = [];
+                var members = me.options.tokens.typeinfo[typeName].members;
+
+                for (var memberName in members) {
+                    state.push({
+                        regex: new RegExp(me.escapeRegExp('.'+memberName)),
+                        token: 'property',
+                        next: me.isValidType(members[memberName].types[0])
+                            ? ('type_' + members[memberName].types[0]) : 'start'
+                    });
+                }
+                state.push(errorState);
+                state.push({next: 'start'});
+
+                states['type_' + typeName] = state;
+            }
 
             // functions
             if (me.options.tokens.functions.length) {
                 states.start.push({
                     regex: new RegExp(
-						$.map(
-							me.options.tokens.functions,
-							function(token) {
-								return me.escapeRegExp(token.name);
-							}
-						).join('|')
-					),
+                        $.map(
+                            me.options.tokens.functions,
+                            function(token) {
+                                return me.escapeRegExp(token.name);
+                            }
+                        ).join('|')
+                    ),
                     token: 'function'
                 });
             }
@@ -335,16 +338,12 @@
                 regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,
                 token: 'number'
             });
-			
-			// everything else (unexpected)
-			states.start.push(errorState);
+
+            // everything else (unexpected)
+            states.start.push(errorState);
 
             CodeMirror.defineSimpleMode(mode, states);
         },
-
-		isValidType: function(name){
-			return name in this.options.tokens.typeinfo;
-		},
 
         initHighlightHint: function(mode) {
             var me = this;
@@ -359,17 +358,20 @@
                     }
                 };
 
-            /* global CodeMirror */
             CodeMirror.registerHelper('hint', mode, function(editor, options) {
                 var cur = editor.getCursor(),
                     curLine = editor.getLine(cur.line),
                     end = cur.ch,
-                    start = end,
+                    start = cur.ch,
+                    offset_end = cur.ch,
+                    offset_start = cur.ch,
                     list = [];
 
+                while (end && /[\w]+/.test(curLine.charAt(end + 1))) ++end;
                 while (start && /[\w\.]+/.test(curLine.charAt(start - 1))) --start;
-                
-                var curWord = (start !== end && curLine.slice(start, end)) || '',
+                while (offset_start && /[\w]+/.test(curLine.charAt(offset_start - 1))) --offset_start;
+
+                var curWord = (start !== end && curLine.slice(start, offset_end)) || '',
                     curPath = curWord ? curWord.split('.') : '',
                     isProp = curPath.length > 1,
                     addedTokens = [];
@@ -384,8 +386,8 @@
 
                 return me.initHintsTooltip({
                     list: list.slice(0, MAX_ROWS),
-                    from: CodeMirror.Pos(cur.line, start),
-                    to: CodeMirror.Pos(cur.line, end)
+                    from: CodeMirror.Pos(cur.line, offset_start),
+                    to: CodeMirror.Pos(cur.line, end + 1)
                 });
             });
         },
@@ -398,29 +400,29 @@
                         $tooltip = null;
                     }
                 };
-            
+
             CodeMirror.on(hints, 'close', function() {
                 removeTooltip();
             });
-            
+
             CodeMirror.on(hints, 'update', function() {
                 removeTooltip();
             });
-            
+
             CodeMirror.on(hints, 'select', function(cur, node) {
                 removeTooltip();
-                
+
                 if (cur.docHTML) {
                     $tooltip = $('<div class="CodeMirror-hints cm-hint-hint"/>').css({
                         'left': node.parentNode.getBoundingClientRect().right + window.pageXOffset,
                         'top': node.getBoundingClientRect().top + window.pageYOffset
                     }).html(cur.docHTML);
-                    
+
                     $tooltip.mousedown(function(event) {
                         event.stopPropagation();
                         event.preventDefault();
                     });
-                    
+
                     $(document.body).append($tooltip);
                 }
             });
@@ -436,7 +438,7 @@
             if (typeof(token.types) !== 'undefined' && token.types) {
                 html += '<i>(' + token.types.join('|')' + ')</i>';
             }
-            
+
             html += '<br/>';*/
 
             if (typeof(token.hint) !== 'undefined' && token.hint) {
@@ -449,7 +451,7 @@
 
             return html;
         },
-        
+
         getSuggestedMembers: function(matchers, maxResults, prevResults, prevResultTokens, searchPath) {
             var me = this,
                 count = 0,
@@ -473,7 +475,7 @@
             // handle middle items in path (completed props)
             $.each(pathOther, function(i1, pName) {
                 var member = null;
-                
+
                 $.each(members, function(i2, testMember){
                     if (testMember.name === pName) {
                         member = testMember;
@@ -522,7 +524,7 @@
                 }
                 if (prevResultTokens.indexOf(token.name) === -1) {
                     prevResults.push({
-                        text: pathFirst + '.' + (pathOther.length ? (pathOther.join('.') + '.') : '') + token.name,
+                        text: token.name + (me.isCallableToken(token) ? '()' : ''),
                         displayText: token.name,
                         className: me.getTypesClass(token.types),
                         docHTML: me.generateHintHtml(token)
@@ -531,10 +533,10 @@
                 }
             });
         },
-        
+
         getSuggestedVariables: function(matchers, maxResults, prevResults, prevResultTokens, searchQuery) {
             var me = this;
-            
+
             var variables = [];
             $.each(matchers, function(i1, matcher) {
                 $.each(['constants', 'variables', 'functions' ], function(i2, tokensKey) {
@@ -559,7 +561,7 @@
                 var token = variables[key];
                 if (prevResultTokens.indexOf(token.name) === -1) {
                     prevResults.push({
-                        text: token.name,
+                        text: token.name + (me.isCallableToken(token) ? '()' : ''),
                         displayText: token.name,
                         className: me.getTypesClass(token.types || token.type),
                         docHTML: me.generateHintHtml(token)
@@ -568,7 +570,7 @@
                 }
             }
         },
-        
+
         getTypesClass: function(types) {
             var className = '';
 
@@ -580,7 +582,7 @@
                 var isObject = false;
 
                 for (var i = 0; i < types.length; i++) {
-                    isObject = isObject || (types[i] in this.options.tokens.typeinfo);
+                    isObject = isObject || this.isValidType(types[i]);
                     className += ' cm-hint-icon-' + types[i].replace(/\\/g, "\\\\");
                 }
 
@@ -591,7 +593,7 @@
 
             return 'cm-hint-icon' + className;
         },
-        
+
         getTypesMembers: function(types) {
             var me = this,
                 members = [];
@@ -611,6 +613,18 @@
             }
 
             return members;
+        },
+
+        isValidType: function(name){
+            return name && (name in this.options.tokens.typeinfo);
+        },
+        
+        isCallableToken: function(token) {
+            return token && token.types && token.types.length && (
+                token.types.indexOf('method') !== -1
+                || token.types.indexOf('function') !== -1
+                || token.types.indexOf('callable') !== -1
+            );
         }
     };
 })(jQuery);

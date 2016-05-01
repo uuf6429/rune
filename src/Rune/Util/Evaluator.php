@@ -40,18 +40,18 @@ class Evaluator
     /**
      * @internal This method should not be called directly.
      *
-     * @param int    $errno
-     * @param string $errstr
-     * @param string $errfile
-     * @param int    $errline
-     * @param array  $errcontext
+     * @param int    $code
+     * @param string $message
+     * @param string $file
+     * @param int    $line
+     * @param array  $context
      *
      * @throws \ErrorException
      */
-    public function errorToErrorException($errno, $errstr, $errfile = 'unknown', $errline = 0, $errcontext = [])
+    public function errorToErrorException($code, $message, $file = 'unknown', $line = 0, $context = [])
     {
         restore_error_handler();
-        throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        throw new ContextErrorException($message, 0, $code, $file, $line, $context);
     }
 
     /**

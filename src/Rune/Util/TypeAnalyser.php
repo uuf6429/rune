@@ -72,14 +72,6 @@ class TypeAnalyser
                 case $type == 'resource':
                     break;
 
-                case function_exists($type):
-                    throw new \RuntimeException(
-                        sprintf(
-                            'Type information for %s cannot be retrieved (it is a function).',
-                            $type
-                        )
-                    );
-
                 default:
                     throw new \RuntimeException(
                         sprintf(
@@ -138,14 +130,14 @@ class TypeAnalyser
             $types = explode('|', $result[1]);
             $types = array_filter(array_map([$this, 'handleType'], $types));
 
-            return [
+            $result = [
                 'name' => substr($result[2], 1),
                 'types' => $types,
                 'hint' => $result[3],
             ];
         }
 
-        return;
+        return $result;
     }
 
     protected function parseReflectedParams(\ReflectionParameter $param)
@@ -174,14 +166,14 @@ class TypeAnalyser
         $result = $this->parseDocBlockPropOrParam($propertyDef);
 
         if ($result) {
-            return new TypeInfoMember(
+            $result = new TypeInfoMember(
                 $result['name'],
                 $result['types'],
                 $result['hint']
             );
         }
 
-        return;
+        return $result;
     }
 
     /**
@@ -245,8 +237,10 @@ class TypeAnalyser
                 ', ',
                 array_map(
                     function ($param) {
+                        $result = '???';
+
                         if ($param) {
-                            return sprintf(
+                            $result = sprintf(
                                 '<span class="%s" title="%s"><span class="type">%s</span>$%s</span>',
                                 $param['hint'] ? 'arg hint' : 'arg',
                                 $param['hint'],
@@ -255,7 +249,7 @@ class TypeAnalyser
                             );
                         }
 
-                        return '???';
+                        return $result;
                     },
                     $params
                 )
@@ -301,9 +295,8 @@ class TypeAnalyser
                 return 'object';
 
             case 'mixed':
+            case 'resource':
                 return '';
-
-            // TODO handle stuff like callable, resource, internal php classes
 
             default:
                 return $type;

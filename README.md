@@ -26,7 +26,7 @@ Screenshot
 ----------
 
 The following is a screen shot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
-![Screenshot](http://i.imgur.com/moRfQet.png?1)
+![Screenshot](http://i.imgur.com/YLFAwxI.png)
 
 Example
 -------

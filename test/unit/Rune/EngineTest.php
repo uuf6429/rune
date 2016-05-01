@@ -8,9 +8,9 @@ use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Rule\AbstractRule;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Util\Evaluator;
+use uuf6429\Rune\Util\ContextErrorException;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use RuntimeException;
-use ErrorException;
 
 class EngineTest extends \PHPUnit_Framework_TestCase
 {
@@ -322,7 +322,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                     .'(Bad Rule - Property on a Non-Object) within '.DynamicContext::class
                     .': Unable to get a property on a non-object.',
 
-                    ErrorException::class.' encountered while processing rule 8 '
+                    ContextErrorException::class.' encountered while processing rule 8 '
                     .'(Bad Rule - Divide by Zero) within '.DynamicContext::class
                     .': Division by zero',
                 ],

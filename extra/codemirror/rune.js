@@ -572,7 +572,7 @@
         },
 
         getTypesClass: function(types) {
-            var className = '';
+            var classNames = ['cm-hint-icon'];
 
             if (types) {
                 if (typeof(types) === 'string') {
@@ -583,15 +583,15 @@
 
                 for (var i = 0; i < types.length; i++) {
                     isObject = isObject || this.isValidType(types[i]);
-                    className += ' cm-hint-icon-' + types[i].replace(/\\/g, "\\\\");
+                    classNames.push('cm-hint-icon-' + types[i].replace(/\\/g, '-'));
                 }
 
                 if (isObject) {
-                    className = ' cm-hint-icon-object' + className;
+                    classNames.unshift('cm-hint-icon-object');
                 }
             }
 
-            return 'cm-hint-icon' + className;
+            return classNames.join(' ');
         },
 
         getTypesMembers: function(types) {

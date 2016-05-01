@@ -29,6 +29,16 @@
         <!-- Rune CodeMirror Support -->
         <link rel="stylesheet" href="<?php echo APP_ROOT; ?>../extra/codemirror/rune.css">
         <script src="<?php echo APP_ROOT; ?>../extra/codemirror/rune.js"></script>
+        <!-- Some custom CSS -->
+        <style type="text/css">
+            .cm-hint-icon-uuf6429-Rune-example-Model-Product:before {
+                content: "\1F455";
+                font-size: 8px;
+            }
+            .cm-hint-icon-uuf6429-Rune-example-Model-Category:before {
+                content: "\2731";
+            }
+        </style>
     </head>
     <body>
         <div class="container">
@@ -41,6 +51,7 @@
                         <legend>Categories</legend>
                         <table class="table table-hover table-condensed" id="categories">
                             <thead>
+                                <th width="32px">ID</th>
                                 <th>Name</th>
                                 <th width="80px">Parent</th>
                             </thead>
@@ -64,6 +75,7 @@
                         <legend>Rules</legend>
                         <table class="table table-hover table-condensed" id="rules">
                             <thead>
+                                <th width="32px">ID</th>
                                 <th width="30%">Name</th>
                                 <th>Condition</th>
                             </thead>
@@ -108,7 +120,7 @@
         
         <script>
             $(document).ready(function(){
-                var rowCounter = 0,
+                var globalRowCount = 0,
                 // default rune editor settings
                     runeEditorOptions = {
                         tokens: <?php echo $json_tokens; ?>
@@ -136,6 +148,9 @@
                             addRow = function(rowData){
                                 var $tr = rowGenerator($tbody, rowData || {});
                                 $tr.find('input, textarea, select').on('change, blur', updateEmptyRows);
+                                $tbody.find('.row-num-autogen').each(function(num, el){
+                                    el.innerHTML = (num + 1).toString();
+                                });
                             };
                         if(!$tbody.length){
                             $tbody = $('<tbody/>');
@@ -151,12 +166,15 @@
                     '#categories',
                     <?php echo $json_categories; ?>,
                     function($tbody, data){
-                        var rowIndex = ++rowCounter,
+                        var rowIndex = ++globalRowCount,
                             $tr = $('<tr/>');
                         $tbody.append(
                             $tr.append(
-                                $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]" class="form-control" placeholder="Category Name"/>').val(data[0] || '')),
-                                $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]" class="form-control" placeholder="ID"/>').val(data[1] || ''))
+                                $('<td/>').append($('<div style="padding: 5px 0;" class="row-num-autogen"/>')),
+                                $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]"'
+                                    + ' class="form-control input-sm" placeholder="Category Name"/>').val(data[0] || '')),
+                                $('<td/>').append($('<input type="text" name="categories['+rowIndex+'][]"'
+                                    + ' class="form-control input-sm" placeholder="ID"/>').val(data[1] || ''))
                             )
                         );
                         return $tr;
@@ -168,13 +186,16 @@
                     '#products',
                     <?php echo $json_products; ?>,
                     function($tbody, data){
-                        var rowIndex = ++rowCounter,
+                        var rowIndex = ++globalRowCount,
                             $tr = $('<tr/>');
                         $tbody.append(
                             $tr.append(
-                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Product Name"/>').val(data[0] || '')),
-                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="Product Colour"/>').val(data[1] || '')),
-                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]" class="form-control" placeholder="ID"/>').val(data[2] || ''))
+                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]"'
+                                    + ' class="form-control input-sm" placeholder="Product Name"/>').val(data[0] || '')),
+                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]"'
+                                    + ' class="form-control input-sm" placeholder="Product Colour"/>').val(data[1] || '')),
+                                $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]"'
+                                    + ' class="form-control input-sm" placeholder="ID"/>').val(data[2] || ''))
                             )
                         );
                         return $tr;
@@ -186,12 +207,15 @@
                     '#rules',
                     <?php echo $json_rules; ?>,
                     function($tbody, data){
-                        var rowIndex = ++rowCounter,
+                        var rowIndex = ++globalRowCount,
                             $tr = $('<tr/>'),
-                            $nameCell = $('<td/>').append($('<input type="text" name="rules['+rowIndex+'][]" class="form-control" placeholder="Rule Name"/>').val(data[0] || '')),
-                            $condCell = $('<td/>').append($('<input type="text" name="rules['+rowIndex+'][]" class="form-control" data-lines="1" data-addclass="form-control" placeholder="Condition"/>').val(data[1] || ''));
+                            $numCell = $('<td/>').append($('<div style="padding: 7px 0;" class="row-num-autogen"/>')),
+                            $nameCell = $('<td/>').append($('<input type="text" name="rules['+rowIndex+'][]"'
+                                + ' class="form-control" placeholder="Rule Name"/>').val(data[0] || '')),
+                            $condCell = $('<td/>').append($('<input type="text" name="rules['+rowIndex+'][]"'
+                                + ' class="form-control" data-lines="1" data-addclass="form-control" placeholder="Condition"/>').val(data[1] || ''));
                         $tbody.append($tr);
-                        $tr.append($nameCell, $condCell);
+                        $tr.append($numCell, $nameCell, $condCell);
                         $condCell.find('input').RuneEditor(runeEditorOptions);
                         return $tr;
                     }

@@ -5,7 +5,7 @@ namespace uuf6429\Rune;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
-use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Util\Evaluator;
 use uuf6429\Rune\Util\ContextErrorException;
@@ -17,7 +17,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool $withBrokenRules
      *
-     * @return AbstractRule[]
+     * @return RuleInterface[]
      */
     protected function getRules($withBrokenRules = false)
     {
@@ -51,7 +51,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                 function (
                     Evaluator $eval,
                     ContextInterface $context,
-                    AbstractRule $rule
+                    RuleInterface $rule
                 ) use (
                     $productName
                 ) {
@@ -350,7 +350,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return AbstractRule[]
+     * @return RuleInterface[]
      */
     protected function getFailureModeScenariopRules()
     {

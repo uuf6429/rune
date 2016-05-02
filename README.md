@@ -19,7 +19,7 @@ The library is made up of several parts:
 - Context - an object that provides data to the rule engine and action to work with.
   You almost always have to implement your own context since this always depends on your scenario.
 - Rule(s) - a list of rules, objects containing a string expression (for the rule engine) and data (for the action).
-  For complicated scenarios, you might want to extend the rule (by extending Rule\AbstractRule), otherwise Rule\Generic should be enough.
+  For complicated scenarios, you might want to extend the rule (by implementing [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)), otherwise [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php) should be enough.
 - RuleEngine - the object that connects the others together to function.
 
 Screenshot

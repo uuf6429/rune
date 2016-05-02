@@ -2,20 +2,20 @@
 
 namespace uuf6429\Rune\Rule;
 
-abstract class AbstractRule
+interface RuleInterface
 {
     /**
      * @return string
      */
-    abstract public function getID();
+    public function getID();
 
     /**
      * @return string
      */
-    abstract public function getName();
+    public function getName();
 
     /**
      * @return string
      */
-    abstract public function getCondition();
+    public function getCondition();
 }

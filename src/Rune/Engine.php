@@ -4,7 +4,7 @@ namespace uuf6429\Rune;
 
 use uuf6429\Rune\Action\AbstractAction;
 use uuf6429\Rune\Context\ContextInterface;
-use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\ContextRuleException;
 use uuf6429\Rune\Util\ContextRulePair;
 use uuf6429\Rune\Util\Evaluator;
@@ -32,7 +32,7 @@ class Engine
 
     /**
      * @param ContextInterface                $context
-     * @param AbstractRule[]                  $rules
+     * @param RuleInterface[]                 $rules
      * @param AbstractAction|AbstractAction[] $actions
      * @param string                          $failMode See ON_ERROR_FAIL_* constants.
      * 
@@ -113,7 +113,7 @@ class Engine
     /**
      * @param ContextRulePair[] $result
      * @param ContextInterface  $context
-     * @param AbstractRule[]    $rules
+     * @param RuleInterface[]   $rules
      */
     protected function findMatches(&$result, $context, $rules)
     {
@@ -133,7 +133,7 @@ class Engine
     /**
      * @param ContextRulePair[] $result
      * @param ContextInterface  $context
-     * @param AbstractRule      $rule
+     * @param RuleInterface     $rule
      */
     protected function findMatchesForContextRule(&$result, $context, $rule)
     {

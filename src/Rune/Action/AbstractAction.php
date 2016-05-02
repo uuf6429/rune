@@ -3,7 +3,7 @@
 namespace uuf6429\Rune\Action;
 
 use uuf6429\Rune\Context\ContextInterface;
-use uuf6429\Rune\Rule\AbstractRule;
+use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\Evaluator;
 
 abstract class AbstractAction
@@ -14,7 +14,7 @@ abstract class AbstractAction
      *
      * @param Evaluator        $eval
      * @param ContextInterface $context
-     * @param AbstractRule     $rule
+     * @param RuleInterface    $rule
      */
-    abstract public function execute(Evaluator $eval, ContextInterface $context, AbstractRule $rule);
+    abstract public function execute(Evaluator $eval, ContextInterface $context, RuleInterface $rule);
 }

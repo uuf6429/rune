@@ -2,7 +2,7 @@
 
 namespace uuf6429\Rune\Rule;
 
-class GenericRule extends AbstractRule
+class GenericRule implements RuleInterface
 {
     /**
      * @var string

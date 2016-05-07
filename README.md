@@ -10,6 +10,17 @@ Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.
 
 This library is an implementation of a Business Rule Engine (a type of Business Process Automation software).
 
+Table Of Contents
+-----------------
+
+- [Rune](#rune)
+  - [Table Of Contents](#table-of-contents)
+  - [Usage](#usage)
+  - [Live Example](#live-example)
+  - [Screenshot](#screenshot)
+  - [Example Code](#example-code)
+
+
 Usage
 -----
 
@@ -22,14 +33,19 @@ The library is made up of several parts:
   For complicated scenarios, you might want to extend the rule (by implementing [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)), otherwise [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php) should be enough.
 - RuleEngine - the object that connects the others together to function.
 
+Live Example
+------------
+
+[Click here](https://rune-uuf6429-1.c9users.io/) to try out the engine and interactive editor!
+
 Screenshot
 ----------
 
 The following is a screen shot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
 ![Screenshot](http://i.imgur.com/YLFAwxI.png)
 
-Example
--------
+Example Code
+------------
 
 This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the rule engine.
 

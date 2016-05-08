@@ -2,15 +2,11 @@
 
 namespace uuf6429\Rune\Action;
 
-use uuf6429\Rune\Context\ContextInterface;
-use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\Util\Evaluator;
-
 /**
  * The "quick 'n dirty" action.
  * Note: this action is considerably slower than a direct implementation.
  */
-class CallbackAction extends AbstractAction
+class CallbackAction implements ActionInterface
 {
     /**
      * @var callable
@@ -19,7 +15,7 @@ class CallbackAction extends AbstractAction
 
     /**
      * The callback will receive the following arguments:
-     * (Evaluator $eval, ContextInterface $context, RuleInterface $rule).
+     * (EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule).
      *
      * @param callable $callback
      */
@@ -31,7 +27,7 @@ class CallbackAction extends AbstractAction
     /**
      * {@inheritdoc}
      */
-    public function execute(Evaluator $eval, ContextInterface $context, RuleInterface $rule)
+    public function execute($eval, $context, $rule)
     {
         call_user_func($this->callback, $eval, $context, $rule);
     }

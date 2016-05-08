@@ -2,12 +2,13 @@
 
 namespace uuf6429\Rune;
 
-use uuf6429\Rune\Action\AbstractAction;
+use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\ContextRuleException;
 use uuf6429\Rune\Util\ContextRulePair;
-use uuf6429\Rune\Util\Evaluator;
+use uuf6429\Rune\Util\EvaluatorInterface;
+use uuf6429\Rune\Util\SymfonyEvaluator;
 
 class Engine
 {
@@ -21,7 +22,7 @@ class Engine
     protected $errors;
 
     /**
-     * @var Evaluator
+     * @var EvaluatorInterface
      */
     protected $evaluator;
 
@@ -31,10 +32,18 @@ class Engine
     protected $failMode;
 
     /**
-     * @param ContextInterface                $context
-     * @param RuleInterface[]                 $rules
-     * @param AbstractAction|AbstractAction[] $actions
-     * @param string                          $failMode See ON_ERROR_FAIL_* constants.
+     * @param EvaluatorInterface|null $evaluator
+     */
+    public function __construct($evaluator = null)
+    {
+        $this->evaluator = $evaluator ?: new SymfonyEvaluator();
+    }
+
+    /**
+     * @param ContextInterface                  $context
+     * @param RuleInterface[]                   $rules
+     * @param ActionInterface|ActionInterface[] $actions
+     * @param string                            $failMode See ON_ERROR_FAIL_* constants.
      * 
      * @return int|false
      */
@@ -47,8 +56,8 @@ class Engine
         $this->failMode = $failMode;
 
         $descriptor = $context->getContextDescriptor();
-        $this->getEvaluator()->setVariables($descriptor->getVariables());
-        $this->getEvaluator()->setFunctions($descriptor->getFunctions());
+        $this->evaluator->setVariables($descriptor->getVariables());
+        $this->evaluator->setFunctions($descriptor->getFunctions());
 
         $matches = [];
         $this->clearErrors();
@@ -67,18 +76,6 @@ class Engine
         }
 
         return count($matches);
-    }
-
-    /**
-     * @return Evaluator
-     */
-    protected function getEvaluator()
-    {
-        if (!$this->evaluator) {
-            $this->evaluator = new Evaluator();
-        }
-
-        return $this->evaluator;
     }
 
     /**
@@ -139,7 +136,7 @@ class Engine
     {
         try {
             $cond = $rule->getCondition();
-            $match = ($cond === '') ? true : $this->getEvaluator()->evaluate($rule->getCondition());
+            $match = ($cond === '') ? true : $this->evaluator->evaluate($rule->getCondition());
 
             if (!is_bool($match)) {
                 throw new \RuntimeException(sprintf(
@@ -167,16 +164,15 @@ class Engine
     }
 
     /**
-     * @param AbstractAction[]  $actions
+     * @param ActionInterface[] $actions
      * @param ContextRulePair[] $matches
      */
     protected function executeActions($actions, $matches)
     {
-        $eval = $this->getEvaluator();
         foreach ($matches as $match) {
             try {
                 foreach ($actions as $action) {
-                    $action->execute($eval, $match->getContext(), $match->getRule());
+                    $action->execute($this->evaluator, $match->getContext(), $match->getRule());
                 }
             } catch (\Exception $ex) {
                 if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {

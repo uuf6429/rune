@@ -2,7 +2,7 @@
 
 namespace uuf6429\Rune\Util;
 
-class EvaluatorTest extends \PHPUnit_Framework_TestCase
+class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array  $variables
@@ -20,7 +20,7 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         $expectedCompileResult,
         $expectedExecuteResult
     ) {
-        $evaluator = new Evaluator();
+        $evaluator = new SymfonyEvaluator();
 
         $evaluator->setVariables($variables);
         $evaluator->setFunctions($functions);

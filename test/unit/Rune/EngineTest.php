@@ -7,7 +7,7 @@ use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Rule\GenericRule;
-use uuf6429\Rune\Util\Evaluator;
+use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\ContextErrorException;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use RuntimeException;
@@ -48,13 +48,12 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     protected function getAction($productName)
     {
         return  new CallbackAction(
-                function (
-                    Evaluator $eval,
-                    ContextInterface $context,
-                    RuleInterface $rule
-                ) use (
-                    $productName
-                ) {
+                /**
+                 * @param EvaluatorInterface $eval,
+                 * @param ContextInterface   $context,
+                 * @param RuleInterface      $rule
+                 */
+                function ($eval, $context, $rule) use ($productName) {
                     $this->matchingRules[$productName][] = $rule->getName();
                 }
             );

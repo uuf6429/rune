@@ -5,7 +5,7 @@ namespace uuf6429\Rune\Util;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 
-class CustomExpressionLanguage extends ExpressionLanguage
+class CustomSymfonyExpressionLanguage extends ExpressionLanguage
 {
     protected function registerFunctions()
     {

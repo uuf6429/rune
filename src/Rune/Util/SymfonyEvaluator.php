@@ -2,27 +2,25 @@
 
 namespace uuf6429\Rune\Util;
 
-use Symfony\Component\ExpressionLanguage\Expression;
-
-class Evaluator
+class SymfonyEvaluator implements EvaluatorInterface
 {
-    /**
-     * @var CustomExpressionLanguage
-     */
-    protected $exprLang;
-
     /**
      * @var mixed[string]
      */
     protected $variables;
 
+    /**
+     * @var CustomSymfonyExpressionLanguage
+     */
+    protected $exprLang;
+
     public function __construct()
     {
-        $this->exprLang = new CustomExpressionLanguage();
+        $this->exprLang = new CustomSymfonyExpressionLanguage();
     }
 
     /**
-     * @param mixed[string] $variables
+     * {@inheritdoc}
      */
     public function setVariables($variables)
     {
@@ -30,7 +28,7 @@ class Evaluator
     }
 
     /**
-     * @param callable[string] $functions
+     * {@inheritdoc}
      */
     public function setFunctions($functions)
     {
@@ -55,11 +53,7 @@ class Evaluator
     }
 
     /**
-     * Compiles an expression source code.
-     *
-     * @param Expression|string $expression The expression to compile
-     *
-     * @return string The compiled PHP source code
+     * {@inheritdoc}
      */
     public function compile($expression)
     {
@@ -71,11 +65,7 @@ class Evaluator
     }
 
     /**
-     * Evaluate an expression.
-     *
-     * @param Expression|string $expression The expression to compile
-     *
-     * @return string The result of the evaluation of the expression
+     * {@inheritdoc}
      */
     public function evaluate($expression)
     {

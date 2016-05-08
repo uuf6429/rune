@@ -2,43 +2,60 @@
 
 namespace uuf6429\Rune\Util;
 
+use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Rule\RuleInterface;
+
 class ContextRuleException extends \RuntimeException
 {
     /**
-     * @var ContextRulePair
+     * @var ContextInterface
      */
-    private $contextRule;
+    private $context;
 
     /**
-     * @param ContextRulePair $contextRule
-     * @param string|null     $message
-     * @param int             $code
-     * @param \Exception|null $previous
+     * @var RuleInterface
      */
-    public function __construct(
-        ContextRulePair $contextRule,
-        $message = null,
-        \Exception $previous = null
-    ) {
+    private $rule;
+
+    /**
+     * @param ContextInterface $context
+     * @param RuleInterface    $rule
+     * @param string|null      $message
+     * @param int              $code
+     * @param \Exception|null  $previous
+     */
+    public function __construct($context, $rule, $message = null, $previous = null)
+    {
         if ($message === null) {
             $message = sprintf(
                 '%s encountered while processing rule %s (%s) within %s%s',
                 (is_object($previous) ? get_class($previous) : 'Error'),
-                $contextRule->getRule()->getID(),
-                $contextRule->getRule()->getName(),
-                get_class($contextRule->getContext()),
-                (is_object($previous) ? (': ' . $previous->getMessage()) : '')
+                $rule->getID(),
+                $rule->getName(),
+                get_class($context),
+                (is_object($previous) ? (': '.$previous->getMessage()) : '')
             );
         }
+
+        $this->context = $context;
+        $this->rule = $rule;
 
         parent::__construct($message, 0, $previous);
     }
 
     /**
-     * @return ContextRulePair
+     * @return ContextInterface
      */
-    public function getContextRule()
+    public function getContext()
     {
-        return $this->contextRule;
+        return $this->context;
+    }
+
+    /**
+     * @return RuleInterface
+     */
+    public function getRule()
+    {
+        return $this->rule;
     }
 }

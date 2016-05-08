@@ -6,7 +6,6 @@ use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\ContextRuleException;
-use uuf6429\Rune\Util\ContextRulePair;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
 
@@ -59,23 +58,23 @@ class Engine
         $this->evaluator->setVariables($descriptor->getVariables());
         $this->evaluator->setFunctions($descriptor->getFunctions());
 
-        $matches = [];
+        $matchingRules = [];
         $this->clearErrors();
 
         try {
-            $this->findMatches($matches, $context, $rules);
+            $this->findMatches($matchingRules, $context, $rules);
 
             // TODO implement this some time in the future
-            //$this->validateMatches($matches);
+            //$this->validateMatches($matchingRules);
 
-            $this->executeActions($actions, $matches);
+            $this->executeActions($actions, $context, $matchingRules);
         } catch (\Exception $ex) {
             $this->addError($ex);
 
             return false;
         }
 
-        return count($matches);
+        return count($matchingRules);
     }
 
     /**
@@ -108,9 +107,9 @@ class Engine
     }
 
     /**
-     * @param ContextRulePair[] $result
-     * @param ContextInterface  $context
-     * @param RuleInterface[]   $rules
+     * @param RuleInterface[]  $result
+     * @param ContextInterface $context
+     * @param RuleInterface[]  $rules
      */
     protected function findMatches(&$result, $context, $rules)
     {
@@ -128,9 +127,9 @@ class Engine
     }
 
     /**
-     * @param ContextRulePair[] $result
-     * @param ContextInterface  $context
-     * @param RuleInterface     $rule
+     * @param RuleInterface[]  $result
+     * @param ContextInterface $context
+     * @param RuleInterface    $rule
      */
     protected function findMatchesForContextRule(&$result, $context, $rule)
     {
@@ -148,11 +147,10 @@ class Engine
             }
 
             if ($match) {
-                $result[] = new ContextRulePair($context, $rule);
+                $result[] = $rule;
             }
         } catch (\Exception $ex) {
-            $pair = new ContextRulePair($context, $rule);
-            $ex = new ContextRuleException($pair, null, $ex);
+            $ex = new ContextRuleException($context, $rule, null, $ex);
 
             if ($this->failMode === self::ON_ERROR_FAIL_ENGINE
                 || $this->failMode === self::ON_ERROR_FAIL_CONTEXT) {
@@ -165,20 +163,21 @@ class Engine
 
     /**
      * @param ActionInterface[] $actions
-     * @param ContextRulePair[] $matches
+     * @param ContextInterface  $context
+     * @param RuleInterface[]   $rules
      */
-    protected function executeActions($actions, $matches)
+    protected function executeActions($actions, $context, $rules)
     {
-        foreach ($matches as $match) {
+        foreach ($rules as $rule) {
             try {
                 foreach ($actions as $action) {
-                    $action->execute($this->evaluator, $match->getContext(), $match->getRule());
+                    $action->execute($this->evaluator, $context, $rule);
                 }
             } catch (\Exception $ex) {
                 if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
                     throw $ex;
                 } else {
-                    $this->addError(new ContextRuleException($match, null, $ex));
+                    $this->addError(new ContextRuleException($context, $rule, null, $ex));
                 }
             }
         }

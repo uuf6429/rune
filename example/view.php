@@ -27,8 +27,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/hint/show-hint.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/hint/show-hint.js"></script>
         <!-- Rune CodeMirror Support -->
-        <link rel="stylesheet" href="<?php echo APP_ROOT; ?>../extra/codemirror/rune.css">
-        <script src="<?php echo APP_ROOT; ?>../extra/codemirror/rune.js"></script>
+        <link rel="stylesheet" href="<?php echo CDN_ROOT; ?>/extra/codemirror/rune.css">
+        <script src="<?php echo CDN_ROOT; ?>/extra/codemirror/rune.js"></script>
         <!-- Some custom CSS -->
         <style type="text/css">
             .cm-hint-icon-uuf6429-Rune-example-Model-Product:before {
@@ -51,9 +51,11 @@
                         <legend>Categories</legend>
                         <table class="table table-hover table-condensed" id="categories">
                             <thead>
-                                <th width="32px">ID</th>
-                                <th>Name</th>
-                                <th width="80px">Parent</th>
+	                            <tr>
+	                                <th width="32px">ID</th>
+	                                <th>Name</th>
+	                                <th width="80px">Parent</th>
+	                            </tr>
                             </thead>
                         </table>
                     </fieldset>
@@ -62,9 +64,11 @@
                         <legend>Products</legend>
                         <table class="table table-hover table-condensed" id="products">
                             <thead>
-                                <th>Name</th>
-                                <th>Colour</th>
-                                <th width="80px">Category</th>
+	                            <tr>
+	                                <th>Name</th>
+	                                <th>Colour</th>
+	                                <th width="80px">Category</th>
+                                </tr>
                             </thead>
                         </table>
                     </fieldset>
@@ -75,9 +79,11 @@
                         <legend>Rules</legend>
                         <table class="table table-hover table-condensed" id="rules">
                             <thead>
-                                <th width="32px">ID</th>
-                                <th width="30%">Name</th>
-                                <th>Condition</th>
+	                            <tr>
+	                                <th width="32px">ID</th>
+	                                <th width="30%">Name</th>
+	                                <th>Condition</th>
+	                            </tr>
                             </thead>
                         </table>
                     </fieldset>

@@ -36,7 +36,7 @@ The library is made up of several parts:
 Live Example
 ------------
 
-[Click here](https://rune-uuf6429-1.c9users.io/) to try out the engine and interactive editor!
+[Click here](http://192.237.167.233/rune-demo/) to try out the engine and interactive editor!
 
 Screenshot
 ----------

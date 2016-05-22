@@ -16,7 +16,8 @@ if (!defined('SHOW_EXAMPLE') && (isset($_SERVER['HTTP_CLIENT_IP'])
     exit('You are not allowed to access this file. Check <code>example/index.php</code> for more information.');
 }
 
-define('APP_ROOT', '/');
+defined('APP_ROOT') || define('APP_ROOT', '/');
+defined('CDN_ROOT') || define('CDN_ROOT', '/../');
 
 // serve static files
 if (in_array($_SERVER['SCRIPT_NAME'], [

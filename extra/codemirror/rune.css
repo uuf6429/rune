@@ -81,65 +81,65 @@
 }
 
 .cm-hint-icon:before {
-	position: absolute;
-	left: 2px;
-	bottom: 2px;
-	border-radius: 50%;
-	font-size: 10px;
-	font-weight: bold;
-	height: 15px;
-	width: 15px;
-	line-height: 15px;
-	text-align: center;
-	color: white;
-	box-sizing: border-box;
-	border: 1px solid rgba(255,255,255,0.7);
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    height: 15px;
+    width: 15px;
+    line-height: 15px;
+    text-align: center;
+    color: white;
+    box-sizing: border-box;
+    border: 1px solid rgba(255,255,255,0.7);
 
-	content: "U";
-	background: #AAA;
+    content: "U";
+    background: #AAA;
 }
 
 .cm-hint-icon-mixed:before {
-	content: "?";
-	background: #222;
+    content: "?";
+    background: #222;
 }
 
 .cm-hint-icon-null:before {
-	content: "N";
-	background: #666; /* null is evil */
+    content: "N";
+    background: #666; /* null is evil */
 }
 
 .cm-hint-icon-string:before {
-	content: "S";
-	background: #a22;
+    content: "S";
+    background: #a22;
 }
 
 .cm-hint-icon-boolean:before {
-	content: "B";
-	background: #a82;
+    content: "B";
+    background: #a82;
 }
 
 .cm-hint-icon-integer:before {
-	content: "I";
-	background: #3a3;
+    content: "I";
+    background: #3a3;
 }
 
 .cm-hint-icon-double:before {
-	content: "D";
-	background: #3a3;
+    content: "D";
+    background: #3a3;
 }
 
 .cm-hint-icon-object:before {
-	content: "O";
-	background: #08F;
+    content: "O";
+    background: #08F;
 }
 
 .cm-hint-icon-function:before {
-	content: "F";
-	background: #C0C;
+    content: "F";
+    background: #C0C;
 }
 
 .cm-hint-icon-method:before {
-	content: "M";
-	background: #C0C;
+    content: "M";
+    background: #C0C;
 }

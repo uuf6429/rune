@@ -51,11 +51,11 @@
                         <legend>Categories</legend>
                         <table class="table table-hover table-condensed" id="categories">
                             <thead>
-	                            <tr>
-	                                <th width="32px">ID</th>
-	                                <th>Name</th>
-	                                <th width="80px">Parent</th>
-	                            </tr>
+                                <tr>
+                                    <th width="32px">ID</th>
+                                    <th>Name</th>
+                                    <th width="80px">Parent</th>
+                                </tr>
                             </thead>
                         </table>
                     </fieldset>
@@ -64,10 +64,10 @@
                         <legend>Products</legend>
                         <table class="table table-hover table-condensed" id="products">
                             <thead>
-	                            <tr>
-	                                <th>Name</th>
-	                                <th>Colour</th>
-	                                <th width="80px">Category</th>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Colour</th>
+                                    <th width="80px">Category</th>
                                 </tr>
                             </thead>
                         </table>
@@ -79,11 +79,11 @@
                         <legend>Rules</legend>
                         <table class="table table-hover table-condensed" id="rules">
                             <thead>
-	                            <tr>
-	                                <th width="32px">ID</th>
-	                                <th width="30%">Name</th>
-	                                <th>Condition</th>
-	                            </tr>
+                                <tr>
+                                    <th width="32px">ID</th>
+                                    <th width="30%">Name</th>
+                                    <th>Condition</th>
+                                </tr>
                             </thead>
                         </table>
                     </fieldset>

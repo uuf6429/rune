@@ -1,41 +1,41 @@
 {
-	"name": "uuf6429/rune",
-	"type": "library",
-	"description": "PHP Rule Engine.",
-	"keywords": ["rule", "engine", "expression", "uuf6429"],
-	"homepage": "http://github.com/uuf6429/rune",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Christian Sciberras",
-			"homepage": "http://christian.sciberras.me"
-		}
-	],
-	"require": {
-		"php": ">=5.5.9",
-		"symfony/expression-language": "~3.0",
-		"kamermans/docblock-reflection": "~1.0"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "~4.8",
-        "fabpot/php-cs-fixer": "^1.11"
-	},
-	"autoload": {
-        "psr-4": {
-			"uuf6429\\Rune\\": "src/Rune",
-			"uuf6429\\Rune\\example\\": "example"
+    "name": "uuf6429/rune",
+    "type": "library",
+    "description": "PHP Rule Engine.",
+    "keywords": ["rule", "engine", "expression", "uuf6429"],
+    "homepage": "http://github.com/uuf6429/rune",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christian Sciberras",
+            "homepage": "http://christian.sciberras.me"
         }
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"uuf6429\\Rune\\": [
-				"test/unit/Rune",
-				"test/integration/Rune"
-			]
-		}
-	},
-	"scripts": {
-		"post-install-cmd": "php extra/composer-hooks/post-install-cmd.php",
-		"post-update-cmd": "php extra/composer-hooks/post-update-cmd.php"
-	}
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "symfony/expression-language": "~3.0",
+        "kamermans/docblock-reflection": "~1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8",
+        "fabpot/php-cs-fixer": "^1.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "uuf6429\\Rune\\": "src/Rune",
+            "uuf6429\\Rune\\example\\": "example"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "uuf6429\\Rune\\": [
+                "test/unit/Rune",
+                "test/integration/Rune"
+            ]
+        }
+    },
+    "scripts": {
+        "post-install-cmd": "php extra/composer-hooks/post-install-cmd.php",
+        "post-update-cmd": "php extra/composer-hooks/post-update-cmd.php"
+    }
 }

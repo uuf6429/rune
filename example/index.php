@@ -86,7 +86,29 @@ $products = array_map(
 $errors = [];
 $engine = new Rune\Engine();
 $action = new Action\PrintAction();
+$context = new Context\ProductContext();
+$descriptor = $context->getContextDescriptor();
 
+// Provide code compiled from rule conditions
+$output_generated = '';
+$eval = new Rune\Util\SymfonyEvaluator();
+$maxLength = 0;
+foreach ($rules as $rule) {
+    $maxLength = max($maxLength, strlen($rule->getName()));
+}
+foreach ($rules as $rule) {
+    try {
+        $eval->setFunctions($descriptor->getFunctions());
+        $eval->setVariables($descriptor->getVariables());
+        $code = $eval->compile($rule->getCondition());
+    } catch (\Exception $ex) {
+        $code = 'Compile Error ('.get_class($ex).'): '.$ex->getMessage();
+    }
+    $output_generated .= str_pad($rule->getName(), $maxLength)
+        .' => '.$code.PHP_EOL;
+}
+
+// Provide triggered rules and any generated errors
 ob_start();
 foreach ($products as $product) {
     $context = new Context\ProductContext($product);
@@ -94,11 +116,9 @@ foreach ($products as $product) {
     $errors += $engine->getErrors();
 }
 $output_result = htmlspecialchars(ob_get_clean(), ENT_QUOTES);
-$output_errors = count($errors) ? implode(PHP_EOL, $errors) : '<i>None</i>';
+$output_errors = implode(PHP_EOL, $errors);
 
-$context = new Context\ProductContext();
-$descriptor = $context->getContextDescriptor();
-
+// Provide some details use for dynamic editor
 $json_tokens = json_encode([
     'constants' => [
         [

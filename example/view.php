@@ -115,9 +115,11 @@
                         PHP_EOL,
                         [
                             '<b>Result:</b>',
-                            $output_result,
+                            htmlspecialchars($output_result, ENT_QUOTES),
+                            '<b>Compiled:</b>',
+                            htmlspecialchars($output_generated, ENT_QUOTES),
                             '<b>Errors:</b>',
-                            $output_errors,
+                            $output_errors ? htmlspecialchars($output_errors, ENT_QUOTES) : '<i>None</i>',
                         ]
                     );
                 ?></pre>

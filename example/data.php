@@ -3,10 +3,10 @@
 return [
     'failureMode' => 2,
     'rules' => [
-        ['Red Products', 'product.colour == lower("Red")'],
-        ['Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'],
+        ['Red Products', 'product.colour == String.lower("Red")'],
+        ['Red Socks', 'product.colour == "red" and product.category.in("Socks")'],
         ['Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'],
-        ['Socks', '(product.name matches "/socks/i") > 0'],
+        ['Socks', 'product.category.in("Socks")'],
         ['Toys', 'product.category.in("Toys")'],
     ],
     'categories' => [

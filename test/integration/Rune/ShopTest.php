@@ -43,6 +43,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 'product' => new Util\TypeInfoMember('product', ['uuf6429\Rune\example\Model\Product']),
+                'String' => new Util\TypeInfoMember('String', ['uuf6429\Rune\example\Model\StringUtils']),
             ],
             $descriptor->getVariableTypeInfo(),
             'Assert variable type information'
@@ -50,7 +51,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
+                //'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
             ],
             $descriptor->getFunctionTypeInfo(),
             'Assert function type information'
@@ -62,8 +63,8 @@ class ShopTest extends \PHPUnit_Framework_TestCase
                     'uuf6429\Rune\example\Context\ProductContext',
                     [
                         'product' => new Util\TypeInfoMember('product', ['uuf6429\Rune\example\Model\Product']),
-                        'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
                         'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
+                        'String' => new Util\TypeInfoMember('String', ['uuf6429\Rune\example\Model\StringUtils'], ''),
                     ]
                 ),
                 'uuf6429\Rune\example\Model\Product' => new Util\TypeInfoClass(
@@ -84,6 +85,13 @@ class ShopTest extends \PHPUnit_Framework_TestCase
                         'parent' => new Util\TypeInfoMember('parent', ['uuf6429\Rune\example\Model\Category']),
                     ]
                 ),
+                'uuf6429\Rune\example\Model\StringUtils' => new Util\TypeInfoClass(
+                    'uuf6429\Rune\example\Model\StringUtils',
+                    [
+                        'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
+                        'upper' => new Util\TypeInfoMember('upper', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Uppercases some text.'),
+                    ]
+                ),
             ],
             $descriptor->getDetailedTypeInfo(),
             'Assert detailed type information'
@@ -96,8 +104,8 @@ class ShopTest extends \PHPUnit_Framework_TestCase
     protected function getRules()
     {
         return [
-            new Rule\GenericRule(1, 'Red Products', 'product.colour == lower("Red")'),
-            new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and (product.name matches "/socks/i") > 0'),
+            new Rule\GenericRule(1, 'Red Products', 'product.colour == String.lower("Red")'),
+            new Rule\GenericRule(2, 'Red Socks', 'String.upper(product.colour) == "RED" and (product.name matches "/socks/i") > 0'),
             new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
             new Rule\GenericRule(4, 'Socks', 'product.category.in("Socks")'),
             new Rule\GenericRule(5, 'Toys', 'product.category.in("Toys")'),

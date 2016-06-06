@@ -2,9 +2,7 @@
 
 namespace uuf6429\Rune\example\Context;
 
-use uuf6429\Rune\Context\ClassContext;
-
-class ProductContext extends ClassContext
+class ProductContext extends AbstractContext
 {
     /**
      * @var uuf6429\Rune\example\Model\Product
@@ -16,6 +14,8 @@ class ProductContext extends ClassContext
      */
     public function __construct($product = null)
     {
+        parent::__construct();
+
         $this->product = $product;
     }
 
@@ -25,17 +25,5 @@ class ProductContext extends ClassContext
     public function __toString()
     {
         return ucwords(trim($this->product->colour.' '.$this->product->name));
-    }
-
-    /**
-     * Lowercases some text.
-     *
-     * @param string $text
-     *
-     * @return string
-     */
-    public function lower($text)
-    {
-        return strtolower($text);
     }
 }

@@ -5,6 +5,7 @@ Rune
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/nice_r/master/LICENSE)
 [![Coverage](https://codecov.io/gh/uuf6429/rune/branch/master/graph/badge.svg?token=Bu2nK2Kq77)](https://codecov.io/github/uuf6429/rune?branch=master)
+[![Packagist](https://img.shields.io/packagist/v/uuf6429/rune.svg?maxAge=2592000)](https://packagist.org/packages/uuf6429/rune)
 
 Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.
 
@@ -15,11 +16,20 @@ Table Of Contents
 
 - [Rune](#rune)
   - [Table Of Contents](#table-of-contents)
+  - [Installation](#installation)
   - [Usage](#usage)
   - [Live Example](#live-example)
   - [Screenshot](#screenshot)
   - [Example Code](#example-code)
 
+Installation
+------------
+
+The recommended and easiest way to install Rune is through [Composer](https://getcomposer.org/):
+
+```bash
+composer require uuf6429/rune "~1.0"
+```
 
 Usage
 -----

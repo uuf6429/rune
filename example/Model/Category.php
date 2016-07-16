@@ -57,7 +57,7 @@ class Category extends AbstractModel
     {
         if (strtolower($this->name) == strtolower($name)) {
             return true;
-        } elseif ($this->parent != null) {
+        } elseif ($this->parent !== null) {
             return $this->parent->in($name);
         } else {
             return false;

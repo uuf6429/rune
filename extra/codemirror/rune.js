@@ -316,7 +316,7 @@
                     }
                     
                     state.push({
-                        regex: new RegExp(me.escapeRegExp('.' + memberName)),
+                        regex: new RegExp('\\.\\s*' + me.escapeRegExp(memberName) + '\\s*'),
                         token: 'property',
                         next: type ? ('type_' + type) : 'start'
                     });
@@ -396,7 +396,7 @@
                             break;
                         default:
                             if(bracketLevel === 0){
-                                if(/[^\w\.\_]/.test(testChar)){
+                                if(/[^\w\.\_\s]/.test(testChar)){
                                     outOfScope = true;
                                 }else{
                                     curPath = testChar + curPath;
@@ -409,11 +409,11 @@
                     --start;
                 }
                 
-                curPath = curPath.split('.');
+                curPath = $.map(curPath.split('.'), function(s){ return $.trim(s); });
 
                 var curWord = (start !== end && curLine.slice(start, offset_end)) || '',
                     addedTokens = [];
-                
+
                 if (curPath.length) {
                     // handle property paths
                     me.getSuggestedMembers(MATCHERS, MAX_ROWS, list, addedTokens, curPath);

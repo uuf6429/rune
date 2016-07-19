@@ -390,7 +390,7 @@
                             break;
                         case '(':
                             if(bracketLevel===0){
-                                break;
+                                outOfScope = true;
                             }
                             bracketLevel--;
                             break;
@@ -410,6 +410,8 @@
                 }
                 
                 curPath = $.map(curPath.split('.'), function(s){ return $.trim(s); });
+                
+                if (curPath.length === 1 && curPath[0] === '') curPath=[];
 
                 var curWord = (start !== end && curLine.slice(start, offset_end)) || '',
                     addedTokens = [];

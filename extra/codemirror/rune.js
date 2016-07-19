@@ -305,11 +305,20 @@
                 var members = me.options.tokens.typeinfo[typeName].members;
 
                 for (var memberName in members) {
+                    var member = members[memberName],
+                        type = null;
+                    
+                    for(var i = member.types.length - 1; i >=0; i--){
+                        if(me.isValidType(member.types[i])){
+                            type = member.types[i];
+                            break;
+                        }
+                    }
+                    
                     state.push({
-                        regex: new RegExp(me.escapeRegExp('.'+memberName)),
+                        regex: new RegExp(me.escapeRegExp('.' + memberName)),
                         token: 'property',
-                        next: me.isValidType(members[memberName].types[0])
-                            ? ('type_' + members[memberName].types[0]) : 'start'
+                        next: type ? ('type_' + type) : 'start'
                     });
                 }
                 state.push(errorState);
@@ -365,18 +374,47 @@
                     start = cur.ch,
                     offset_end = cur.ch,
                     offset_start = cur.ch,
+                    curPath = '',
                     list = [];
 
                 while (end && /[\w]+/.test(curLine.charAt(end + 1))) ++end;
-                while (start && /[\w\.]+/.test(curLine.charAt(start - 1))) --start;
                 while (offset_start && /[\w]+/.test(curLine.charAt(offset_start - 1))) --offset_start;
+                
+                var bracketLevel = 0,
+                    testChar = '';
+                while (start && (testChar = curLine.charAt(start - 1)) !== ''){
+                    var outOfScope = false;
+                    switch(testChar){
+                        case ')':
+                            bracketLevel++;
+                            break;
+                        case '(':
+                            if(bracketLevel===0){
+                                break;
+                            }
+                            bracketLevel--;
+                            break;
+                        default:
+                            if(bracketLevel === 0){
+                                if(/[^\w\.\_]/.test(testChar)){
+                                    outOfScope = true;
+                                }else{
+                                    curPath = testChar + curPath;
+                                }
+                            }
+                    }
+                    if(outOfScope){
+                        break;
+                    }
+                    --start;
+                }
+                
+                curPath = curPath.split('.');
 
                 var curWord = (start !== end && curLine.slice(start, offset_end)) || '',
-                    curPath = curWord ? curWord.split('.') : '',
-                    isProp = curPath.length > 1,
                     addedTokens = [];
-
-                if (isProp) {
+                
+                if (curPath.length) {
                     // handle property paths
                     me.getSuggestedMembers(MATCHERS, MAX_ROWS, list, addedTokens, curPath);
                 } else {

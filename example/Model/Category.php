@@ -55,12 +55,24 @@ class Category extends AbstractModel
      */
     public function in($name)
     {
+        return $this->findParent($name) ? true : false;
+    }
+
+    /**
+     * Returns the first (parent) category that matches name.
+     *
+     * @param string $name
+     *
+     * @return \uuf6429\Rune\example\Model\Category|null
+     */
+    public function findParent($name)
+    {
         if (strtolower($this->name) == strtolower($name)) {
-            return true;
+            return $this;
         } elseif ($this->parent !== null) {
-            return $this->parent->in($name);
+            return $this->parent->findParent($name);
         } else {
-            return false;
+            return;
         }
     }
 }

@@ -68,6 +68,7 @@ class TypeAnalyser
                     $this->analyseClassOrInterface($type);
                     break;
 
+                case $type == 'null':
                 case $type == 'callable':
                 case $type == 'resource':
                     break;
@@ -264,7 +265,11 @@ class TypeAnalyser
             )
         );
 
-        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
+        $return = explode('|', $return);
+        $return = array_filter(array_map([$this, 'handleType'], $return));
+        array_unshift($return, 'method');
+
+        return new TypeInfoMember($method->name, $return, $signature . $hint, $link);
     }
 
     /**
@@ -307,7 +312,7 @@ class TypeAnalyser
                 return '';
 
             default:
-                return $type;
+                return ltrim($type, '\\');
         }
     }
 

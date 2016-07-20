@@ -575,7 +575,7 @@
                 }
                 if (prevResultTokens.indexOf(token.name) === -1) {
                     prevResults.push({
-                        text: token.name + (me.isCallableToken(token) ? '()' : ''),
+                        text: me.getMemmberSuggestion(token),
                         displayText: token.name,
                         className: me.getTypesClass(token.types),
                         docHTML: me.generateHintHtml(token)
@@ -612,7 +612,7 @@
                 var token = variables[key];
                 if (prevResultTokens.indexOf(token.name) === -1) {
                     prevResults.push({
-                        text: token.name + (me.isCallableToken(token) ? '()' : ''),
+                        text: me.getMemmberSuggestion(token),
                         displayText: token.name,
                         className: me.getTypesClass(token.types || token.type),
                         docHTML: me.generateHintHtml(token)
@@ -620,6 +620,27 @@
                     prevResultTokens.push(token.name);
                 }
             }
+        },
+        
+        getMemmberSuggestion: function(token) {
+            var me = this,
+                result = token.name;
+            
+            if(me.isCallableToken(token)){
+                result += '()'; // TODO if we had access to method signature in token
+                                // we could also prefill function with relevant values.
+                
+                $.each(token.types, function(i, type){
+                    if(me.isValidType(type)){
+                        result += '.';
+                        return false;
+                    }
+                });
+                
+                console.log(token);
+            }
+            
+            return result;
         },
 
         getTypesClass: function(types) {

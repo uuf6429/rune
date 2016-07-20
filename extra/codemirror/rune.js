@@ -256,8 +256,14 @@
                     },
                     // brackets
                     {
-                        regex: /[\{\[\(\}\]\)]/,
-                        token: 'bracket'
+                        regex: /[\{\[\(]/,
+                        token: 'bracket bracket-start',
+                        push: 'start'
+                    },
+                    {
+                        regex: /[\}\]\)]/,
+                        token: 'bracket bracket-end',
+                        pop: true
                     }
                 ],
                 comment: [],
@@ -299,7 +305,7 @@
                 });
             }
 
-            // properties
+            // object members
             for (var typeName in me.options.tokens.typeinfo) {
                 var state = [];
                 var members = me.options.tokens.typeinfo[typeName].members;
@@ -386,6 +392,11 @@
                     var outOfScope = false;
                     switch(testChar){
                         case ')':
+                            if(!$.trim(curPath)){
+                                // If we end up with a bracket token, without any
+                                // other token then there's nothing we can suggest.
+                                outOfScope = true;
+                            }
                             bracketLevel++;
                             break;
                         case '(':
@@ -413,7 +424,7 @@
                 
                 if (curPath.length === 1 && curPath[0] === '') curPath=[];
 
-                var curWord = (start !== end && curLine.slice(start, offset_end)) || '',
+                var curWord = $.trim(start !== end && curLine.slice(start, offset_end) || ''),
                     addedTokens = [];
 
                 if (curPath.length) {

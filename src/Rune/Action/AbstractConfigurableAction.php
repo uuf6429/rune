@@ -10,9 +10,7 @@ abstract class AbstractConfigurableAction implements ActionInterface
     public function execute($eval, $context, $rule)
     {
         $configExpr = $this->getConfigExpression();
-        echo var_export($configExpr, true).' => ';
         $config = is_null($configExpr) ? [] : $eval->evaluate($configExpr);
-        print_r($config);
         $this->executeWithConfig($eval, $context, $rule, (array) $config);
     }
 

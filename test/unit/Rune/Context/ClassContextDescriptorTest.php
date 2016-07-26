@@ -12,4 +12,19 @@ class ClassContextDescriptorTest extends \PHPUnit_Framework_TestCase
         );
         new ClassContextDescriptor(new \stdClass());
     }
+
+    public function testContextFunctions()
+    {
+        $mockContext = $this
+            ->getMockBuilder(ClassContext::class)
+            ->setMethods(['someFunction'])
+            ->getMock();
+        $mockContext->someProperty = true;
+
+        /* @var ClassContext $mockContext */
+        $desc = $mockContext->getContextDescriptor();
+
+        $this->assertArrayHasKey('someFunction', $desc->getFunctions());
+        $this->assertArrayHasKey('someProperty', $desc->getVariables());
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace uuf6429\Rune\example;
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use uuf6429\Rune;
 
@@ -21,23 +21,23 @@ defined('CDN_ROOT') || define('CDN_ROOT', '/../');
 
 // serve static files
 if (in_array($_SERVER['SCRIPT_NAME'], [
-    APP_ROOT.'extra/codemirror/rune.js',
-    APP_ROOT.'extra/codemirror/rune.css',
+    APP_ROOT . 'extra/codemirror/rune.js',
+    APP_ROOT . 'extra/codemirror/rune.css',
 ])) {
     return false;
 }
 
 // load simple example
 if (in_array($_SERVER['SCRIPT_NAME'], [
-    APP_ROOT.'simple',
-    APP_ROOT.'simple.php',
+    APP_ROOT . 'simple',
+    APP_ROOT . 'simple.php',
 ])) {
     return require_once 'simple.php';
 }
 
 // load default data and override it with $_POST data (do some cleanup here)
 $data = array_merge(
-    require __DIR__.'/data.php',
+    require __DIR__ . '/data.php',
     array_map(
         function ($group) {
             return !is_array($group) ? $group : array_filter(
@@ -102,10 +102,10 @@ foreach ($rules as $rule) {
         $eval->setVariables($descriptor->getVariables());
         $code = $eval->compile($rule->getCondition());
     } catch (\Exception $ex) {
-        $code = 'Compile Error ('.get_class($ex).'): '.$ex->getMessage();
+        $code = 'Compile Error (' . get_class($ex) . '): ' . $ex->getMessage();
     }
     $output_generated .= str_pad($rule->getName(), $maxLength)
-        .' => '.$code.PHP_EOL;
+        . ' => ' . $code . PHP_EOL;
 }
 
 // Provide triggered rules and any generated errors

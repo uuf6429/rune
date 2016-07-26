@@ -51,7 +51,7 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
             ],
             'string concatentation' => [
                 '$variables' => ['name' => 'Joe', 'age' => 12, 'weight' => 39230],
-                '$functions' => ['gramsToKilos' => function ($g) { return ($g / 1000).'kg'; }],
+                '$functions' => ['gramsToKilos' => function ($g) { return ($g / 1000) . 'kg'; }],
                 '$expression' => 'name ~ " was " ~ gramsToKilos(weight) ~ " when " ~ age ~ "."',
                 '$expectedCompileResult' => '((((($name . " was ") . gramsToKilos($weight)) . " when ") . $age) . ".")',
                 '$expectedExecuteResult' => 'Joe was 39.23kg when 12.',

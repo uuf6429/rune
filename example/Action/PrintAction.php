@@ -17,7 +17,7 @@ class PrintAction implements ActionInterface
     public function execute($eval, $context, $rule)
     {
         printf(
-            'Rule %s (%s) triggered for %s.'.PHP_EOL,
+            'Rule %s (%s) triggered for %s.' . PHP_EOL,
             $rule->getID(),
             $rule->getName(),
             (string) $context

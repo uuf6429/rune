@@ -33,7 +33,7 @@ class ContextRuleException extends \RuntimeException
                 $rule->getID(),
                 $rule->getName(),
                 get_class($context),
-                (is_object($previous) ? (': '.$previous->getMessage()) : '')
+                (is_object($previous) ? (': ' . $previous->getMessage()) : '')
             );
         }
 

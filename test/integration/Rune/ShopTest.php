@@ -20,7 +20,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             'Rule 6 (Clothes) triggered for Yellow Sporty Socks.',
             'Rule 5 (Toys) triggered for Lego Blocks.',
             'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
-        ]).PHP_EOL);
+        ]) . PHP_EOL);
 
         $errors = [];
         $engine = new Engine();

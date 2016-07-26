@@ -21,7 +21,6 @@ class ContextRuleException extends \RuntimeException
      * @param ContextInterface $context
      * @param RuleInterface    $rule
      * @param string|null      $message
-     * @param int              $code
      * @param \Exception|null  $previous
      */
     public function __construct($context, $rule, $message = null, $previous = null)

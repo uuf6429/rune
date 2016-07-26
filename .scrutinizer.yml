@@ -27,7 +27,6 @@ coding_style:
             classes_functions:
                 class: new-line
                 function: new-line
-                closure: new-line
             if:
                 opening: end-of-line
             for:

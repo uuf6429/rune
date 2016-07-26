@@ -26,8 +26,8 @@ class DynamicContext implements ContextInterface
     private $descriptor;
 
     /**
-     * @param array<string,mixed>   $variables
-     * @param array<callable,mixed> $functions
+     * @param array<string,mixed>    $variables
+     * @param array<string,callable> $functions
      */
     public function __construct($variables = [], $functions = [])
     {

@@ -8,10 +8,16 @@
 // - To completely override this mechanism, create a normal pre-commit file without
 //   this comment.
 
-$pcfp = 'vendor'.DIRECTORY_SEPARATOR.'bin'.DIRECTORY_SEPARATOR.'php-cs-fixer';
+define('DS', DIRECTORY_SEPARATOR);
+define('APP_ROOT', __DIR__.DS.'..'.DS.'..');
+$pcfp = APP_ROOT.DS.'vendor'.DS.'bin'.DS.'php-cs-fixer';
+$pcfpcfg = realpath(APP_ROOT.DS.'.php_cs');
+$excluded = [];
 exec('git diff --cached --name-status --diff-filter=ACM', $output);
 $c = count($output);
 $l = strlen((string) $c);
+
+echo 'Checking files...'.PHP_EOL;
 
 foreach ($output as $i => $file) {
     $fileName = trim(substr($file, 1));

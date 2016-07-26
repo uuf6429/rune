@@ -60,7 +60,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param mixed[string] $productValues
+     * @param array<string,mixed> $productValues
      *
      * @return DynamicContext
      */

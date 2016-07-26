@@ -11,12 +11,12 @@ namespace uuf6429\Rune\Context;
 class DynamicContext implements ContextInterface
 {
     /**
-     * @var mixed[string]
+     * @var array<string,mixed>
      */
     private $variables = [];
 
     /**
-     * @var callable[string]
+     * @var array<string,callable>
      */
     private $functions = [];
 
@@ -26,8 +26,8 @@ class DynamicContext implements ContextInterface
     private $descriptor;
 
     /**
-     * @param mixed[string]    $variables
-     * @param callable[string] $functions
+     * @param array<string,mixed>   $variables
+     * @param array<callable,mixed> $functions
      */
     public function __construct($variables = [], $functions = [])
     {
@@ -48,7 +48,7 @@ class DynamicContext implements ContextInterface
     }
 
     /**
-     * @return mixed[string]
+     * @return array<string,mixed>
      */
     public function getVariables()
     {
@@ -56,7 +56,7 @@ class DynamicContext implements ContextInterface
     }
 
     /**
-     * @return callable[string]
+     * @return array<string,callable>
      */
     public function getFunctions()
     {

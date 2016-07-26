@@ -24,6 +24,6 @@ class ProductContext extends AbstractContext
      */
     public function __toString()
     {
-        return ucwords(trim($this->product->colour.' '.$this->product->name));
+        return ucwords(trim($this->product->colour . ' ' . $this->product->name));
     }
 }

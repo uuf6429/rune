@@ -9,9 +9,9 @@ namespace uuf6429\Rune\Util;
  */
 class ContextErrorException extends \ErrorException
 {
-    private $context = array();
+    private $context = [];
 
-    public function __construct($message, $code, $severity, $filename, $lineno, $context = array())
+    public function __construct($message, $code, $severity, $filename, $lineno, $context = [])
     {
         parent::__construct($message, $code, $severity, $filename, $lineno);
         $this->context = $context;

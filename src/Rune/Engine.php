@@ -42,7 +42,7 @@ class Engine
      * @param ContextInterface                  $context
      * @param RuleInterface[]                   $rules
      * @param ActionInterface|ActionInterface[] $actions
-     * @param string                            $failMode See ON_ERROR_FAIL_* constants.
+     * @param int                               $failMode See ON_ERROR_FAIL_* constants.
      * 
      * @return int|false
      */
@@ -78,7 +78,7 @@ class Engine
     }
 
     /**
-     * @return \ContextRuleException[]
+     * @return \Exception[]
      */
     public function getErrors()
     {

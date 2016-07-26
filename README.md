@@ -5,6 +5,7 @@ Rune
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/nice_r/master/LICENSE)
 [![Coverage](https://codecov.io/gh/uuf6429/rune/branch/master/graph/badge.svg?token=Bu2nK2Kq77)](https://codecov.io/github/uuf6429/rune?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/uuf6429/rune/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/uuf6429/rune/?branch=master)
 [![Packagist](https://img.shields.io/packagist/v/uuf6429/Rune.svg)](https://packagist.org/packages/uuf6429/rune)
 
 Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.

@@ -94,9 +94,9 @@
                         <label class="control-label" for="failureMode">Failure Level:&nbsp;</label>
                         <select class="form-control " name="failureMode"><?php
                             foreach ([3 => 'Engine', 2 => 'Context', 1 => 'Rule'] as $i => $text) {
-                                echo '<option value="'.$i.'"'
-                                        .($i == $failureMode ? ' selected="selected"' : '').
-                                    '>'.$text.'</option>';
+                                echo '<option value="' . $i . '"'
+                                        . ($i == $failureMode ? ' selected="selected"' : '') .
+                                    '>' . $text . '</option>';
                             }
                         ?></select>
                     </div>

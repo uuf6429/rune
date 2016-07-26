@@ -228,9 +228,9 @@ class TypeAnalyser
 
         $signature = sprintf(
             '<div class="cm-signature">'
-                    .'<span class="type">%s</span> <span class="name">%s</span>'
-                    .'(<span class="args">%s</span>)</span>'
-                .'</div>',
+                    . '<span class="type">%s</span> <span class="name">%s</span>'
+                    . '(<span class="args">%s</span>)</span>'
+                . '</div>',
             $return,
             $method->name,
             implode(
@@ -244,7 +244,7 @@ class TypeAnalyser
                                 '<span class="%s" title="%s"><span class="type">%s</span>$%s</span>',
                                 $param['hint'] ? 'arg hint' : 'arg',
                                 $param['hint'],
-                                count($param['types']) ? (implode('|', $param['types']).' ') : '',
+                                count($param['types']) ? (implode('|', $param['types']) . ' ') : '',
                                 $param['name']
                             );
                         }
@@ -256,7 +256,7 @@ class TypeAnalyser
             )
         );
 
-        return new TypeInfoMember($method->name, ['method'], $signature.$hint, $link);
+        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
     }
 
     /**

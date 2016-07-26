@@ -17,14 +17,14 @@ class TypeAnalyser
     /**
      * List of discovered types, key is the fully qualified type name.
      *
-     * @var TypeInfoClass[string]
+     * @var array<string,TypeInfoClass>
      */
     protected $types = [];
 
     /**
      * Enables deep analysis (recursively analyses class members and their types).
      * 
-     * @var type
+     * @var bool
      */
     protected $deep = false;
 
@@ -95,7 +95,11 @@ class TypeAnalyser
 
         $docb = new DocBlock($reflector);
         $hint = $docb->getComment() ?: '';
-        $link = $docb->getTag('link', '');
+        $link = $docb->getTag('link', '') ?: '';
+
+        if (is_array($link)) {
+            $link = $link[0];
+        }
 
         $members = array_filter(
             array_merge(
@@ -200,8 +204,12 @@ class TypeAnalyser
         }
 
         $docb = new DocBlock($method);
-        $hint = $docb->getComment();
-        $link = $docb->getTag('link', '');
+        $hint = $docb->getComment() ?: '';
+        $link = $docb->getTag('link', '') ?: '';
+
+        if (is_array($link)) {
+            $link = $link[0];
+        }
 
         if ($docb->tagExists('param')) {
             // detect return from docblock
@@ -304,7 +312,7 @@ class TypeAnalyser
     }
 
     /**
-     * @return TypeInfoClass[string]
+     * @return array<string,TypeInfoClass>
      */
     public function getTypes()
     {

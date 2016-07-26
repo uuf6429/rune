@@ -13,7 +13,7 @@ class CustomSymfonyExpressionLanguage extends ExpressionLanguage
     }
 
     /**
-     * @param callable[string] $functions
+     * @param array<string,callable> $functions
      */
     public function setFunctions($functions)
     {

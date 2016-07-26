@@ -19,14 +19,14 @@ $l = strlen((string) $c);
 
 echo 'Checking files...' . PHP_EOL;
 
-foreach ($output as $i => $file) {
+foreach ((array) $output as $i => $file) {
     $fileName = trim(substr($file, 1));
 
     if (substr($fileName, -4) == '.php') {
         $lint_output = [];
         exec('php -l ' . escapeshellarg($fileName), $lint_output, $return);
 
-        if ($return == 0) {
+        if ($return === 0) {
             echo '[' . str_pad($i + 1, $l, ' ', STR_PAD_LEFT) . '/' . $c . '] ' . $fileName . ' .';
             exec($pcfp . ' fix ' . escapeshellarg($fileName) . ' --config-file=' . escapeshellarg($pcfpcfg));
             echo '.';

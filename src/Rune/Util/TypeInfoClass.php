@@ -25,10 +25,10 @@ class TypeInfoClass
     public $link;
 
     /**
-     * @param string         $name
-     * @param TypeInfoMember $members
-     * @param string         $hint
-     * @param string         $link
+     * @param string           $name
+     * @param TypeInfoMember[] $members
+     * @param string           $hint
+     * @param string           $link
      */
     public function __construct($name, $members = [], $hint = '', $link = '')
     {

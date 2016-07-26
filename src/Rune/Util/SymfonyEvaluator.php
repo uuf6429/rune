@@ -5,7 +5,7 @@ namespace uuf6429\Rune\Util;
 class SymfonyEvaluator implements EvaluatorInterface
 {
     /**
-     * @var mixed[string]
+     * @var array<string,mixed>
      */
     protected $variables;
 

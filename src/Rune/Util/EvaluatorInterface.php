@@ -5,12 +5,12 @@ namespace uuf6429\Rune\Util;
 interface EvaluatorInterface
 {
     /**
-     * @param mixed[string] $variables
+     * @param array<string,mixed> $variables
      */
     public function setVariables($variables);
 
     /**
-     * @param callable[string] $functions
+     * @param array<string,callable> $functions
      */
     public function setFunctions($functions);
 

@@ -46,4 +46,13 @@ coding_style:
             constants:
                 true_false_null: lower
 
-build: true
+build:
+    environment:
+        php: '7.0'
+    tests:
+        override:
+            -
+                command: 'phpunit --coverage-clover=coverage.xml'
+                coverage:
+                    file: 'coverage.xml'
+                    format: 'clover'

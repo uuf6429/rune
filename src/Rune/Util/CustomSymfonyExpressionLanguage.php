@@ -2,8 +2,8 @@
 
 namespace uuf6429\Rune\Util;
 
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class CustomSymfonyExpressionLanguage extends ExpressionLanguage
 {

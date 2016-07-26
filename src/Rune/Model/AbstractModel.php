@@ -11,7 +11,7 @@ abstract class AbstractModel
      */
     public function __get($name)
     {
-        $method = 'get'.ucfirst($name);
+        $method = 'get' . ucfirst($name);
 
         if (!method_exists($this, $method)) {
             throw new \RuntimeException(

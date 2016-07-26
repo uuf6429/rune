@@ -1,0 +1,49 @@
+filter:
+    excluded_paths:
+        - 'test/*'
+        - 'example/*'
+checks:
+    php:
+        uppercase_constants: true
+        return_doc_comments: true
+        remove_extra_empty_lines: true
+        parameters_in_camelcaps: true
+        encourage_single_quotes: true
+        fix_line_ending: true
+        newline_at_end_of_file: true
+        avoid_todo_comments: true
+        avoid_fixme_comments: true
+    javascript:
+        eqeqeq: true
+
+coding_style:
+    php:
+        spaces:
+            before_parentheses:
+                closure_definition: true
+            around_operators:
+                concatenation: true
+        braces:
+            classes_functions:
+                class: new-line
+                function: new-line
+                closure: new-line
+            if:
+                opening: end-of-line
+            for:
+                opening: end-of-line
+            while:
+                opening: end-of-line
+            do_while:
+                opening: new-line
+            switch:
+                opening: end-of-line
+            try:
+                opening: end-of-line
+        upper_lower_casing:
+            keywords:
+                general: lower
+            constants:
+                true_false_null: lower
+
+build: true

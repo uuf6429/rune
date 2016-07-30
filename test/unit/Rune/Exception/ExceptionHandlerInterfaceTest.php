@@ -14,20 +14,23 @@ class ExceptionHandlerInterfaceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param mixed  $value
-     * @param string $expectedMessage
+     * @param string $expectedMessageRegex
      * @dataProvider handlingNonExceptionsDataProvider
      */
-    public function testHandlingNonException($value, $expectedMessage)
+    public function testHandlingNonException($value, $expectedMessageRegex)
     {
         $handler = new ExceptionPropagatorHandler();
+
+        $ex = null;
 
         try {
             $handler->handle($value);
         } catch (\TypeError $ex) {
-            $this->assertRegexp('/' . preg_quote($expectedMessage) . '/', $ex->getMessage());
         } catch (\Exception $ex) {
-            $this->assertRegexp('/' . preg_quote($expectedMessage) . '/', $ex->getMessage());
         }
+
+        $this->assertNotNull($ex);
+        $this->assertRegexp('/' . $expectedMessageRegex . '/', $ex->getMessage());
     }
 
     /**
@@ -38,27 +41,31 @@ class ExceptionHandlerInterfaceTest extends \PHPUnit_Framework_TestCase
         return [
             'number' => [
                 '$value' => 12345,
-                '$expectedMessage' => 'Argument 1 passed to ' .
-                    ExceptionPropagatorHandler::class .
-                    '::handle() must be an instance of Exception, integer given',
+                '$expectedMessage' => 'Argument 1 passed to '
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . ' must be an instance of Exception,'
+                    . '(.*?)int(.*?)given',
             ],
             'string' => [
                 '$value' => 'Exception',
-                '$expectedMessage' => 'Argument 1 passed to ' .
-                    ExceptionPropagatorHandler::class .
-                    '::handle() must be an instance of Exception, string given',
+                '$expectedMessage' => 'Argument 1 passed to '
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . ' must be an instance of Exception,'
+                    . '(.*?)string given',
             ],
             'object' => [
                 '$value' => new \stdClass(),
-                '$expectedMessage' => 'Argument 1 passed to ' .
-                    ExceptionPropagatorHandler::class .
-                    '::handle() must be an instance of Exception, instance of stdClass given',
+                '$expectedMessage' => 'Argument 1 passed to '
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . ' must be an instance of Exception,'
+                    . '(.*?)stdClass given',
             ],
             'array' => [
                 '$value' => [],
-                '$expectedMessage' => 'Argument 1 passed to ' .
-                    ExceptionPropagatorHandler::class .
-                    '::handle() must be an instance of Exception, array given',
+                '$expectedMessage' => 'Argument 1 passed to '
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . ' must be an instance of Exception,'
+                    . '(.*?)array given',
             ],
         ];
     }

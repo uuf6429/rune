@@ -37,7 +37,6 @@ class Engine
      * @param ContextInterface $context
      * @param RuleInterface[]  $rules
      * @param ActionInterface  $action
-     * @param int              $failMode See ON_ERROR_FAIL_* constants.
      * 
      * @return int|false
      */
@@ -49,18 +48,12 @@ class Engine
 
         $matchingRules = [];
 
-        try {
-            $this->findMatches($matchingRules, $context, $rules);
+        $this->findMatches($matchingRules, $context, $rules);
 
-            // TODO implement this some time in the future
-            //$this->validateMatches($matchingRules);
+        // TODO implement this some time in the future
+        //$this->validateMatches($matchingRules);
 
-            $this->executeActionForRules($action, $context, $matchingRules);
-        } catch (\Exception $ex) {
-            $this->addError($ex);
-
-            return false;
-        }
+        $this->executeActionForRules($action, $context, $matchingRules);
 
         return count($matchingRules);
     }
@@ -107,9 +100,9 @@ class Engine
     }
 
     /**
-     * @param ActionInterface[] $action
-     * @param ContextInterface  $context
-     * @param RuleInterface[]   $rules
+     * @param ActionInterface  $action
+     * @param ContextInterface $context
+     * @param RuleInterface[]  $rules
      */
     protected function executeActionForRules($action, $context, $rules)
     {
@@ -117,7 +110,9 @@ class Engine
             try {
                 $action->execute($this->evaluator, $context, $rule);
             } catch (\Exception $ex) {
-                $this->addError(new ContextRuleActionException($context, $rule, $action, null, $ex));
+                $this->exceptionHandler->handle(
+                    new ContextRuleActionException($context, $rule, $action, null, $ex)
+                );
             }
         }
     }

@@ -6,7 +6,7 @@ use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 
-class ContextRuleActionException extends \ContextRuleException
+class ContextRuleActionException extends ContextRuleException
 {
     /**
      * @var ActionInterface
@@ -22,11 +22,13 @@ class ContextRuleActionException extends \ContextRuleException
      */
     public function __construct($context, $rule, $action, $message = null, $previous = null)
     {
+        $this->action = $action;
+
         if ($message === null) {
             $message = sprintf(
                 '%s encountered while executing action %s for rule %s (%s) within %s%s',
                 (is_object($previous) ? get_class($previous) : 'Error'),
-                get_class($action),
+                get_class($this->getAction()),
                 $rule->getID(),
                 $rule->getName(),
                 get_class($context),
@@ -34,9 +36,7 @@ class ContextRuleActionException extends \ContextRuleException
             );
         }
 
-        $this->action = $action;
-
-        parent::__construct($context, $rule, $message, 0, $previous);
+        parent::__construct($context, $rule, $message, $previous);
     }
 
     /**

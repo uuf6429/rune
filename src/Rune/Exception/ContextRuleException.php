@@ -25,19 +25,19 @@ class ContextRuleException extends \RuntimeException
      */
     public function __construct($context, $rule, $message = null, $previous = null)
     {
+        $this->context = $context;
+        $this->rule = $rule;
+
         if ($message === null) {
             $message = sprintf(
                 '%s encountered while processing rule %s (%s) within %s%s',
                 (is_object($previous) ? get_class($previous) : 'Error'),
-                $rule->getID(),
-                $rule->getName(),
-                get_class($context),
+                $this->getRule()->getID(),
+                $this->getRule()->getName(),
+                get_class($this->getContext()),
                 (is_object($previous) ? (': ' . $previous->getMessage()) : '')
             );
         }
-
-        $this->context = $context;
-        $this->rule = $rule;
 
         parent::__construct($message, 0, $previous);
     }

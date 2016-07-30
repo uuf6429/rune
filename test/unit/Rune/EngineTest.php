@@ -330,6 +330,17 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     public function testRuleEngineCollectingExceptionHandler()
     {
+        $productData = [
+            'Product 1' => [
+                'COLOR' => 'red',
+            ],
+            'Product 2' => [
+                'COLOR' => 'green',
+            ],
+            'Product 3' => [
+                'COLOR' => 'blue',
+            ],
+        ];
         $rules = [
             new GenericRule(1, 'Good Rule 1', 'COLOR == "red"'),
             new GenericRule(2, 'Bad Rule', 'COLOR == black'),
@@ -353,17 +364,6 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
             . ': Variable "black" is not valid around position 10.',
         ];
-        $productData = [
-            'Product 1' => [
-                'COLOR' => 'red',
-            ],
-            'Product 2' => [
-                'COLOR' => 'green',
-            ],
-            'Product 3' => [
-                'COLOR' => 'blue',
-            ],
-        ];
 
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
@@ -379,6 +379,67 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expectedRules, $this->matchingRules);
+
+        $errorMesgs = array_map(
+            function (\Exception $exception) {
+                return $exception->getMessage();
+            },
+            $exceptionHandler->getExceptions()
+        );
+
+        $this->assertEquals($expectedExceptions, $errorMesgs, 'Engine exceptions were not as expected.');
+    }
+
+    public function testRuleEngineSometimesFaultyAction()
+    {
+        $productData = [
+            'Product 1' => [],
+            'Product 2' => [],
+            'Product 3' => [],
+        ];
+        $rules = [
+            new GenericRule(1, 'Always triggered', 'true'),
+        ];
+        $expectedRules = [
+            'Product 1' => ['Always triggered'],
+            'Product 2' => [],
+            'Product 3' => ['Always triggered'],
+        ];
+        $expectedExceptions = [
+            'Exception encountered while executing action ' . CallbackAction::class
+                . ' for rule 1 (Always triggered) within ' . DynamicContext::class
+                . ': Exception thrown for Product 2.',
+        ];
+
+        $matchingRules = array_fill_keys(array_keys($productData), []);
+
+        $exceptionHandler = new Exception\ExceptionCollectorHandler();
+        $engine = new Engine($exceptionHandler);
+
+        foreach ($productData as $productName => $productValues) {
+            $action = new CallbackAction(
+                /**
+                 * @param EvaluatorInterface $eval,
+                 * @param DynamicContext     $context,
+                 * @param RuleInterface      $rule
+                 */
+                function ($eval, $context, $rule) use ($productName, &$matchingRules) {
+                    if ($productName == 'Product 2') {
+                        throw new \Exception("Exception thrown for $productName.");
+                    }
+
+                    $matchingRules[$productName][] = $rule->getName();
+                }
+            );
+
+            $engine->execute(
+                $this->getContext($productValues),
+                $rules,
+                $action
+            );
+        }
+
+        $this->assertEquals($expectedRules, $matchingRules);
 
         $errorMesgs = array_map(
             function (\Exception $exception) {

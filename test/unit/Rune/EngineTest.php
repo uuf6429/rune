@@ -84,29 +84,25 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         $expectedErrors,
         $expectedResult
     ) {
-        $this->markTestSkipped('Remove deprecated failure mode code.');
-
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
         $result = 0;
-        $errors = [];
-        $engine = new Engine();
+        $exceptionHandler = new Exception\ExceptionCollectorHandler();
+        $engine = new Engine($exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
             $result += $engine->execute(
                 $this->getContext($productValues),
                 $this->getRules($withBadRules),
-                $this->getAction($productName),
-                $withBadRules ? Engine::ON_ERROR_FAIL_RULE : Engine::ON_ERROR_FAIL_CONTEXT
+                $this->getAction($productName)
             );
-            $errors += $engine->getErrors();
         }
 
         $errorMesgs = array_map(
             function (\Exception $exception) {
                 return $exception->getMessage();
             },
-            $errors
+            $exceptionHandler->getExceptions()
         );
 
         if (empty($expectedErrors)) {
@@ -332,12 +328,32 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getFailureModeScenariopProductData()
+    public function testRuleEngineCollectingExceptionHandler()
     {
-        return [
+        $rules = [
+            new GenericRule(1, 'Good Rule 1', 'COLOR == "red"'),
+            new GenericRule(2, 'Bad Rule', 'COLOR == black'),
+            new GenericRule(3, 'Good Rule 3', 'COLOR == "red" or COLOR == "blue"'),
+        ];
+        $expectedRules = [
+            'Product 1' => ['Good Rule 1', 'Good Rule 3'],
+            'Product 2' => [],
+            'Product 3' => ['Good Rule 3'],
+        ];
+        $expectedExceptions = [
+            'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+            . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
+            . ': Variable "black" is not valid around position 10.',
+
+            'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+            . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
+            . ': Variable "black" is not valid around position 10.',
+
+            'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+            . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
+            . ': Variable "black" is not valid around position 10.',
+        ];
+        $productData = [
             'Product 1' => [
                 'COLOR' => 'red',
             ],
@@ -348,45 +364,18 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                 'COLOR' => 'blue',
             ],
         ];
-    }
 
-    /**
-     * @return RuleInterface[]
-     */
-    protected function getFailureModeScenariopRules()
-    {
-        return [
-            new GenericRule(1, 'Good Rule 1', 'COLOR == "red"'),
-            new GenericRule(2, 'Bad Rule', 'COLOR == black'),
-            new GenericRule(3, 'Good Rule 2', 'COLOR == "red" or COLOR == "blue"'),
-        ];
-    }
-
-    /**
-     * @param int   $failureMode
-     * @param array $expectedRules
-     * @param array $expectedErrors
-     * 
-     * @dataProvider sampleValuesFailureModeDataProvider
-     */
-    public function testRuleEngineFailureModes($failureMode, $expectedRules, $expectedErrors)
-    {
-        $this->markTestSkipped('Failure mode needs to be redesigned.');
-
-        $productData = $this->getFailureModeScenariopProductData();
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
-        $errors = [];
-        $engine = new Engine();
+        $exceptionHandler = new Exception\ExceptionCollectorHandler();
+        $engine = new Engine($exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
             $engine->execute(
                 $this->getContext($productValues),
-                $this->getFailureModeScenariopRules(),
-                $this->getAction($productName),
-                $failureMode
+                $rules,
+                $this->getAction($productName)
             );
-            $errors += $engine->getErrors();
         }
 
         $this->assertEquals($expectedRules, $this->matchingRules);
@@ -395,75 +384,9 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             function (\Exception $exception) {
                 return $exception->getMessage();
             },
-            $errors
+            $exceptionHandler->getExceptions()
         );
 
-        $this->assertEquals($expectedErrors, $errorMesgs, 'Engine errors were not as expected.');
-    }
-
-    /**
-     * @return array
-     */
-    public function sampleValuesFailureModeDataProvider()
-    {
-        $this->markTestSkipped('Failure mode needs to be redesigned.');
-
-        return [
-            'test engine failure' => [
-                'failureMode' => Engine::ON_ERROR_FAIL_ENGINE,
-                'expectedRules' => [
-                    'Product 1' => [],
-                    'Product 2' => [],
-                    'Product 3' => [],
-                ],
-                'expectedErrors' => [
-                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
-                    . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-                    . ': Variable "black" is not valid around position 10.',
-                ],
-            ],
-            'test context failure' => [
-                'failureMode' => Engine::ON_ERROR_FAIL_CONTEXT,
-                'expectedRules' => [
-                    'Product 1' => [1],
-                    'Product 2' => [],
-                    'Product 3' => [],
-                ],
-                'expectedErrors' => [
-                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
-                    . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-                    . ': Variable "black" is not valid around position 10.',
-
-                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
-                    . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-                    . ': Variable "black" is not valid around position 10.',
-
-                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
-                    . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-                    . ': Variable "black" is not valid around position 10.',
-                ],
-            ],
-            'test rule failure' => [
-                'failureMode' => Engine::ON_ERROR_FAIL_RULE,
-                'expectedRules' => [
-                    'Product 1' => ['Blue Products', 'Small, Blue Products'],
-                    'Product 2' => [],
-                    'Product 3' => ['Small, Blue Products'],
-                ],
-                'expectedErrors' => [
-                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
-                    . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-                    . ': Variable "black" is not valid around position 10.',
-
-                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
-                    . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-                    . ': Variable "black" is not valid around position 10.',
-
-                    'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
-                    . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-                    . ': Variable "black" is not valid around position 10.',
-                ],
-            ],
-        ];
+        $this->assertEquals($expectedExceptions, $errorMesgs, 'Engine exceptions were not as expected.');
     }
 }

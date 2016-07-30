@@ -4,6 +4,7 @@ namespace uuf6429\Rune;
 
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Exception\ContextRuleActionException;
 use uuf6429\Rune\Exception\ContextRuleException;
 use uuf6429\Rune\Exception\ExceptionHandlerInterface;
 use uuf6429\Rune\Exception\ExceptionPropagatorHandler;

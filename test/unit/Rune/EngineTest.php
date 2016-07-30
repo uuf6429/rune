@@ -84,6 +84,8 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         $expectedErrors,
         $expectedResult
     ) {
+        $this->markTestSkipped('Remove deprecated failure mode code.');
+
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
         $result = 0;
@@ -404,6 +406,8 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      */
     public function sampleValuesFailureModeDataProvider()
     {
+        $this->markTestSkipped('Failure mode needs to be redesigned.');
+
         return [
             'test engine failure' => [
                 'failureMode' => Engine::ON_ERROR_FAIL_ENGINE,

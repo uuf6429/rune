@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\Rune\Util;
+namespace uuf6429\Rune\Exception;
 
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\RuleInterface;

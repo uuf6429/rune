@@ -4,8 +4,8 @@ namespace uuf6429\Rune;
 
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Exception\ContextRuleException;
 use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\Util\ContextRuleException;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
 

@@ -11,7 +11,7 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
      * @param string $expectedCompileResult
      * @param mixed  $expectedExecuteResult
      * 
-     * @dataProvider testEvaluatorDataProvider
+     * @dataProvider evaluatorDataProvider
      */
     public function testEvaluator(
         $variables,
@@ -32,7 +32,7 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function testEvaluatorDataProvider()
+    public function evaluatorDataProvider()
     {
         return [
             'simple arithmetic' => [

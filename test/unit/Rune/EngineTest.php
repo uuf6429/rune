@@ -7,9 +7,9 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
+use uuf6429\Rune\Exception\ContextErrorException;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\Util\ContextErrorException;
 use uuf6429\Rune\Util\EvaluatorInterface;
 
 class EngineTest extends \PHPUnit_Framework_TestCase

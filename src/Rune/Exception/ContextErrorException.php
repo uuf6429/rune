@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\Rune\Util;
+namespace uuf6429\Rune\Exception;
 
 /**
  * Error Exception with Variable Context.

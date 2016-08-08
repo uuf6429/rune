@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'failureMode' => 2,
     'rules' => [
         ['Red Products', 'product.colour == String.lower("Red")'],
         ['Red Socks', 'product.colour == "red" and product.category.in("Socks")'],

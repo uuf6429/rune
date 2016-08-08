@@ -89,7 +89,7 @@
                 </div>
                 &nbsp;
                 <div class="row">
-                    <div class="col-md-8 text-center">
+                    <div class="text-center">
                         <input type="submit" class="btn btn-primary btn-lg" value="Execute"/>
                         <a class="btn btn-link" href="<?php echo APP_ROOT; ?>">Reset Changes</a>
                     </div>

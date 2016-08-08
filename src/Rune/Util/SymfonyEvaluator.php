@@ -2,6 +2,8 @@
 
 namespace uuf6429\Rune\Util;
 
+use uuf6429\Rune\Exception\ContextErrorException;
+
 class SymfonyEvaluator implements EvaluatorInterface
 {
     /**

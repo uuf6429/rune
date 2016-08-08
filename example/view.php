@@ -1,7 +1,6 @@
 <?php
 /**
  * @var string APP_ROOT
- * @var int    $failureMode
  * @var string $json_tokens
  * @var string $json_categories
  * @var string $json_products
@@ -90,17 +89,7 @@
                 </div>
                 &nbsp;
                 <div class="row">
-                    <div class="col-md-4 form-group-sm form-inline">
-                        <label class="control-label" for="failureMode">Failure Level:&nbsp;</label>
-                        <select class="form-control " name="failureMode"><?php
-                            foreach ([3 => 'Engine', 2 => 'Context', 1 => 'Rule'] as $i => $text) {
-                                echo '<option value="' . $i . '"'
-                                        . ($i == $failureMode ? ' selected="selected"' : '') .
-                                    '>' . $text . '</option>';
-                            }
-                        ?></select>
-                    </div>
-                    <div class="col-md-8 text-center">
+                    <div class="text-center">
                         <input type="submit" class="btn btn-primary btn-lg" value="Execute"/>
                         <a class="btn btn-link" href="<?php echo APP_ROOT; ?>">Reset Changes</a>
                     </div>

@@ -51,8 +51,6 @@ $data = array_merge(
     )
 );
 
-$failureMode = $data['failureMode'];
-
 $rules = array_map(
     function ($index, $data) {
         return new Rune\Rule\GenericRule($index + 1, $data[0], $data[1]);
@@ -83,8 +81,8 @@ $products = array_map(
     $data['products']
 );
 
-$errors = [];
-$engine = new Rune\Engine();
+$exceptionHandler = new Rune\Exception\ExceptionCollectorHandler();
+$engine = new Rune\Engine($exceptionHandler);
 $action = new Action\PrintAction();
 $context = new Context\ProductContext();
 $descriptor = $context->getContextDescriptor();
@@ -112,11 +110,10 @@ foreach ($rules as $rule) {
 ob_start();
 foreach ($products as $product) {
     $context = new Context\ProductContext($product);
-    $engine->execute($context, $rules, $action, $data['failureMode']);
-    $errors += $engine->getErrors();
+    $engine->execute($context, $rules, $action);
 }
 $output_result = htmlspecialchars(ob_get_clean(), ENT_QUOTES);
-$output_errors = implode(PHP_EOL, $errors);
+$output_errors = implode(PHP_EOL, $exceptionHandler->getExceptions());
 
 // Provide some details use for dynamic editor
 $json_tokens = json_encode([

@@ -2,12 +2,16 @@
 
 namespace uuf6429\Rune\Action;
 
+use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Rule\RuleInterface;
+use uuf6429\Rune\Util\EvaluatorInterface;
+
 abstract class AbstractConfigurableAction implements ActionInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function execute($eval, $context, $rule)
+    final public function execute($eval, $context, $rule)
     {
         $configExpr = $this->getConfigExpression();
         $config = is_null($configExpr) ? [] : $eval->evaluate($configExpr);
@@ -15,6 +19,9 @@ abstract class AbstractConfigurableAction implements ActionInterface
     }
 
     /**
+     * Return an array of configuration name/expression pairs.
+     * You will receive the the value of the evaluated expressions later on in executeWithConfig().
+     *
      * @return array Array of [name => expression] pairs.
      */
     abstract protected function getConfigDefinition();
@@ -42,6 +49,7 @@ abstract class AbstractConfigurableAction implements ActionInterface
             if (trim($expression) === '') {
                 $expression = 'null';
             }
+
             $result[] = sprintf(
                 '%s: (%s)',
                 var_export($name, true),
@@ -50,7 +58,7 @@ abstract class AbstractConfigurableAction implements ActionInterface
         }
 
         return count($result)
-            ? ('{'.implode(', ', $result).'}')
+            ? ('{' . implode(', ', $result) . '}')
             : null;
     }
 }

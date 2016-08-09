@@ -2,12 +2,12 @@
 
 namespace uuf6429\Rune\Action;
 
-use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Context\ContextInterface;
-use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\Engine;
 use uuf6429\Rune\Context\DynamicContext;
+use uuf6429\Rune\Engine;
 use uuf6429\Rune\Rule\GenericRule;
+use uuf6429\Rune\Rule\RuleInterface;
+use uuf6429\Rune\Util\EvaluatorInterface;
 
 class AbstractConfigurableActionTest extends \PHPUnit_Framework_TestCase
 {
@@ -81,6 +81,7 @@ class AbstractConfigurableActionTest extends \PHPUnit_Framework_TestCase
                     '2' => 'c',
                     '6' => 'h',
                 ],
+                '$expectedException' => null,
             ],
             'strange config keys' => [
                 '$configDefinitions' => [
@@ -93,11 +94,15 @@ class AbstractConfigurableActionTest extends \PHPUnit_Framework_TestCase
                     "\n" => 'a newline',
                     'it\'s "gone"!' => 'some quotes',
                 ],
+                '$expectedException' => null,
             ],
         ];
     }
 
     /**
+     * @param array $configDefinitions
+     * @param array $expectedConfig
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject|ActionInterface
      */
     protected function getActionMock($configDefinitions, $expectedConfig)

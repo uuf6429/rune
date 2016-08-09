@@ -18,6 +18,12 @@ class DynamicContextDescriptorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $variables
+     * @param array $functions
+     * @param array $expectedVTI
+     * @param array $expectedFTI
+     * @param array $expectedDTI
+     *
      * @dataProvider typeInfoDataProvider
      */
     public function testTypeInfo($variables, $functions, $expectedVTI, $expectedFTI, $expectedDTI)

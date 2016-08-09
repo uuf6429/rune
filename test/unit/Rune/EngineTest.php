@@ -14,6 +14,8 @@ use uuf6429\Rune\Util\EvaluatorInterface;
 
 class EngineTest extends \PHPUnit_Framework_TestCase
 {
+    protected $matchingRules;
+
     /**
      * @param bool $withBrokenRules
      *
@@ -48,15 +50,15 @@ class EngineTest extends \PHPUnit_Framework_TestCase
     protected function getAction($productName)
     {
         return  new CallbackAction(
-                /**
-                 * @param EvaluatorInterface $eval,
-                 * @param ContextInterface   $context,
-                 * @param RuleInterface      $rule
-                 */
-                function ($eval, $context, $rule) use ($productName) {
-                    $this->matchingRules[$productName][] = $rule->getName();
-                }
-            );
+            /**
+             * @param EvaluatorInterface $eval,
+             * @param ContextInterface   $context,
+             * @param RuleInterface      $rule
+             */
+            function ($eval, $context, RuleInterface $rule) use ($productName) {
+                $this->matchingRules[$productName][] = $rule->getName();
+            }
+        );
     }
 
     /**
@@ -74,6 +76,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      * @param array $productData
      * @param array $expectedRules
      * @param array $expectedErrors
+     * @param int   $expectedResult
      * 
      * @dataProvider sampleValuesDataProvider
      */
@@ -380,14 +383,14 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedRules, $this->matchingRules);
 
-        $errorMesgs = array_map(
+        $errorMegs = array_map(
             function (\Exception $exception) {
                 return $exception->getMessage();
             },
             $exceptionHandler->getExceptions()
         );
 
-        $this->assertEquals($expectedExceptions, $errorMesgs, 'Engine exceptions were not as expected.');
+        $this->assertEquals($expectedExceptions, $errorMegs, 'Engine exceptions were not as expected.');
     }
 
     public function testRuleEngineSometimesFaultyAction()
@@ -423,7 +426,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                  * @param DynamicContext     $context,
                  * @param RuleInterface      $rule
                  */
-                function ($eval, $context, $rule) use ($productName, &$matchingRules) {
+                function ($eval, $context, RuleInterface $rule) use ($productName, &$matchingRules) {
                     if ($productName == 'Product 2') {
                         throw new \Exception("Exception thrown for $productName.");
                     }

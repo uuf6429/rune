@@ -30,7 +30,7 @@ class ExceptionHandlerInterfaceTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertNotNull($ex);
-        $this->assertRegexp('/' . $expectedMessageRegex . '/', $ex->getMessage());
+        $this->assertRegExp('/' . $expectedMessageRegex . '/', $ex->getMessage());
     }
 
     /**

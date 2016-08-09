@@ -20,7 +20,7 @@ abstract class AbstractConfigurableAction implements ActionInterface
 
     /**
      * Return an array of configuration name/expression pairs.
-     * You will receive the the value of the evaluated expressions later on in executeWithConfig().
+     * You will receive the value of the evaluated expressions later on in executeWithConfig().
      *
      * @return array Array of [name => expression] pairs.
      */

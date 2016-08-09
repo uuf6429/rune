@@ -66,7 +66,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
      *
      * @return TypeInfoMember[]
      */
-    protected function getMemeberTypeInfo($analyser)
+    protected function getMemberTypeInfo($analyser)
     {
         if ($this->memberTypeInfo === null) {
             $class = get_class($this->context);
@@ -91,7 +91,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
         $analyser = $analyser ?: new TypeAnalyser();
 
         return array_filter(
-            $this->getMemeberTypeInfo($analyser),
+            $this->getMemberTypeInfo($analyser),
             function (TypeInfoMember $member) {
                 return !$member->isCallable();
             }
@@ -106,7 +106,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
         $analyser = $analyser ?: new TypeAnalyser();
 
         return array_filter(
-            $this->getMemeberTypeInfo($analyser),
+            $this->getMemberTypeInfo($analyser),
             function (TypeInfoMember $member) {
                 return $member->isCallable();
             }

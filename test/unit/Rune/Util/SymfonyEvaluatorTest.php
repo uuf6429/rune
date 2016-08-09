@@ -11,7 +11,7 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
      * @param string $expectedCompileResult
      * @param mixed  $expectedExecuteResult
      * 
-     * @dataProvider testEvaluatorDataProvider
+     * @dataProvider evaluatorDataProvider
      */
     public function testEvaluator(
         $variables,
@@ -32,7 +32,7 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function testEvaluatorDataProvider()
+    public function evaluatorDataProvider()
     {
         return [
             'simple arithmetic' => [
@@ -49,7 +49,7 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
                 '$expectedCompileResult' => '(($a + ($b * 2)) + (round($c) * 3))',
                 '$expectedExecuteResult' => 2 + 6 + 15,
             ],
-            'string concatentation' => [
+            'string concatenation' => [
                 '$variables' => ['name' => 'Joe', 'age' => 12, 'weight' => 39230],
                 '$functions' => ['gramsToKilos' => function ($g) { return ($g / 1000) . 'kg'; }],
                 '$expression' => 'name ~ " was " ~ gramsToKilos(weight) ~ " when " ~ age ~ "."',

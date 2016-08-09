@@ -4,21 +4,20 @@ namespace uuf6429\Rune;
 
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Exception\ContextRuleActionException;
+use uuf6429\Rune\Exception\ContextRuleException;
+use uuf6429\Rune\Exception\ExceptionHandlerInterface;
+use uuf6429\Rune\Exception\ExceptionPropagatorHandler;
 use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\Util\ContextRuleException;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
 
 class Engine
 {
-    const ON_ERROR_FAIL_RULE = 1;
-    const ON_ERROR_FAIL_CONTEXT = 2;
-    const ON_ERROR_FAIL_ENGINE = 3;
-
     /**
-     * @var \Exception[]
+     * @var ExceptionHandlerInterface
      */
-    protected $errors;
+    protected $exceptionHandler;
 
     /**
      * @var EvaluatorInterface
@@ -26,84 +25,38 @@ class Engine
     protected $evaluator;
 
     /**
-     * @var int
+     * @param ExceptionHandlerInterface|null $exceptionHandler
+     * @param EvaluatorInterface|null        $evaluator
      */
-    protected $failMode;
-
-    /**
-     * @param EvaluatorInterface|null $evaluator
-     */
-    public function __construct($evaluator = null)
+    public function __construct($exceptionHandler = null, $evaluator = null)
     {
+        $this->exceptionHandler = $exceptionHandler ?: new ExceptionPropagatorHandler();
         $this->evaluator = $evaluator ?: new SymfonyEvaluator();
     }
 
     /**
-     * @param ContextInterface                  $context
-     * @param RuleInterface[]                   $rules
-     * @param ActionInterface|ActionInterface[] $actions
-     * @param int                               $failMode See ON_ERROR_FAIL_* constants.
+     * @param ContextInterface $context
+     * @param RuleInterface[]  $rules
+     * @param ActionInterface  $action
      * 
      * @return int|false
      */
-    public function execute($context, $rules, $actions, $failMode = self::ON_ERROR_FAIL_CONTEXT)
+    public function execute($context, $rules, $action)
     {
-        if (!is_array($actions)) {
-            $actions = [$actions];
-        }
-
-        $this->failMode = $failMode;
-
         $descriptor = $context->getContextDescriptor();
         $this->evaluator->setVariables($descriptor->getVariables());
         $this->evaluator->setFunctions($descriptor->getFunctions());
 
         $matchingRules = [];
-        $this->clearErrors();
 
-        try {
-            $this->findMatches($matchingRules, $context, $rules);
+        $this->findMatches($matchingRules, $context, $rules);
 
-            // TODO implement this some time in the future
-            //$this->validateMatches($matchingRules);
+        // TODO implement this some time in the future
+        //$this->validateMatches($matchingRules);
 
-            $this->executeActions($actions, $context, $matchingRules);
-        } catch (\Exception $ex) {
-            $this->addError($ex);
-
-            return false;
-        }
+        $this->executeActionForRules($action, $context, $matchingRules);
 
         return count($matchingRules);
-    }
-
-    /**
-     * @return \Exception[]
-     */
-    public function getErrors()
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasErrors()
-    {
-        return !empty($this->errors);
-    }
-
-    protected function clearErrors()
-    {
-        $this->errors = [];
-    }
-
-    /**
-     * @param \Exception $error
-     */
-    protected function addError(\Exception $error)
-    {
-        $this->errors[] = $error;
     }
 
     /**
@@ -113,72 +66,54 @@ class Engine
      */
     protected function findMatches(&$result, $context, $rules)
     {
-        try {
-            foreach ($rules as $rule) {
-                $this->findMatchesForContextRule($result, $context, $rule);
-            }
-        } catch (\Exception $ex) {
-            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
-                throw $ex;
-            } else {
-                $this->addError($ex);
+        foreach ($rules as $rule) {
+            try {
+                $this->findMatchesForContextRule($result, $rule);
+            } catch (\Exception $ex) {
+                $this->exceptionHandler->handle(
+                    new ContextRuleException($context, $rule, null, $ex)
+                );
             }
         }
     }
 
     /**
-     * @param RuleInterface[]  $result
-     * @param ContextInterface $context
-     * @param RuleInterface    $rule
+     * @param RuleInterface[] $result
+     * @param RuleInterface   $rule
      */
-    protected function findMatchesForContextRule(&$result, $context, $rule)
+    protected function findMatchesForContextRule(&$result, $rule)
     {
-        try {
-            $cond = $rule->getCondition();
-            $match = ($cond === '') ? true : $this->evaluator->evaluate($rule->getCondition());
+        $cond = $rule->getCondition();
+        $match = ($cond === '') ? true : $this->evaluator->evaluate($rule->getCondition());
 
-            if (!is_bool($match)) {
-                throw new \RuntimeException(sprintf(
-                    'The condition result for rule %s (%s) should be boolean, not %s.',
-                    $rule->getID(),
-                    $rule->getName(),
-                    gettype($match)
-                ));
-            }
+        if (!is_bool($match)) {
+            throw new \RuntimeException(sprintf(
+                'The condition result for rule %s (%s) should be boolean, not %s.',
+                $rule->getID(),
+                $rule->getName(),
+                gettype($match)
+            ));
+        }
 
-            if ($match) {
-                $result[] = $rule;
-            }
-        } catch (\Exception $ex) {
-            $ex = new ContextRuleException($context, $rule, null, $ex);
-
-            if ($this->failMode === self::ON_ERROR_FAIL_ENGINE
-                || $this->failMode === self::ON_ERROR_FAIL_CONTEXT) {
-                throw $ex;
-            } else {
-                $this->addError($ex);
-            }
+        if ($match) {
+            $result[] = $rule;
         }
     }
 
     /**
-     * @param ActionInterface[] $actions
-     * @param ContextInterface  $context
-     * @param RuleInterface[]   $rules
+     * @param ActionInterface  $action
+     * @param ContextInterface $context
+     * @param RuleInterface[]  $rules
      */
-    protected function executeActions($actions, $context, $rules)
+    protected function executeActionForRules($action, $context, $rules)
     {
         foreach ($rules as $rule) {
             try {
-                foreach ($actions as $action) {
-                    $action->execute($this->evaluator, $context, $rule);
-                }
+                $action->execute($this->evaluator, $context, $rule);
             } catch (\Exception $ex) {
-                if ($this->failMode === self::ON_ERROR_FAIL_ENGINE) {
-                    throw $ex;
-                } else {
-                    $this->addError(new ContextRuleException($context, $rule, null, $ex));
-                }
+                $this->exceptionHandler->handle(
+                    new ContextRuleActionException($context, $rule, $action, null, $ex)
+                );
             }
         }
     }

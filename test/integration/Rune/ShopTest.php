@@ -22,17 +22,20 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
         ]) . PHP_EOL);
 
-        $errors = [];
-        $engine = new Engine();
+        $exceptions = new Exception\ExceptionCollectorHandler();
+        $engine = new Engine($exceptions);
         $action = new Action\PrintAction();
 
         foreach ($this->getProducts() as $product) {
             $context = new Context\ProductContext($product);
             $engine->execute($context, $this->getRules(), $action);
-            $errors += $engine->getErrors();
         }
 
-        $this->assertSame('', implode(PHP_EOL, $errors), 'RuleEngine should not generate errors.');
+        $this->assertSame(
+            '',
+            implode(PHP_EOL, $exceptions->getExceptions()),
+            'RuleEngine should not generate errors.'
+        );
     }
 
     public function testExampleTypeInfo()

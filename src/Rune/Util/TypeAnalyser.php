@@ -164,6 +164,8 @@ class TypeAnalyser
 
     /**
      * @param string $propertyDef
+     *
+     * @return null|TypeInfoMember
      */
     protected function docBlockPropertyToTypeInfoMember($propertyDef)
     {
@@ -182,6 +184,8 @@ class TypeAnalyser
 
     /**
      * @param \ReflectionProperty $property
+     *
+     * @return TypeInfoMember
      */
     protected function propertyToTypeInfoMember(\ReflectionProperty $property)
     {
@@ -196,6 +200,8 @@ class TypeAnalyser
 
     /**
      * @param \ReflectionMethod $method
+     *
+     * @return TypeInfoMember|null
      */
     protected function methodToTypeInfoMember(\ReflectionMethod $method)
     {
@@ -269,6 +275,8 @@ class TypeAnalyser
 
     /**
      * @param string $name
+     *
+     * @return string
      */
     protected function handleType($name)
     {

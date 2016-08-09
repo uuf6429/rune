@@ -29,7 +29,7 @@ Installation
 The recommended and easiest way to install Rune is through [Composer](https://getcomposer.org/):
 
 ```bash
-composer require uuf6429/rune "~1.0"
+composer require uuf6429/rune "~2.0"
 ```
 
 Usage

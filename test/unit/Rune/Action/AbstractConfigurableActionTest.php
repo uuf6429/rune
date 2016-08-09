@@ -14,7 +14,7 @@ class AbstractConfigurableActionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $configDefinitions
      * @param array $expectedConfig
-     * @dataProvider testConfigurableActionScenarioDataProvider
+     * @dataProvider configurableActionScenarioDataProvider
      */
     public function testConfigurableActionScenario($configDefinitions, $expectedConfig)
     {
@@ -35,7 +35,7 @@ class AbstractConfigurableActionTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function testConfigurableActionScenarioDataProvider()
+    public function configurableActionScenarioDataProvider()
     {
         return [
             'no config' => [
@@ -86,12 +86,10 @@ class AbstractConfigurableActionTest extends \PHPUnit_Framework_TestCase
             'strange config keys' => [
                 '$configDefinitions' => [
                     ' ' => '"a space"',
-                    "\n" => '"a newline"',
                     'it\'s "gone"!' => '"some quotes"',
                 ],
                 '$expectedConfig' => [
                     ' ' => 'a space',
-                    "\n" => 'a newline',
                     'it\'s "gone"!' => 'some quotes',
                 ],
                 '$expectedException' => null,

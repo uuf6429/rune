@@ -1,9 +1,8 @@
-Rune
-====
+# Rune
 
 [![Build Status](https://travis-ci.org/uuf6429/rune.svg?branch=master)](https://travis-ci.org/uuf6429/rune)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/nice_r/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/rune/master/LICENSE)
 [![Coverage](https://codecov.io/gh/uuf6429/rune/branch/master/graph/badge.svg?token=Bu2nK2Kq77)](https://codecov.io/github/uuf6429/rune?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/uuf6429/rune/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/uuf6429/rune/?branch=master)
 [![Packagist](https://img.shields.io/packagist/v/uuf6429/Rune.svg)](https://packagist.org/packages/uuf6429/rune)
@@ -12,8 +11,7 @@ Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.
 
 This library is an implementation of a Business Rule Engine (a type of Business Process Automation software).
 
-Table Of Contents
------------------
+## Table Of Contents
 
 - [Rune](#rune)
   - [Table Of Contents](#table-of-contents)
@@ -23,8 +21,7 @@ Table Of Contents
   - [Screenshot](#screenshot)
   - [Example Code](#example-code)
 
-Installation
-------------
+## Installation
 
 The recommended and easiest way to install Rune is through [Composer](https://getcomposer.org/):
 
@@ -32,8 +29,7 @@ The recommended and easiest way to install Rune is through [Composer](https://ge
 composer require uuf6429/rune "~2.0"
 ```
 
-Usage
------
+## Usage
 
 The library is made up of several parts:
 
@@ -44,19 +40,16 @@ The library is made up of several parts:
   For complicated scenarios, you might want to extend the rule (by implementing [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)), otherwise [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php) should be enough.
 - RuleEngine - the object that connects the others together to function.
 
-Live Example
-------------
+## Live Example
 
 [Click here](http://192.237.167.233/rune-demo/) to try out the engine and interactive editor!
 
-Screenshot
-----------
+## Screenshot
 
 The following is a screen shot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
 ![Screenshot](http://i.imgur.com/YLFAwxI.png)
 
-Example Code
-------------
+## Example Code
 
 This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the rule engine.
 

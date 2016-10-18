@@ -1,18 +1,20 @@
 <?php
 
-namespace uuf6429\Rune\Model;
+namespace uuf6429\Rune\Util;
 
-/**
- * @deprecated 2.1.0 AbstractModel will be removed in the next major version.
- */
-class ModelTest extends \PHPUnit_Framework_TestCase
+class LazyPropertiesTest extends \PHPUnit_Framework_TestCase
 {
     public function testLazyLoad()
     {
-        /** @var AbstractModel $model */
-        $model = $this->getMockBuilder(AbstractModel::class)
-            ->setMethods(['getSomeVar'])
-            ->getMock();
+        $model = $this->getMockForTrait(
+            LazyProperties::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['getSomeVar']
+        );
 
         $model->expects($this->once())
             ->method('getSomeVar')
@@ -24,10 +26,7 @@ class ModelTest extends \PHPUnit_Framework_TestCase
 
     public function testBrokenLazyLoad()
     {
-        /** @var AbstractModel $model */
-        $model = $this->getMockBuilder(AbstractModel::class)
-            ->setMethods(null)
-            ->getMock();
+        $model = $this->getMockForTrait(LazyProperties::class);
 
         $this->setExpectedException(
             \RuntimeException::class,

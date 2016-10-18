@@ -2,9 +2,7 @@
 
 namespace uuf6429\Rune\example\Model;
 
-use uuf6429\Rune\Model\AbstractModel;
-
-class StringUtils extends AbstractModel
+class StringUtils
 {
     /**
      * Lowercases some text.

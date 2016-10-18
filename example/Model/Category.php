@@ -2,13 +2,15 @@
 
 namespace uuf6429\Rune\example\Model;
 
-use uuf6429\Rune\Model\AbstractModel;
+use uuf6429\Rune\Util\LazyProperties;
 
 /**
  * @property uuf6429\Rune\example\Model\Category $parent
  */
-class Category extends AbstractModel
+class Category
 {
+    use LazyProperties;
+
     /** @var int */
     public $id;
 

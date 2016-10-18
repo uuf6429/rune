@@ -57,7 +57,7 @@ This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/s
 namespace uuf6429\Rune;
 
 // A class whose instances will be available inside rule engine.
-class Product extends Model\AbstractModel
+class Product
 {
     /** @var string */
     public $name;

@@ -3,7 +3,7 @@
 namespace uuf6429\Rune;
 
 // A class whose instances will be available inside rule engine.
-class Product extends Model\AbstractModel
+class Product
 {
     /** @var string */
     public $name;

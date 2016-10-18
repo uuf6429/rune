@@ -29,7 +29,7 @@ class ContextRuleActionException extends ContextRuleException
                 '%s encountered while executing action %s for rule %s (%s) within %s%s',
                 (is_object($previous) ? get_class($previous) : 'Error'),
                 get_class($this->getAction()),
-                $rule->getID(),
+                $rule->getId(),
                 $rule->getName(),
                 get_class($context),
                 (is_object($previous) ? (': ' . $previous->getMessage()) : '')

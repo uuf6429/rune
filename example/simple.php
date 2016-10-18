@@ -52,7 +52,7 @@ $action = new Action\CallbackAction(
     function ($eval, ProductContext $context, $rule) {
         printf(
             'Rule %s triggered for %s %s<br/>',
-            $rule->getID(),
+            $rule->getId(),
             ucwords($context->product->colour),
             $context->product->name
         );

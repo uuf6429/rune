@@ -89,7 +89,7 @@ class Engine
         if (!is_bool($match)) {
             throw new \RuntimeException(sprintf(
                 'The condition result for rule %s (%s) should be boolean, not %s.',
-                $rule->getID(),
+                $rule->getId(),
                 $rule->getName(),
                 gettype($match)
             ));

@@ -34,7 +34,7 @@ class GenericRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getID()
+    public function getId()
     {
         return $this->id;
     }

@@ -7,7 +7,7 @@ interface RuleInterface
     /**
      * @return string
      */
-    public function getID();
+    public function getId();
 
     /**
      * @return string

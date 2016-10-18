@@ -32,7 +32,7 @@ class ContextRuleException extends \RuntimeException
             $message = sprintf(
                 '%s encountered while processing rule %s (%s) within %s%s',
                 (is_object($previous) ? get_class($previous) : 'Error'),
-                $this->getRule()->getID(),
+                $this->getRule()->getId(),
                 $this->getRule()->getName(),
                 get_class($this->getContext()),
                 (is_object($previous) ? (': ' . $previous->getMessage()) : '')

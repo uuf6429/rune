@@ -8,7 +8,7 @@ use uuf6429\Rune\example\Model\StringUtils;
 abstract class AbstractContext extends ClassContext
 {
     /**
-     * @var uuf6429\Rune\example\Model\StringUtils
+     * @var \uuf6429\Rune\example\Model\StringUtils
      */
     public $String;
 

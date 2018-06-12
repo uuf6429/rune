@@ -10,6 +10,7 @@ class ClassContextDescriptorTest extends \PHPUnit_Framework_TestCase
             \InvalidArgumentException::class,
             'Context must be or extends ClassContext.'
         );
+        /* @noinspection PhpParamsInspection */
         new ClassContextDescriptor(new \stdClass());
     }
 

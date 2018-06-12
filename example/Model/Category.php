@@ -5,7 +5,7 @@ namespace uuf6429\Rune\example\Model;
 use uuf6429\Rune\Util\LazyProperties;
 
 /**
- * @property uuf6429\Rune\example\Model\Category $parent
+ * @property \uuf6429\Rune\example\Model\Category $parent
  */
 class Category
 {
@@ -57,12 +57,14 @@ class Category
      */
     public function in($name)
     {
-        if (strtolower($this->name) == strtolower($name)) {
+        if (strtolower($this->name) === strtolower($name)) {
             return true;
-        } elseif ($this->parent !== null) {
-            return $this->parent->in($name);
-        } else {
-            return false;
         }
+
+        if ($this->parent !== null) {
+            return $this->parent->in($name);
+        }
+
+        return false;
     }
 }

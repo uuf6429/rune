@@ -4,7 +4,11 @@ namespace uuf6429\Rune;
 
 use uuf6429\Rune\example\Action;
 use uuf6429\Rune\example\Context;
+use uuf6429\Rune\example\Context\ProductContext;
 use uuf6429\Rune\example\Model;
+use uuf6429\Rune\example\Model\Category;
+use uuf6429\Rune\example\Model\Product;
+use uuf6429\Rune\example\Model\StringUtils;
 
 class ShopTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,8 +49,8 @@ class ShopTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'product' => new Util\TypeInfoMember('product', ['uuf6429\Rune\example\Model\Product']),
-                'String' => new Util\TypeInfoMember('String', ['uuf6429\Rune\example\Model\StringUtils']),
+                'product' => new Util\TypeInfoMember('product', [Product::class]),
+                'String' => new Util\TypeInfoMember('String', [StringUtils::class]),
             ],
             $descriptor->getVariableTypeInfo(),
             'Assert variable type information'
@@ -62,34 +66,34 @@ class ShopTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'uuf6429\Rune\example\Context\ProductContext' => new Util\TypeInfoClass(
-                    'uuf6429\Rune\example\Context\ProductContext',
+                ProductContext::class => new Util\TypeInfoClass(
+                    ProductContext::class,
                     [
-                        'product' => new Util\TypeInfoMember('product', ['uuf6429\Rune\example\Model\Product']),
+                        'product' => new Util\TypeInfoMember('product', [Product::class]),
                         'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
-                        'String' => new Util\TypeInfoMember('String', ['uuf6429\Rune\example\Model\StringUtils'], ''),
+                        'String' => new Util\TypeInfoMember('String', [StringUtils::class], ''),
                     ]
                 ),
-                'uuf6429\Rune\example\Model\Product' => new Util\TypeInfoClass(
-                    'uuf6429\Rune\example\Model\Product',
+                Product::class => new Util\TypeInfoClass(
+                    Product::class,
                     [
                         'id' => new Util\TypeInfoMember('id', ['integer']),
                         'name' => new Util\TypeInfoMember('name', ['string']),
                         'colour' => new Util\TypeInfoMember('colour', ['string']),
-                        'category' => new Util\TypeInfoMember('category', ['uuf6429\Rune\example\Model\Category']),
+                        'category' => new Util\TypeInfoMember('category', [Category::class]),
                     ]
                 ),
-                'uuf6429\Rune\example\Model\Category' => new Util\TypeInfoClass(
-                    'uuf6429\Rune\example\Model\Category',
+                Category::class => new Util\TypeInfoClass(
+                    Category::class,
                     [
                         'id' => new Util\TypeInfoMember('id', ['integer']),
                         'name' => new Util\TypeInfoMember('name', ['string']),
                         'in' => new Util\TypeInfoMember('in', ['method'], '<div class="cm-signature"><span class="type">bool</span> <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span>)</span></div>Returns true if category name or any of its parents are identical to $name.'),
-                        'parent' => new Util\TypeInfoMember('parent', ['uuf6429\Rune\example\Model\Category']),
+                        'parent' => new Util\TypeInfoMember('parent', [Category::class]),
                     ]
                 ),
-                'uuf6429\Rune\example\Model\StringUtils' => new Util\TypeInfoClass(
-                    'uuf6429\Rune\example\Model\StringUtils',
+                StringUtils::class => new Util\TypeInfoClass(
+                    StringUtils::class,
                     [
                         'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
                         'upper' => new Util\TypeInfoMember('upper', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Uppercases some text.'),
@@ -102,7 +106,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return GenericRule[]
+     * @return Rule\GenericRule[]
      */
     protected function getRules()
     {
@@ -117,7 +121,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Model\Product
+     * @return Model\Product[]
      */
     protected function getProducts()
     {
@@ -165,7 +169,7 @@ class ShopTest extends \PHPUnit_Framework_TestCase
     public function getCategory($id)
     {
         foreach ($this->getCategories() as $category) {
-            if ($category->id == $id) {
+            if ($category->id === $id) {
                 return $category;
             }
         }

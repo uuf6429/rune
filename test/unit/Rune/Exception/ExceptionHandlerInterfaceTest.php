@@ -5,7 +5,7 @@ namespace uuf6429\Rune\Exception;
 class ExceptionHandlerInterfaceTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @return ExceptionHandlerInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|ExceptionHandlerInterface
      */
     protected function getHandler()
     {
@@ -27,6 +27,7 @@ class ExceptionHandlerInterfaceTest extends \PHPUnit_Framework_TestCase
             $handler->handle($value);
         } catch (\TypeError $ex) {
         } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
         }
 
         $this->assertNotNull($ex);
@@ -42,28 +43,28 @@ class ExceptionHandlerInterfaceTest extends \PHPUnit_Framework_TestCase
             'number' => [
                 '$value' => 12345,
                 '$expectedMessage' => 'Argument 1 passed to '
-                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
                     . ' must be an instance of Exception,'
                     . '(.*?)int(.*?)given',
             ],
             'string' => [
                 '$value' => 'Exception',
                 '$expectedMessage' => 'Argument 1 passed to '
-                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
                     . ' must be an instance of Exception,'
                     . '(.*?)string given',
             ],
             'object' => [
                 '$value' => new \stdClass(),
                 '$expectedMessage' => 'Argument 1 passed to '
-                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
                     . ' must be an instance of Exception,'
                     . '(.*?)stdClass given',
             ],
             'array' => [
                 '$value' => [],
                 '$expectedMessage' => 'Argument 1 passed to '
-                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()')
+                    . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
                     . ' must be an instance of Exception,'
                     . '(.*?)array given',
             ],

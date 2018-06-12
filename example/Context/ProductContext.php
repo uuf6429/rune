@@ -5,12 +5,12 @@ namespace uuf6429\Rune\example\Context;
 class ProductContext extends AbstractContext
 {
     /**
-     * @var uuf6429\Rune\example\Model\Product
+     * @var \uuf6429\Rune\example\Model\Product
      */
     public $product;
 
     /**
-     * @param Product|null $product
+     * @param null|\uuf6429\Rune\example\Model\Product $product
      */
     public function __construct($product = null)
     {

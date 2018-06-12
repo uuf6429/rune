@@ -13,12 +13,12 @@ class DynamicContext implements ContextInterface
     /**
      * @var array<string,mixed>
      */
-    private $variables = [];
+    private $variables;
 
     /**
      * @var array<string,callable>
      */
-    private $functions = [];
+    private $functions;
 
     /**
      * @var DynamicContextDescriptor
@@ -29,7 +29,7 @@ class DynamicContext implements ContextInterface
      * @param array<string,mixed>    $variables
      * @param array<string,callable> $functions
      */
-    public function __construct($variables = [], $functions = [])
+    public function __construct(array $variables = [], array $functions = [])
     {
         $this->variables = $variables;
         $this->functions = $functions;

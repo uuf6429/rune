@@ -48,7 +48,7 @@ class SymfonyEvaluator implements EvaluatorInterface
      *
      * @throws \ErrorException
      */
-    public function errorToErrorException($code, $message, $file = 'unknown', $line = 0, $context = [])
+    public function errorToErrorException($code, $message, $file = 'unknown', $line = 0, array $context = [])
     {
         restore_error_handler();
         throw new ContextErrorException($message, 0, $code, $file, $line, $context);

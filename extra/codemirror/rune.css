@@ -8,28 +8,27 @@
     padding: 2px 8px;
 }
 
-.cm-cell {
-    br {
-        clear: both;
-    }
-    
-    label {
-        cursor: auto;
-        float: left;
-        margin-right: 4px;
-        font-size: 12px;
-        font-weight: bold;
-    }
-    
-    .cm-label {
-        line-height: 26px;
-    }
-    
-    .cm-notice {
-        line-height: 26px;
-        padding: 0 4px;
-    }
+.cm-cell br {
+    clear: both;
 }
+
+.cm-cell label {
+    cursor: auto;
+    float: left;
+    margin-right: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.cm-cell .cm-label {
+    line-height: 26px;
+}
+
+.cm-cell .cm-notice {
+    line-height: 26px;
+    padding: 0 4px;
+}
+
 
 .cm-s-explang span.cm-comment { color: #a86; }
 .cm-s-explang span.cm-keyword { line-height: 1em; font-weight: bold; color: #00f; }
@@ -54,23 +53,23 @@
 .cm-signature {
     font: 12px Consolas;
     margin: 6px;
-    
-    .type {
-        color: #693;
-    }
-    
-    .name {
-        color: #333;
-    }
-    
-    .args {
-        color: #369;
-    }
-    
-    .hint {
-        cursor: help;
-        border-bottom: 1px dotted #777;
-    }
+}
+
+.cm-signature .type {
+    color: #693;
+}
+
+.cm-signature .name {
+    color: #333;
+}
+
+.cm-signature .args {
+    color: #369;
+}
+
+.cm-signature .hint {
+    cursor: help;
+    border-bottom: 1px dotted #777;
 }
 
 .cm-hint-icon {

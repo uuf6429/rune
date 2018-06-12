@@ -6,12 +6,8 @@ use kamermans\Reflection\DocBlock;
 
 class TypeAnalyser
 {
-    protected $simpleTypes = [
+    protected static $simpleTypes = [
         'object', 'array', 'string', 'boolean', 'integer', 'double',
-    ];
-
-    protected $excludedMethods = [
-        '__construct', '__destruct', '__toString',
     ];
 
     /**
@@ -61,15 +57,15 @@ class TypeAnalyser
         $this->deep = $deep;
         $type = $this->normalise($type);
 
-        if ($type && !in_array($type, $this->simpleTypes) && !isset($this->types[$type])) {
+        if ($type && !isset($this->types[$type]) && !in_array($type, static::$simpleTypes, true)) {
             switch (true) {
-                case interface_exists($type):
-                case class_exists($type):
+                case @interface_exists($type):
+                case @class_exists($type):
                     $this->analyseClassOrInterface($type);
                     break;
 
-                case $type == 'callable':
-                case $type == 'resource':
+                case $type === 'callable':
+                case $type === 'resource':
                     break;
 
                 default:
@@ -296,6 +292,8 @@ class TypeAnalyser
      */
     protected function normalise($type)
     {
+        $type = ltrim($type, '\\');
+
         switch ($type) {
             case 'int':
                 return 'integer';

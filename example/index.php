@@ -23,7 +23,7 @@ defined('CDN_ROOT') || define('CDN_ROOT', '/../');
 if (in_array($_SERVER['SCRIPT_NAME'], [
     APP_ROOT . 'extra/codemirror/rune.js',
     APP_ROOT . 'extra/codemirror/rune.css',
-])) {
+], true)) {
     return false;
 }
 
@@ -31,8 +31,8 @@ if (in_array($_SERVER['SCRIPT_NAME'], [
 if (in_array($_SERVER['SCRIPT_NAME'], [
     APP_ROOT . 'simple',
     APP_ROOT . 'simple.php',
-])) {
-    return require_once 'simple.php';
+], true)) {
+    return require 'simple.php';
 }
 
 // load default data and override it with $_POST data (do some cleanup here)
@@ -42,15 +42,14 @@ $data = array_merge(
         function ($group) {
             return !is_array($group) ? $group : array_filter(
                 array_values($group),
-                function ($data) {
-                    return array_filter($data);
-                }
+                'array_filter'
             );
         },
         $_POST
     )
 );
 
+/** @var Rune\Rule\GenericRule[] $rules */
 $rules = array_map(
     function ($index, $data) {
         return new Rune\Rule\GenericRule($index + 1, $data[0], $data[1]);

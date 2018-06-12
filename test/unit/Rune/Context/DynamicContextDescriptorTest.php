@@ -14,6 +14,7 @@ class DynamicContextDescriptorTest extends \PHPUnit_Framework_TestCase
             \InvalidArgumentException::class,
             'Context must be or extends DynamicContext.'
         );
+        /* @noinspection PhpParamsInspection */
         new DynamicContextDescriptor(new \stdClass());
     }
 
@@ -62,12 +63,12 @@ class DynamicContextDescriptorTest extends \PHPUnit_Framework_TestCase
                 '$variables' => ['rule' => new GenericRule(0, '', '')],
                 '$functions' => [],
                 '$expectedVTI' => [
-                    'rule' => new TypeInfoMember('rule', ['uuf6429\Rune\Rule\GenericRule']),
+                    'rule' => new TypeInfoMember('rule', [GenericRule::class]),
                 ],
                 '$expectedFTI' => [],
                 '$expectedDTI' => [
-                    'uuf6429\Rune\Rule\GenericRule' => new TypeInfoClass(
-                        'uuf6429\Rune\Rule\GenericRule',
+                    GenericRule::class => new TypeInfoClass(
+                        GenericRule::class,
                         [
                             new TypeInfoMember('getId', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getId</span>(<span class="args"></span>)</span></div>'),
                             new TypeInfoMember('getName', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getName</span>(<span class="args"></span>)</span></div>'),

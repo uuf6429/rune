@@ -41,8 +41,8 @@ class ClassContextDescriptor extends AbstractContextDescriptor
         $names = array_filter(
             get_class_methods($this->context),
             function ($name) {
-                return substr($name, 0, 2) != '__'
-                    && $name != self::CONTEXT_DESCRIPTOR_METHOD;
+                return substr($name, 0, 2) !== '__'
+                    && $name !== self::CONTEXT_DESCRIPTOR_METHOD;
             }
         );
 
@@ -75,7 +75,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
             $this->memberTypeInfo = array_filter(
                 isset($types[$class]) ? $types[$class]->members : [],
                 function (TypeInfoMember $member) {
-                    return $member->name != self::CONTEXT_DESCRIPTOR_METHOD;
+                    return $member->getName() !== self::CONTEXT_DESCRIPTOR_METHOD;
                 }
             );
         }

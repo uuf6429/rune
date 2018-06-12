@@ -2,27 +2,27 @@
 
 namespace uuf6429\Rune\Util;
 
-class TypeInfoMember
+class TypeInfoMember implements \JsonSerializable
 {
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string[]
      */
-    public $types;
+    protected $types;
 
     /**
      * @var string
      */
-    public $hint;
+    protected $hint;
 
     /**
      * @var string
      */
-    public $link;
+    protected $link;
 
     /**
      * @param string   $name
@@ -30,12 +30,44 @@ class TypeInfoMember
      * @param string   $hint
      * @param string   $link
      */
-    public function __construct($name, $types, $hint = '', $link = '')
+    public function __construct($name, array $types = [], $hint = '', $link = '')
     {
         $this->name = $name;
         $this->types = $types;
         $this->hint = $hint;
         $this->link = $link;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public function getTypes()
+    {
+        return $this->types;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHint()
+    {
+        return $this->hint;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLink()
+    {
+        return $this->link;
     }
 
     /**
@@ -47,5 +79,18 @@ class TypeInfoMember
         static $callableTypes = ['callable', 'Closure', 'method'];
 
         return !empty(array_intersect($this->types, $callableTypes));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'types' => $this->types,
+            'hint' => $this->hint,
+            'link' => $this->link,
+        ];
     }
 }

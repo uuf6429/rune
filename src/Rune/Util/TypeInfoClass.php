@@ -30,14 +30,14 @@ class TypeInfoClass
      * @param string           $hint
      * @param string           $link
      */
-    public function __construct($name, $members = [], $hint = '', $link = '')
+    public function __construct($name, array $members = [], $hint = '', $link = '')
     {
         $this->name = $name;
         $this->hint = $hint;
         $this->link = $link;
 
         foreach ($members as $member) {
-            $this->members[$member->name] = $member;
+            $this->members[$member->getName()] = $member;
         }
     }
 }

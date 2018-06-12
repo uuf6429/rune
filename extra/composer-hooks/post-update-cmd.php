@@ -8,7 +8,7 @@ $trgt_exists = file_exists($file_trgt);
 $can_install = !$trgt_exists || strpos(file_get_contents($file_trgt), $file_head) !== false;
 
 if ($can_install) {
-    if ($trgt_exists && (file_get_contents($file_srsc) == file_get_contents($file_trgt))) {
+    if ($trgt_exists && (file_get_contents($file_srsc) === file_get_contents($file_trgt))) {
         echo 'Pre-commit hook already up-to-date.' . PHP_EOL;
     } else {
         echo 'Installing pre-commit hook...' . PHP_EOL;

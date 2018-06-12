@@ -6,8 +6,13 @@ class CallbackActionTest extends \PHPUnit_Framework_TestCase
 {
     public function testFunctionIsCalled()
     {
+        if (!function_exists('create_function')) {
+            $this->markTestSkipped('"create_function" is not supported in this PHP version and therefore will not be tested.');
+        }
+
         $GLOBALS['called'] = false;
 
+        /* @noinspection PhpDeprecationInspection */
         $callback = create_function('', '$GLOBALS["called"] = true;');
         $action = new CallbackAction($callback);
         $action->execute(null, null, null);

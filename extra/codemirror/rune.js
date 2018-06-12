@@ -177,7 +177,7 @@
         $elements: null,
 
         escapeRegExp: function(str) {
-            return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+            return str.replace(/[\-\[\]\/{}()*+?.\\^$|]/g, '\\$&');
         },
 
         initialize: function(mode) {
@@ -236,7 +236,7 @@
         initHighlightMode: function(mode) {
             var me = this;
             var errorState = {
-                regex: /[\.\w]+/,
+                regex: /[.\w]+/,
                 token: 'error',
                 next: 'start'
             };
@@ -256,7 +256,7 @@
                     },
                     // brackets
                     {
-                        regex: /[\{\[\(\}\]\)]/,
+                        regex: /[{\[(}\])]/,
                         token: 'bracket'
                     }
                 ],
@@ -368,7 +368,7 @@
                     list = [];
 
                 while (end && /[\w]+/.test(curLine.charAt(end + 1))) ++end;
-                while (start && /[\w\.]+/.test(curLine.charAt(start - 1))) --start;
+                while (start && /[\w.]+/.test(curLine.charAt(start - 1))) --start;
                 while (offset_start && /[\w]+/.test(curLine.charAt(offset_start - 1))) --offset_start;
 
                 var curWord = (start !== end && curLine.slice(start, offset_end)) || '',

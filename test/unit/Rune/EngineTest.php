@@ -427,7 +427,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                  * @param RuleInterface      $rule
                  */
                 function ($eval, $context, RuleInterface $rule) use ($productName, &$matchingRules) {
-                    if ($productName == 'Product 2') {
+                    if ($productName === 'Product 2') {
                         throw new \Exception("Exception thrown for $productName.");
                     }
 

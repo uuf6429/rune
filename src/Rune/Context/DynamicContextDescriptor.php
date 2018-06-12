@@ -74,10 +74,11 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     {
         $analyser = $analyser ?: new TypeAnalyser();
 
-        $members = $this->getVariableTypeInfo($analyser) + $this->getFunctionTypeInfo($analyser);
+        /** @var TypeInfoMember[] $members */
+        $members = array_merge($this->getVariableTypeInfo($analyser), $this->getFunctionTypeInfo($analyser));
 
         foreach ($members as $member) {
-            $analyser->analyse($member->types);
+            $analyser->analyse($member->getTypes());
         }
 
         return $analyser->getTypes();

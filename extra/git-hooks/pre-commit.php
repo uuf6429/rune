@@ -22,7 +22,7 @@ echo 'Checking files...' . PHP_EOL;
 foreach ((array) $output as $i => $file) {
     $fileName = trim(substr($file, 1));
 
-    if (substr($fileName, -4) == '.php') {
+    if (substr($fileName, -4) === '.php') {
         $lint_output = [];
         exec('php -l ' . escapeshellarg($fileName), $lint_output, $return);
 

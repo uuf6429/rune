@@ -6,6 +6,8 @@ class ExceptionPropagatorHandler implements ExceptionHandlerInterface
 {
     /**
      * {@inheritdoc}
+     *
+     * @throws \Exception|\Throwable
      */
     public function handle(\Exception $exception)
     {

@@ -5,11 +5,16 @@ namespace uuf6429\Rune\Util;
 /**
  * This trait will delay loading of properties, helping in performance. Usage:
  * 1. Use the trait in your class. :)
- * 2. Add @property to class PHPDoc for your lazy properties.
+ * 2. Add '@property' to class PHPDoc for your lazy properties.
  * 3. Add getter methods that initialize and return the actual property value.
  */
 trait LazyProperties
 {
+    /**
+     * @var bool
+     */
+    private $readonlyLock = true;
+
     /**
      * @param string $name
      *
@@ -29,8 +34,43 @@ trait LazyProperties
         }
 
         $result = $this->$method();
-        $this->$name = $result;
+        try {
+            $this->readonlyLock = false;
+            $this->$name = $result;
+        } finally {
+            $this->readonlyLock = true;
+        }
 
         return $result;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed  $value
+     */
+    public function __set($name, $value)
+    {
+        if ($this->readonlyLock) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Property %s in class %s is read only and cannot be set.',
+                    $name, get_class($this)
+                )
+            );
+        }
+
+        $this->$name = $value;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        $method = 'get' . ucfirst($name);
+
+        return method_exists($this, $method) && $this->__get($name) !== null;
     }
 }

@@ -47,11 +47,27 @@ class TypeInfoMember implements \JsonSerializable
     }
 
     /**
+     * @return bool
+     */
+    public function hasTypes()
+    {
+        return (bool) count($this->types);
+    }
+
+    /**
      * @return array|string[]
      */
     public function getTypes()
     {
         return $this->types;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasHint()
+    {
+        return (bool) $this->hint;
     }
 
     /**

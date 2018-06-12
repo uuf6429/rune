@@ -90,7 +90,7 @@ class Engine
     protected function findMatchesForContextRule(&$result, $rule)
     {
         $cond = $rule->getCondition();
-        $match = ($cond === '') ? true : $this->evaluator->evaluate($rule->getCondition());
+        $match = ($cond === '') ?: $this->evaluator->evaluate($rule->getCondition());
 
         if (!is_bool($match)) {
             throw new \RuntimeException(sprintf(

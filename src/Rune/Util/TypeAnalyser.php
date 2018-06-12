@@ -100,7 +100,7 @@ class TypeAnalyser
         $members = array_filter(
             array_merge(
                 array_map(
-                    [$this, 'docBlockPropertyToTypeInfoMember'],
+                    [$this, 'parseDocBlockPropOrParam'],
                     $docb->getTag('property', [], true)
                 ),
                 array_map(
@@ -120,26 +120,30 @@ class TypeAnalyser
     /**
      * @param string $line
      *
-     * @return array|null array with keys 'name', 'types', 'hint' OR null if not applicable
+     * @return null|TypeInfoMember
      */
     protected function parseDocBlockPropOrParam($line)
     {
-        $result = null;
         $regex = '/^([\\w\\|\\\\]+)\\s+(\\$\\w+)\\s*(.*)$/';
         if (preg_match($regex, trim($line), $result)) {
             $types = explode('|', $result[1]);
             $types = array_filter(array_map([$this, 'handleType'], $types));
 
-            $result = [
-                'name' => substr($result[2], 1),
-                'types' => $types,
-                'hint' => $result[3],
-            ];
+            return new TypeInfoMember(
+                substr($result[2], 1),
+                $types,
+                $result[3]
+            );
         }
 
-        return $result;
+        return null;
     }
 
+    /**
+     * @param \ReflectionParameter $param
+     *
+     * @return null|TypeInfoMember
+     */
     protected function parseReflectedParams(\ReflectionParameter $param)
     {
         $types = [];
@@ -151,31 +155,11 @@ class TypeAnalyser
             }
         }
 
-        return [
-            'name' => $param->getName(),
-            'types' => $types,
-            'hint' => '',
-        ];
-    }
-
-    /**
-     * @param string $propertyDef
-     *
-     * @return null|TypeInfoMember
-     */
-    protected function docBlockPropertyToTypeInfoMember($propertyDef)
-    {
-        $result = $this->parseDocBlockPropOrParam($propertyDef);
-
-        if ($result) {
-            $result = new TypeInfoMember(
-                $result['name'],
-                $result['types'],
-                $result['hint']
-            );
-        }
-
-        return $result;
+        return new TypeInfoMember(
+            $param->getName(),
+            $types,
+            ''
+        );
     }
 
     /**
@@ -202,7 +186,7 @@ class TypeAnalyser
     protected function methodToTypeInfoMember(\ReflectionMethod $method)
     {
         if (substr($method->name, 0, 2) === '__') {
-            return;
+            return null;
         }
 
         $docb = new DocBlock($method);
@@ -246,16 +230,16 @@ class TypeAnalyser
             implode(
                 ', ',
                 array_map(
-                    function ($param) {
+                    function (TypeInfoMember $param) {
                         $result = '???';
 
                         if ($param) {
                             $result = sprintf(
                                 '<span class="%s" title="%s"><span class="type">%s</span>$%s</span>',
-                                $param['hint'] ? 'arg hint' : 'arg',
-                                $param['hint'],
-                                count($param['types']) ? (implode('|', $param['types']) . ' ') : '',
-                                $param['name']
+                                $param->hasHint() ? 'arg hint' : 'arg',
+                                $param->getHint(),
+                                $param->hasTypes() ? (implode('|', $param->getTypes()) . ' ') : '',
+                                $param->getName()
                             );
                         }
 
@@ -292,29 +276,19 @@ class TypeAnalyser
      */
     protected function normalise($type)
     {
+        static $typeMap = [
+            'int' => 'integer',
+            'float' => 'double',
+            'decimal' => 'double',
+            'bool' => 'boolean',
+            'stdClass' => 'object',
+            'mixed' => '',
+            'resource' => '',
+        ];
+
         $type = ltrim($type, '\\');
 
-        switch ($type) {
-            case 'int':
-                return 'integer';
-
-            case 'float':
-            case 'decimal':
-                return 'double';
-
-            case 'bool':
-                return 'boolean';
-
-            case 'stdClass':
-                return 'object';
-
-            case 'mixed':
-            case 'resource':
-                return '';
-
-            default:
-                return $type;
-        }
+        return isset($typeMap[$type]) ? $typeMap[$type] : $type;
     }
 
     /**

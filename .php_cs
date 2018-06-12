@@ -7,6 +7,7 @@ return PhpCsFixer\Config::create()
         'array_syntax' => ['syntax' => 'short'],
         'blank_line_after_opening_tag' => true,
         'concat_space' => ['spacing' => 'one'],
+        'no_null_property_initialization' => true,
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'protected_to_private' => false,
         'yoda_style' => false,

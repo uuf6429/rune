@@ -174,6 +174,6 @@ class ShopTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        return;
+        return null;
     }
 }

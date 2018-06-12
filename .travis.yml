@@ -32,6 +32,7 @@ addons:
       - Major-refactor
 
 install:
+  - composer remove "friendsofphp/php-cs-fixer" --dev --no-interaction
   - composer install --no-scripts --no-progress --no-interaction
 
 script:

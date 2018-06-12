@@ -77,7 +77,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
      * @param array $expectedRules
      * @param array $expectedErrors
      * @param int   $expectedResult
-     * 
+     *
      * @dataProvider sampleValuesDataProvider
      */
     public function testRuleEngine(
@@ -316,7 +316,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
                     SyntaxError::class . ' encountered while processing rule 6 '
                     . '(Bad Rule - Syntax Error) within ' . DynamicContext::class
-                    . ': Unexpected character "=" around position 5.',
+                    . ': Unexpected character "=" around position 5 for expression `SIZE =  = "hm`.',
 
                     RuntimeException::class . ' encountered while processing rule 7 '
                     . '(Bad Rule - Property on a Non-Object) within ' . DynamicContext::class
@@ -357,15 +357,15 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         $expectedExceptions = [
             'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
             . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-            . ': Variable "black" is not valid around position 10.',
+            . ': Variable "black" is not valid around position 10 for expression `COLOR == black`.',
 
             'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
             . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-            . ': Variable "black" is not valid around position 10.',
+            . ': Variable "black" is not valid around position 10 for expression `COLOR == black`.',
 
             'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
             . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
-            . ': Variable "black" is not valid around position 10.',
+            . ': Variable "black" is not valid around position 10 for expression `COLOR == black`.',
         ];
 
         $this->matchingRules = array_fill_keys(array_keys($productData), []);

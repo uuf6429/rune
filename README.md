@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/uuf6429/rune.svg?branch=master)](https://travis-ci.org/uuf6429/rune)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/rune/master/LICENSE)
-[![Coverage](https://codecov.io/gh/uuf6429/rune/branch/master/graph/badge.svg?token=Bu2nK2Kq77)](https://codecov.io/github/uuf6429/rune?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/uuf6429/rune/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/uuf6429/rune/?branch=master)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=coverage)](https://sonarcloud.io/component_measures?id=Rune&metric=new_coverage)
+[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Rune)
 [![Packagist](https://img.shields.io/packagist/v/uuf6429/Rune.svg)](https://packagist.org/packages/uuf6429/rune)
 
 Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.

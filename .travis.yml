@@ -7,17 +7,49 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 5.5
   - 5.6
   - 7.0
   - 7.1
   - 7.2
   - hhvm
+  - nightly
 
-install: composer update --prefer-dist
+matrix:
+  allow_failures:
+    - php: hhvm
+    - php: nightly
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+addons:
+  sonarcloud:
+    organization: uuf6429-github
+    token: $SONAR_TOKEN
+    branches:
+      - master
+      - Major-refactor
+
+install:
+  - composer install --no-scripts --no-progress --no-interaction
 
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.xml
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash) -t 7f9174e9-a953-4631-b0d3-e1388fe1620f
+  - |
+    ./vendor/bin/phpunit \
+      --log-junit junit.xml \
+      --coverage-clover clover.xml \
+      --configuration phpunit.xml.dist
+  - |
+    [ "$TRAVIS_PHP_VERSION" != "hhvm" ] \
+    && [ "$TRAVIS_PHP_VERSION" != "nightly" ] \
+    && sonar-scanner \
+      "-Dsonar.projectVersion=$(git describe --tags)_PHP-$TRAVIS_PHP_VERSION" \
+      "-Dsonar.projectKey=Rune" \
+      "-Dsonar.projectName=Rune" \
+      "-Dsonar.projectKey=Rune" \
+      "-Dsonar.php.tests.reportPath=junit.xml" \
+      "-Dsonar.php.coverage.reportPaths=clover.xml" \
+      "-Dsonar.sources=src" \
+      "-Dsonar.tests=test" \
+    || true

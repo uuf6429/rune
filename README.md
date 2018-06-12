@@ -1,7 +1,7 @@
 # Rune
 
 [![Build Status](https://travis-ci.org/uuf6429/rune.svg?branch=master)](https://travis-ci.org/uuf6429/rune)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/rune/master/LICENSE)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=coverage)](https://sonarcloud.io/component_measures?id=Rune&metric=new_coverage)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Rune)

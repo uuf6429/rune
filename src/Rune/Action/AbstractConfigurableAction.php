@@ -22,17 +22,17 @@ abstract class AbstractConfigurableAction implements ActionInterface
      * Return an array of configuration name/expression pairs.
      * You will receive the value of the evaluated expressions later on in executeWithConfig().
      *
-     * @return array Array of [name => expression] pairs.
+     * @return array array of [name => expression] pairs
      */
     abstract protected function getConfigDefinition();
 
     /**
      * Do whatever you want here.
      *
-     * @param EvaluatorInterface $eval    Evaluator instance.
-     * @param ContextInterface   $context The current context.
-     * @param RuleInterface      $rule    The rule that triggered this action.
-     * @param array              $config  Array of [name => value] pairs.
+     * @param EvaluatorInterface $eval    evaluator instance
+     * @param ContextInterface   $context the current context
+     * @param RuleInterface      $rule    the rule that triggered this action
+     * @param array              $config  array of [name => value] pairs
      */
     abstract protected function executeWithConfig($eval, $context, $rule, $config);
 

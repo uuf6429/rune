@@ -3,7 +3,7 @@
 
 // Warning! This file is updated automatically.
 // If you change it, your changes may be lost in the future.
-// 
+//
 // - To have your own pre-commit file, create a separate file called "pre-commit-inc"
 // - To completely override this mechanism, create a normal pre-commit file without
 //   this comment.
@@ -28,7 +28,7 @@ foreach ((array) $output as $i => $file) {
 
         if ($return === 0) {
             echo '[' . str_pad($i + 1, $l, ' ', STR_PAD_LEFT) . '/' . $c . '] ' . $fileName . ' .';
-            exec($pcfp . ' fix ' . escapeshellarg($fileName) . ' --config-file=' . escapeshellarg($pcfpcfg));
+            exec($pcfp . ' fix ' . escapeshellarg($fileName) . ' --config=' . escapeshellarg($pcfpcfg));
             echo '.';
             exec('git add ' . escapeshellarg($fileName));
             echo '.' . PHP_EOL;

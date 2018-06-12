@@ -24,7 +24,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
      */
     public function __construct($context)
     {
-        if (!($context instanceof ClassContext)) {
+        if (!$context instanceof ClassContext) {
             throw new \InvalidArgumentException('Context must be or extends ClassContext.');
         }
 

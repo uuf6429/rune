@@ -19,7 +19,7 @@ class TypeAnalyser
 
     /**
      * Enables deep analysis (recursively analyses class members and their types).
-     * 
+     *
      * @var bool
      */
     protected $deep = false;
@@ -120,7 +120,7 @@ class TypeAnalyser
     /**
      * @param string $line
      *
-     * @return array|null Array with keys 'name', 'types', 'hint' OR null if not applicable.
+     * @return array|null array with keys 'name', 'types', 'hint' OR null if not applicable
      */
     protected function parseDocBlockPropOrParam($line)
     {

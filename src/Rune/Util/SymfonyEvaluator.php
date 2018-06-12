@@ -38,7 +38,7 @@ class SymfonyEvaluator implements EvaluatorInterface
     }
 
     /**
-     * @internal This method should not be called directly.
+     * @internal this method should not be called directly
      *
      * @param int    $code
      * @param string $message

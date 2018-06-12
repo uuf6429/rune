@@ -31,7 +31,7 @@ class Product
      * @param string   $name
      * @param string   $colour
      * @param int      $categoryId
-     * @param callable $categoryProvider Returns category given $id as first param.
+     * @param callable $categoryProvider returns category given $id as first param
      */
     public function __construct($id, $name, $colour, $categoryId, $categoryProvider)
     {

@@ -10,7 +10,7 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
      * @param string $expression
      * @param string $expectedCompileResult
      * @param mixed  $expectedExecuteResult
-     * 
+     *
      * @dataProvider evaluatorDataProvider
      */
     public function testEvaluator(
@@ -56,7 +56,6 @@ class SymfonyEvaluatorTest extends \PHPUnit_Framework_TestCase
                 '$expectedCompileResult' => '((((($name . " was ") . gramsToKilos($weight)) . " when ") . $age) . ".")',
                 '$expectedExecuteResult' => 'Joe was 39.23kg when 12.',
             ],
-
         ];
     }
 }

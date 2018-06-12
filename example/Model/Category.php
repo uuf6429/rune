@@ -27,7 +27,7 @@ class Category
      * @param int      $id
      * @param string   $name
      * @param int      $parentId
-     * @param callable $categoryProvider Returns category given $id as first param.
+     * @param callable $categoryProvider returns category given $id as first param
      */
     public function __construct($id, $name, $parentId, $categoryProvider)
     {

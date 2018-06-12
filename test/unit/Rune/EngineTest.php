@@ -409,7 +409,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
             'Product 3' => ['Always triggered'],
         ];
         $expectedExceptions = [
-            'Exception encountered while executing action ' . CallbackAction::class
+            'LogicException encountered while executing action ' . CallbackAction::class
                 . ' for rule 1 (Always triggered) within ' . DynamicContext::class
                 . ': Exception thrown for Product 2.',
         ];
@@ -428,7 +428,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
                  */
                 function ($eval, $context, RuleInterface $rule) use ($productName, &$matchingRules) {
                     if ($productName === 'Product 2') {
-                        throw new \Exception("Exception thrown for $productName.");
+                        throw new \LogicException("Exception thrown for $productName.");
                     }
 
                     $matchingRules[$productName][] = $rule->getName();

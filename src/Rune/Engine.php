@@ -38,7 +38,7 @@ class Engine
      * @param ContextInterface $context
      * @param RuleInterface[]  $rules
      * @param ActionInterface  $action
-     * 
+     *
      * @return int|false
      */
     public function execute($context, $rules, $action)
@@ -63,6 +63,8 @@ class Engine
      * @param RuleInterface[]  $result
      * @param ContextInterface $context
      * @param RuleInterface[]  $rules
+     *
+     * @throws
      */
     protected function findMatches(&$result, $context, $rules)
     {
@@ -70,6 +72,10 @@ class Engine
             try {
                 $this->findMatchesForContextRule($result, $rule);
             } catch (\Exception $ex) {
+                $this->exceptionHandler->handle(
+                    new ContextRuleException($context, $rule, null, $ex)
+                );
+            } catch (\Throwable $ex) {
                 $this->exceptionHandler->handle(
                     new ContextRuleException($context, $rule, null, $ex)
                 );
@@ -104,6 +110,8 @@ class Engine
      * @param ActionInterface  $action
      * @param ContextInterface $context
      * @param RuleInterface[]  $rules
+     *
+     * @throws
      */
     protected function executeActionForRules($action, $context, $rules)
     {
@@ -111,6 +119,10 @@ class Engine
             try {
                 $action->execute($this->evaluator, $context, $rule);
             } catch (\Exception $ex) {
+                $this->exceptionHandler->handle(
+                    new ContextRuleActionException($context, $rule, $action, null, $ex)
+                );
+            } catch (\Throwable $ex) {
                 $this->exceptionHandler->handle(
                     new ContextRuleActionException($context, $rule, $action, null, $ex)
                 );

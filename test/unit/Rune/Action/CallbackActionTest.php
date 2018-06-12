@@ -6,7 +6,7 @@ class CallbackActionTest extends \PHPUnit_Framework_TestCase
 {
     public function testFunctionIsCalled()
     {
-        if (!function_exists('create_function')) {
+        if (version_compare(PHP_VERSION, '7.1') >= 0) {
             $this->markTestSkipped('"create_function" is not supported in this PHP version and therefore will not be tested.');
         }
 

@@ -2,7 +2,9 @@
 
 namespace uuf6429\Rune\Util;
 
-class LazyPropertiesTest extends \PHPUnit_Framework_TestCase
+use uuf6429\Rune\TestCase;
+
+class LazyPropertiesTest extends TestCase
 {
     public function testLazyLoad()
     {
@@ -28,8 +30,8 @@ class LazyPropertiesTest extends \PHPUnit_Framework_TestCase
     {
         $model = $this->getMockForTrait(LazyProperties::class);
 
-        $this->setExpectedException(
-            \RuntimeException::class,
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(
             sprintf(
                 'Missing property %s and method %s in class %s.',
                 'someVar', 'getSomeVar', get_class($model)

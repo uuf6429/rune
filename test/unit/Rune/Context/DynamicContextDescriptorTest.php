@@ -3,17 +3,17 @@
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Rule\GenericRule;
+use uuf6429\Rune\TestCase;
 use uuf6429\Rune\Util\TypeInfoClass;
 use uuf6429\Rune\Util\TypeInfoMember;
 
-class DynamicContextDescriptorTest extends \PHPUnit_Framework_TestCase
+class DynamicContextDescriptorTest extends TestCase
 {
     public function testUnsupportedContext()
     {
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'Context must be or extends DynamicContext.'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Context must be or extends DynamicContext.');
+
         /* @noinspection PhpParamsInspection */
         new DynamicContextDescriptor(new \stdClass());
     }

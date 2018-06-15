@@ -2,7 +2,9 @@
 
 namespace uuf6429\Rune\Action;
 
-class ActionsActionTest extends \PHPUnit_Framework_TestCase
+use uuf6429\Rune\TestCase;
+
+class ActionsActionTest extends TestCase
 {
     public function testExecuteThreeActionsInActionChain()
     {

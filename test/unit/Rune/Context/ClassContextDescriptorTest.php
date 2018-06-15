@@ -2,14 +2,15 @@
 
 namespace uuf6429\Rune\Context;
 
-class ClassContextDescriptorTest extends \PHPUnit_Framework_TestCase
+use uuf6429\Rune\TestCase;
+
+class ClassContextDescriptorTest extends TestCase
 {
     public function testUnsupportedContext()
     {
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'Context must be or extends ClassContext.'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Context must be or extends ClassContext.');
+
         /* @noinspection PhpParamsInspection */
         new ClassContextDescriptor(new \stdClass());
     }

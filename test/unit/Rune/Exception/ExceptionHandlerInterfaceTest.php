@@ -2,14 +2,17 @@
 
 namespace uuf6429\Rune\Exception;
 
-class ExceptionHandlerInterfaceTest extends \PHPUnit_Framework_TestCase
+use uuf6429\Rune\TestCase;
+
+class ExceptionHandlerInterfaceTest extends TestCase
 {
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ExceptionHandlerInterface
      */
     protected function getHandler()
     {
-        return $this->getMock(ExceptionHandlerInterface::class);
+        return $this->getMockBuilder(ExceptionHandlerInterface::class)
+            ->getMock();
     }
 
     /**

@@ -2,17 +2,12 @@
 
 namespace uuf6429\Rune\Util;
 
-class TypeInfoMember implements \JsonSerializable
+class TypeInfoMember implements TypeInfoInterface
 {
     /**
      * @var string
      */
     protected $name;
-
-    /**
-     * @var string[]
-     */
-    protected $types;
 
     /**
      * @var string
@@ -25,17 +20,24 @@ class TypeInfoMember implements \JsonSerializable
     protected $link;
 
     /**
+     * @var string[]
+     */
+    protected $types;
+
+    /**
      * @param string   $name
      * @param string[] $types
      * @param string   $hint
      * @param string   $link
+     *
+     * @todo Change position of $types
      */
     public function __construct($name, array $types = [], $hint = '', $link = '')
     {
         $this->name = $name;
-        $this->types = $types;
         $this->hint = $hint;
         $this->link = $link;
+        $this->types = $types;
     }
 
     /**
@@ -44,22 +46,6 @@ class TypeInfoMember implements \JsonSerializable
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasTypes()
-    {
-        return (bool) count($this->types);
-    }
-
-    /**
-     * @return array|string[]
-     */
-    public function getTypes()
-    {
-        return $this->types;
     }
 
     /**
@@ -89,6 +75,22 @@ class TypeInfoMember implements \JsonSerializable
     /**
      * @return bool
      */
+    public function hasTypes()
+    {
+        return (bool) count($this->types);
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public function getTypes()
+    {
+        return $this->types;
+    }
+
+    /**
+     * @return bool
+     */
     public function isCallable()
     {
         // Note: __invoke is not supported here... would have been nice of PHP to have an Invokable interface
@@ -104,9 +106,9 @@ class TypeInfoMember implements \JsonSerializable
     {
         return [
             'name' => $this->name,
-            'types' => $this->types,
             'hint' => $this->hint,
             'link' => $this->link,
+            'types' => $this->types,
         ];
     }
 }

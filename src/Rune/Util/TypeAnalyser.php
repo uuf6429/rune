@@ -292,7 +292,7 @@ class TypeAnalyser
     }
 
     /**
-     * @return array<string,TypeInfoClass>
+     * @return TypeInfoClass[] key is the fully qualified class name
      */
     public function getTypes()
     {

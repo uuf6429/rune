@@ -3,9 +3,10 @@
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Util\TypeAnalyser;
+use uuf6429\Rune\Util\TypeInfoCollection;
 use uuf6429\Rune\Util\TypeInfoMember;
 
-class ClassContextDescriptor extends AbstractContextDescriptor
+class ClassContextDescriptor implements ContextDescriptorInterface
 {
     const CONTEXT_DESCRIPTOR_METHOD = 'getContextDescriptor';
 
@@ -22,13 +23,9 @@ class ClassContextDescriptor extends AbstractContextDescriptor
     /**
      * @param ClassContext $context
      */
-    public function __construct($context)
+    public function __construct(ClassContext $context)
     {
-        if (!$context instanceof ClassContext) {
-            throw new \InvalidArgumentException('Context must be or extends ClassContext.');
-        }
-
-        parent::__construct($context);
+        $this->context = $context;
     }
 
     /**
@@ -73,7 +70,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
             $analyser->analyse($class, false);
             $types = $analyser->getTypes();
             $this->memberTypeInfo = array_filter(
-                isset($types[$class]) ? $types[$class]->members : [],
+                isset($types[$class]) ? $types[$class]->getMembers() : [],
                 function (TypeInfoMember $member) {
                     return $member->getName() !== self::CONTEXT_DESCRIPTOR_METHOD;
                 }
@@ -90,11 +87,13 @@ class ClassContextDescriptor extends AbstractContextDescriptor
     {
         $analyser = $analyser ?: new TypeAnalyser();
 
-        return array_filter(
-            $this->getMemberTypeInfo($analyser),
-            function (TypeInfoMember $member) {
-                return !$member->isCallable();
-            }
+        return new TypeInfoCollection(
+            array_filter(
+                $this->getMemberTypeInfo($analyser),
+                function (TypeInfoMember $member) {
+                    return !$member->isCallable();
+                }
+            )
         );
     }
 
@@ -105,11 +104,13 @@ class ClassContextDescriptor extends AbstractContextDescriptor
     {
         $analyser = $analyser ?: new TypeAnalyser();
 
-        return array_filter(
-            $this->getMemberTypeInfo($analyser),
-            function (TypeInfoMember $member) {
-                return $member->isCallable();
-            }
+        return new TypeInfoCollection(
+            array_filter(
+                $this->getMemberTypeInfo($analyser),
+                function (TypeInfoMember $member) {
+                    return $member->isCallable();
+                }
+            )
         );
     }
 
@@ -121,6 +122,6 @@ class ClassContextDescriptor extends AbstractContextDescriptor
         $analyser = $analyser ?: new TypeAnalyser();
         $analyser->analyse(get_class($this->context));
 
-        return $analyser->getTypes();
+        return new TypeInfoCollection($analyser->getTypes());
     }
 }

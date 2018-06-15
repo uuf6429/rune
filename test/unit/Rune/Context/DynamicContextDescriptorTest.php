@@ -9,15 +9,6 @@ use uuf6429\Rune\Util\TypeInfoMember;
 
 class DynamicContextDescriptorTest extends TestCase
 {
-    public function testUnsupportedContext()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Context must be or extends DynamicContext.');
-
-        /* @noinspection PhpParamsInspection */
-        new DynamicContextDescriptor(new \stdClass());
-    }
-
     /**
      * @param array $variables
      * @param array $functions
@@ -32,9 +23,9 @@ class DynamicContextDescriptorTest extends TestCase
         $context = new DynamicContext($variables, $functions);
         $descriptor = $context->getContextDescriptor();
 
-        $this->assertEquals($expectedVTI, $descriptor->getVariableTypeInfo());
-        $this->assertEquals($expectedFTI, $descriptor->getFunctionTypeInfo());
-        $this->assertEquals($expectedDTI, $descriptor->getDetailedTypeInfo());
+        $this->assertEquals($expectedVTI, $descriptor->getVariableTypeInfo()->toNameArray());
+        $this->assertEquals($expectedFTI, $descriptor->getFunctionTypeInfo()->toNameArray());
+        $this->assertEquals($expectedDTI, $descriptor->getDetailedTypeInfo()->toNameArray());
     }
 
     public function typeInfoDataProvider()

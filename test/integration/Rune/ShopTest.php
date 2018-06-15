@@ -52,7 +52,7 @@ class ShopTest extends TestCase
                 'product' => new Util\TypeInfoMember('product', [Product::class]),
                 'String' => new Util\TypeInfoMember('String', [StringUtils::class]),
             ],
-            $descriptor->getVariableTypeInfo(),
+            $descriptor->getVariableTypeInfo()->toNameArray(),
             'Assert variable type information'
         );
 
@@ -60,7 +60,7 @@ class ShopTest extends TestCase
             [
                 //'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
             ],
-            $descriptor->getFunctionTypeInfo(),
+            $descriptor->getFunctionTypeInfo()->toNameArray(),
             'Assert function type information'
         );
 
@@ -100,7 +100,7 @@ class ShopTest extends TestCase
                     ]
                 ),
             ],
-            $descriptor->getDetailedTypeInfo(),
+            $descriptor->getDetailedTypeInfo()->toNameArray(),
             'Assert detailed type information'
         );
     }

@@ -3,9 +3,10 @@
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Util\TypeAnalyser;
+use uuf6429\Rune\Util\TypeInfoCollection;
 use uuf6429\Rune\Util\TypeInfoMember;
 
-class DynamicContextDescriptor extends AbstractContextDescriptor
+class DynamicContextDescriptor implements ContextDescriptorInterface
 {
     /**
      * @var DynamicContext
@@ -15,13 +16,9 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * @param DynamicContext $context
      */
-    public function __construct($context)
+    public function __construct(DynamicContext $context)
     {
-        if (!($context instanceof DynamicContext)) {
-            throw new \InvalidArgumentException('Context must be or extends DynamicContext.');
-        }
-
-        parent::__construct($context);
+        $this->context = $context;
     }
 
     /**
@@ -51,7 +48,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
             $result[$name] = new TypeInfoMember($name, [$type]);
         }
 
-        return $result;
+        return new TypeInfoCollection($result);
     }
 
     /**
@@ -64,7 +61,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
             $result[$name] = new TypeInfoMember($name, ['callable']);
         }
 
-        return $result;
+        return new TypeInfoCollection($result);
     }
 
     /**
@@ -74,13 +71,13 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     {
         $analyser = $analyser ?: new TypeAnalyser();
 
-        /** @var TypeInfoMember[] $members */
-        $members = array_merge($this->getVariableTypeInfo($analyser), $this->getFunctionTypeInfo($analyser));
+        $members = $this->getVariableTypeInfo($analyser);
+        $members = $members->merge($this->getFunctionTypeInfo($analyser));
 
         foreach ($members as $member) {
             $analyser->analyse($member->getTypes());
         }
 
-        return $analyser->getTypes();
+        return new TypeInfoCollection($analyser->getTypes());
     }
 }

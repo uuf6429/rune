@@ -22,16 +22,15 @@ matrix:
 cache:
   directories:
     - $HOME/.composer/cache/files
+    - $HOME/.sonar/cache
 
 addons:
   sonarcloud:
     organization: uuf6429-github
     token: $SONAR_TOKEN
-    branches:
-      - master
-      - Major-refactor
 
 install:
+  - git fetch --unshallow
   - composer remove "friendsofphp/php-cs-fixer" --dev --no-interaction
   - composer install --no-scripts --no-progress --no-interaction
 

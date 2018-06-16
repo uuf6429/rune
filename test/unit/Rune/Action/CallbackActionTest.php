@@ -2,9 +2,7 @@
 
 namespace uuf6429\Rune\Action;
 
-use uuf6429\Rune\TestCase;
-
-class CallbackActionTest extends TestCase
+class CallbackActionTest extends \PHPUnit\Framework\TestCase
 {
     public function testFunctionIsCalled()
     {

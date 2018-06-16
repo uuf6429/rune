@@ -3,11 +3,10 @@
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\Rule\GenericRule;
-use uuf6429\Rune\TestCase;
 use uuf6429\Rune\Util\TypeInfoClass;
 use uuf6429\Rune\Util\TypeInfoMember;
 
-class DynamicContextDescriptorTest extends TestCase
+class DynamicContextDescriptorTest extends \PHPUnit\Framework\TestCase
 {
     public function testUnsupportedContext()
     {

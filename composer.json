@@ -17,7 +17,7 @@
         "kamermans/docblock-reflection": "~1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7 || ^6.5",
+        "phpunit/phpunit": "^6.5",
         "friendsofphp/php-cs-fixer": "^2"
     },
     "autoload": {

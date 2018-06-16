@@ -7,10 +7,9 @@ use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Engine;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\TestCase;
 use uuf6429\Rune\Util\EvaluatorInterface;
 
-class AbstractConfigurableActionTest extends TestCase
+class AbstractConfigurableActionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array $configDefinitions

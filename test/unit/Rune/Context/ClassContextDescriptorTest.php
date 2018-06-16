@@ -2,9 +2,7 @@
 
 namespace uuf6429\Rune\Context;
 
-use uuf6429\Rune\TestCase;
-
-class ClassContextDescriptorTest extends TestCase
+class ClassContextDescriptorTest extends \PHPUnit\Framework\TestCase
 {
     public function testUnsupportedContext()
     {

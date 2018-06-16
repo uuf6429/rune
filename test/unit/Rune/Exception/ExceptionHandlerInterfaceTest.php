@@ -2,9 +2,7 @@
 
 namespace uuf6429\Rune\Exception;
 
-use uuf6429\Rune\TestCase;
-
-class ExceptionHandlerInterfaceTest extends TestCase
+class ExceptionHandlerInterfaceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ExceptionHandlerInterface

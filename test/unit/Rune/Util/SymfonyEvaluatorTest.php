@@ -2,9 +2,7 @@
 
 namespace uuf6429\Rune\Util;
 
-use uuf6429\Rune\TestCase;
-
-class SymfonyEvaluatorTest extends TestCase
+class SymfonyEvaluatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array  $variables

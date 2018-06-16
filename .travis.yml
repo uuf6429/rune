@@ -22,6 +22,7 @@ matrix:
 cache:
   directories:
     - $HOME/.composer/cache/files
+    - $HOME/.sonar/cache
 
 addons:
   sonarcloud:

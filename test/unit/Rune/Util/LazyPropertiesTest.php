@@ -2,7 +2,9 @@
 
 namespace uuf6429\Rune\Util;
 
-class LazyPropertiesTest extends \PHPUnit\Framework\TestCase
+use uuf6429\Rune\TestCase;
+
+class LazyPropertiesTest extends TestCase
 {
     public function testLazyLoad()
     {

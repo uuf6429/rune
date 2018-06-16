@@ -2,10 +2,12 @@
 
 namespace uuf6429\Rune\Model;
 
+use uuf6429\Rune\TestCase;
+
 /**
  * @deprecated 2.1.0 AbstractModel will be removed in the next major version.
  */
-class ModelTest extends \PHPUnit\Framework\TestCase
+class ModelTest extends TestCase
 {
     public function testLazyLoad()
     {

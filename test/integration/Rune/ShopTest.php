@@ -10,7 +10,7 @@ use uuf6429\Rune\example\Model\Category;
 use uuf6429\Rune\example\Model\Product;
 use uuf6429\Rune\example\Model\StringUtils;
 
-class ShopTest extends \PHPUnit\Framework\TestCase
+class ShopTest extends TestCase
 {
     public function testSimpleEngine()
     {

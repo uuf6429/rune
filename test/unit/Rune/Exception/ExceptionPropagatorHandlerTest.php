@@ -2,7 +2,9 @@
 
 namespace uuf6429\Rune\Exception;
 
-class ExceptionPropagatorHandlerTest extends \PHPUnit\Framework\TestCase
+use uuf6429\Rune\TestCase;
+
+class ExceptionPropagatorHandlerTest extends TestCase
 {
     /**
      * {@inheritdoc}

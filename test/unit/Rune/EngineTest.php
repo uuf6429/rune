@@ -12,7 +12,7 @@ use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
 
-class EngineTest extends \PHPUnit_Framework_TestCase
+class EngineTest extends TestCase
 {
     protected $matchingRules;
 

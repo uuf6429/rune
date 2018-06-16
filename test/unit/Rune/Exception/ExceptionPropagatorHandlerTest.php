@@ -2,7 +2,9 @@
 
 namespace uuf6429\Rune\Exception;
 
-class ExceptionPropagatorHandlerTest extends \PHPUnit_Framework_TestCase
+use uuf6429\Rune\TestCase;
+
+class ExceptionPropagatorHandlerTest extends TestCase
 {
     /**
      * {@inheritdoc}
@@ -14,7 +16,8 @@ class ExceptionPropagatorHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandlingExceptions()
     {
-        $this->setExpectedException(\Exception::class, 'Rethrown from handler.');
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Rethrown from handler.');
 
         $this->getHandler()->handle(new \Exception('Rethrown from handler.'));
     }

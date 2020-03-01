@@ -2,12 +2,14 @@
 
 namespace uuf6429\Rune\Exception;
 
+use ErrorException;
+
 /**
  * Error Exception with Variable Context.
  *
  * @author Christian Sciberras <uuf6429@gmail.com>
  */
-class ContextErrorException extends \ErrorException
+class ContextErrorException extends ErrorException
 {
     /**
      * @var array
@@ -23,7 +25,7 @@ class ContextErrorException extends \ErrorException
     /**
      * @return array Array of variables that existed when the exception occurred
      */
-    public function getContext()
+    public function getContext(): array
     {
         return $this->context;
     }

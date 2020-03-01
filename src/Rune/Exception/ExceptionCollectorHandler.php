@@ -2,6 +2,8 @@
 
 namespace uuf6429\Rune\Exception;
 
+use Throwable;
+
 class ExceptionCollectorHandler implements ExceptionHandlerInterface
 {
     protected $exceptions = [];
@@ -9,28 +11,25 @@ class ExceptionCollectorHandler implements ExceptionHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function handle(\Exception $exception)
+    public function handle(Throwable $exception): void
     {
         $this->exceptions[] = $exception;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasExceptions()
+    public function hasExceptions(): bool
     {
         return (bool) count($this->exceptions);
     }
 
     /**
-     * @return \Exception[]
+     * @return Throwable[]
      */
-    public function getExceptions()
+    public function getExceptions(): array
     {
         return $this->exceptions;
     }
 
-    public function clearExceptions()
+    public function clearExceptions(): void
     {
         $this->exceptions = [];
     }

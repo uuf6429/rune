@@ -2,7 +2,9 @@
 
 namespace uuf6429\Rune\Util;
 
-class TypeInfoMember implements \JsonSerializable
+use JsonSerializable;
+
+class TypeInfoMember implements JsonSerializable
 {
     /**
      * @var string
@@ -38,58 +40,40 @@ class TypeInfoMember implements \JsonSerializable
         $this->link = $link;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasTypes()
+    public function hasTypes(): bool
     {
         return (bool) count($this->types);
     }
 
     /**
-     * @return array|string[]
+     * @return string[]
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->types;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasHint()
+    public function hasHint(): bool
     {
         return (bool) $this->hint;
     }
 
-    /**
-     * @return string
-     */
-    public function getHint()
+    public function getHint(): string
     {
         return $this->hint;
     }
 
-    /**
-     * @return string
-     */
-    public function getLink()
+    public function getLink(): string
     {
         return $this->link;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCallable()
+    public function isCallable(): bool
     {
         // Note: __invoke is not supported here... would have been nice of PHP to have an Invokable interface
         static $callableTypes = ['callable', 'Closure', 'method'];

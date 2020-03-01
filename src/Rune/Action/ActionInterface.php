@@ -11,10 +11,6 @@ interface ActionInterface
     /**
      * Do something with regards to triggering rule using data from context,
      * optionally using evaluator for further processing.
-     *
-     * @param EvaluatorInterface $eval
-     * @param ContextInterface   $context
-     * @param RuleInterface      $rule
      */
-    public function execute($eval, $context, $rule);
+    public function execute(EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule): void;
 }

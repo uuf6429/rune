@@ -16,21 +16,14 @@ trait LazyProperties
     private $readonlyLock = true;
 
     /**
-     * @param string $name
-     *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         $method = 'get' . ucfirst($name);
 
         if (!method_exists($this, $method)) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Missing property %s and method %s in class %s.',
-                    $name, $method, get_class($this)
-                )
-            );
+            throw new \RuntimeException(sprintf('Missing property %s and method %s in class %s.', $name, $method, get_class($this)));
         }
 
         $result = $this->$method();
@@ -45,29 +38,18 @@ trait LazyProperties
     }
 
     /**
-     * @param string $name
      * @param mixed  $value
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value): void
     {
         if ($this->readonlyLock) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Property %s in class %s is read only and cannot be set.',
-                    $name, get_class($this)
-                )
-            );
+            throw new \RuntimeException(sprintf('Property %s in class %s is read only and cannot be set.', $name, get_class($this)));
         }
 
         $this->$name = $value;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         $method = 'get' . ucfirst($name);
 

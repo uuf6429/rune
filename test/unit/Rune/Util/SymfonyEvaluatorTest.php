@@ -2,7 +2,7 @@
 
 namespace uuf6429\Rune\Util;
 
-use uuf6429\Rune\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class SymfonyEvaluatorTest extends TestCase
 {
@@ -21,7 +21,7 @@ class SymfonyEvaluatorTest extends TestCase
         $expression,
         $expectedCompileResult,
         $expectedExecuteResult
-    ) {
+    ): void {
         $evaluator = new SymfonyEvaluator();
 
         $evaluator->setVariables($variables);
@@ -31,10 +31,7 @@ class SymfonyEvaluatorTest extends TestCase
         $this->assertEquals($expectedExecuteResult, $evaluator->evaluate($expression));
     }
 
-    /**
-     * @return array
-     */
-    public function evaluatorDataProvider()
+    public function evaluatorDataProvider(): array
     {
         return [
             'simple arithmetic' => [
@@ -53,7 +50,7 @@ class SymfonyEvaluatorTest extends TestCase
             ],
             'string concatenation' => [
                 '$variables' => ['name' => 'Joe', 'age' => 12, 'weight' => 39230],
-                '$functions' => ['gramsToKilos' => function ($g) { return ($g / 1000) . 'kg'; }],
+                '$functions' => ['gramsToKilos' => static function ($g) { return ($g / 1000) . 'kg'; }],
                 '$expression' => 'name ~ " was " ~ gramsToKilos(weight) ~ " when " ~ age ~ "."',
                 '$expectedCompileResult' => '((((($name . " was ") . gramsToKilos($weight)) . " when ") . $age) . ".")',
                 '$expectedExecuteResult' => 'Joe was 39.23kg when 12.',

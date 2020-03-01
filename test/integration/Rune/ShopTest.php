@@ -2,6 +2,7 @@
 
 namespace uuf6429\Rune;
 
+use PHPUnit\Framework\TestCase;
 use uuf6429\Rune\example\Action;
 use uuf6429\Rune\example\Context;
 use uuf6429\Rune\example\Context\ProductContext;
@@ -12,7 +13,7 @@ use uuf6429\Rune\example\Model\StringUtils;
 
 class ShopTest extends TestCase
 {
-    public function testSimpleEngine()
+    public function testSimpleEngine(): void
     {
         $this->expectOutputString(implode(PHP_EOL, [
             'Rule 1 (Red Products) triggered for Red Bricks.',
@@ -42,7 +43,7 @@ class ShopTest extends TestCase
         );
     }
 
-    public function testExampleTypeInfo()
+    public function testExampleTypeInfo(): void
     {
         $context = new Context\ProductContext();
         $descriptor = $context->getContextDescriptor();
@@ -70,7 +71,7 @@ class ShopTest extends TestCase
                     ProductContext::class,
                     [
                         'product' => new Util\TypeInfoMember('product', [Product::class]),
-                        'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
+                        'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type">uuf6429\Rune\Context\AbstractContextDescriptor</span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
                         'String' => new Util\TypeInfoMember('String', [StringUtils::class], ''),
                     ]
                 ),
@@ -108,7 +109,7 @@ class ShopTest extends TestCase
     /**
      * @return Rule\GenericRule[]
      */
-    protected function getRules()
+    protected function getRules(): array
     {
         return [
             new Rule\GenericRule(1, 'Red Products', 'product.colour == String.lower("Red")'),
@@ -123,7 +124,7 @@ class ShopTest extends TestCase
     /**
      * @return Model\Product[]
      */
-    protected function getProducts()
+    protected function getProducts(): array
     {
         $cp = $this->getCategoryProvider();
 
@@ -139,7 +140,7 @@ class ShopTest extends TestCase
     /**
      * @return Model\Category[]
      */
-    protected function getCategories()
+    protected function getCategories(): array
     {
         $cp = $this->getCategoryProvider();
 
@@ -153,20 +154,15 @@ class ShopTest extends TestCase
         ];
     }
 
-    /**
-     * @return callable
-     */
-    protected function getCategoryProvider()
+    protected function getCategoryProvider(): callable
     {
         return [$this, 'getCategory'];
     }
 
     /**
      * @param int $id
-     *
-     * @return Model\Category|null
      */
-    public function getCategory($id)
+    public function getCategory($id): ?Model\Category
     {
         foreach ($this->getCategories() as $category) {
             if ($category->id === $id) {

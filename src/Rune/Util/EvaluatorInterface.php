@@ -7,24 +7,17 @@ interface EvaluatorInterface
     /**
      * @param array<string,mixed> $variables
      */
-    public function setVariables($variables);
+    public function setVariables(array $variables): void;
 
     /**
      * @param array<string,callable> $functions
      */
-    public function setFunctions($functions);
+    public function setFunctions(array $functions): void;
+
+    public function compile(string $expression): string;
 
     /**
-     * @param string $expression
-     *
-     * @return string
-     */
-    public function compile($expression);
-
-    /**
-     * @param string $expression
-     *
      * @return mixed
      */
-    public function evaluate($expression);
+    public function evaluate(string $expression);
 }

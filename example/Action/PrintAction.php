@@ -11,10 +11,10 @@ class PrintAction implements ActionInterface
 {
     /**
      * @param EvaluatorInterface $eval
-     * @param ContextInterface   $context
-     * @param RuleInterface      $rule
+     * @param ContextInterface $context
+     * @param RuleInterface $rule
      */
-    public function execute($eval, $context, $rule)
+    public function execute($eval, $context, $rule): void
     {
         printf(
             'Rule %s (%s) triggered for %s.' . PHP_EOL,

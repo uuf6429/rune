@@ -15,10 +15,10 @@ class ContextRuleActionException extends ContextRuleException
 
     /**
      * @param ContextInterface $context
-     * @param RuleInterface    $rule
-     * @param ActionInterface  $action
-     * @param string|null      $message
-     * @param \Exception|null  $previous
+     * @param RuleInterface $rule
+     * @param ActionInterface $action
+     * @param string|null $message
+     * @param \Exception|null $previous
      */
     public function __construct($context, $rule, $action, $message = null, $previous = null)
     {
@@ -39,10 +39,7 @@ class ContextRuleActionException extends ContextRuleException
         parent::__construct($context, $rule, $message, $previous);
     }
 
-    /**
-     * @return ActionInterface
-     */
-    public function getAction()
+    public function getAction(): ActionInterface
     {
         return $this->action;
     }

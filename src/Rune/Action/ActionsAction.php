@@ -2,6 +2,10 @@
 
 namespace uuf6429\Rune\Action;
 
+use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Rule\RuleInterface;
+use uuf6429\Rune\Util\EvaluatorInterface;
+
 class ActionsAction implements ActionInterface
 {
     /**
@@ -12,7 +16,7 @@ class ActionsAction implements ActionInterface
     /**
      * @param ActionInterface[] $actions
      */
-    public function __construct($actions)
+    public function __construct(array $actions)
     {
         $this->actions = $actions;
     }
@@ -20,7 +24,7 @@ class ActionsAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($eval, $context, $rule)
+    public function execute(EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule): void
     {
         foreach ($this->actions as $action) {
             $action->execute($eval, $context, $rule);

@@ -11,6 +11,7 @@ return PhpCsFixer\Config::create()
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'protected_to_private' => false,
         'yoda_style' => false,
+        'phpdoc_align' => false,
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

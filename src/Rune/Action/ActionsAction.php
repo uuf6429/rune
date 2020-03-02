@@ -24,8 +24,11 @@ class ActionsAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule): void
-    {
+    public function execute(
+        EvaluatorInterface $eval,
+        ContextInterface $context,
+        RuleInterface $rule
+    ): void {
         foreach ($this->actions as $action) {
             $action->execute($eval, $context, $rule);
         }

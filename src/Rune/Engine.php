@@ -2,7 +2,6 @@
 
 namespace uuf6429\Rune;
 
-use RuntimeException;
 use Throwable;
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
@@ -10,6 +9,7 @@ use uuf6429\Rune\Exception\ContextRuleActionException;
 use uuf6429\Rune\Exception\ContextRuleException;
 use uuf6429\Rune\Exception\ExceptionHandlerInterface;
 use uuf6429\Rune\Exception\ExceptionPropagatorHandler;
+use uuf6429\Rune\Exception\InvalidRuleConditionException;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
@@ -91,13 +91,7 @@ class Engine
         $match = ($cond === '') ?: $this->evaluator->evaluate($rule->getCondition());
 
         if (!is_bool($match)) {
-            $message = sprintf(
-                'The condition result for rule %s (%s) should be boolean, not %s.',
-                $rule->getId(),
-                $rule->getName(),
-                gettype($match)
-            );
-            throw new RuntimeException($message);
+            throw new InvalidRuleConditionException($rule, $match);
         }
 
         if ($match) {

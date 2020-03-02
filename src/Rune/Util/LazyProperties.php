@@ -2,6 +2,9 @@
 
 namespace uuf6429\Rune\Util;
 
+use uuf6429\Rune\Exception\InvalidLazyPropertyException;
+use uuf6429\Rune\Exception\ReadOnlyPropertyException;
+
 /**
  * This trait will delay loading of properties, helping in performance. Usage:
  * 1. Use the trait in your class. :)
@@ -16,6 +19,8 @@ trait LazyProperties
     private $readonlyLock = true;
 
     /**
+     * @param string $name
+     *
      * @return mixed
      */
     public function __get(string $name)
@@ -23,7 +28,7 @@ trait LazyProperties
         $method = 'get' . ucfirst($name);
 
         if (!method_exists($this, $method)) {
-            throw new \RuntimeException(sprintf('Missing property %s and method %s in class %s.', $name, $method, get_class($this)));
+            throw new InvalidLazyPropertyException(get_class($this), $method, $name);
         }
 
         $result = $this->$method();
@@ -38,17 +43,23 @@ trait LazyProperties
     }
 
     /**
-     * @param mixed  $value
+     * @param string $name
+     * @param mixed $value
      */
     public function __set(string $name, $value): void
     {
         if ($this->readonlyLock) {
-            throw new \RuntimeException(sprintf('Property %s in class %s is read only and cannot be set.', $name, get_class($this)));
+            throw new ReadOnlyPropertyException(get_class($this), $name);
         }
 
         $this->$name = $value;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
     public function __isset(string $name): bool
     {
         $method = 'get' . ucfirst($name);

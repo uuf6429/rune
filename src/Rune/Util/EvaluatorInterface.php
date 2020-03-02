@@ -14,9 +14,16 @@ interface EvaluatorInterface
      */
     public function setFunctions(array $functions): void;
 
+    /**
+     * @param string $expression
+     *
+     * @return string
+     */
     public function compile(string $expression): string;
 
     /**
+     * @param string $expression
+     *
      * @return mixed
      */
     public function evaluate(string $expression);

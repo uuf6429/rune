@@ -8,7 +8,7 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
-use RuntimeException;
+use uuf6429\Rune\Exception\UnsupportedTypeException;
 
 class TypeAnalyser
 {
@@ -48,6 +48,7 @@ class TypeAnalyser
 
     /**
      * @param string|array $type
+     * @param bool $deep
      *
      * @throws ReflectionException
      */
@@ -76,12 +77,16 @@ class TypeAnalyser
                     break;
 
                 default:
-                    throw new RuntimeException(sprintf('Type information for %s cannot be retrieved (unsupported type).', $type));
+                    throw new UnsupportedTypeException(
+                        sprintf('Type information for %s cannot be retrieved.', $type)
+                    );
             }
         }
     }
 
     /**
+     * @param string $name
+     *
      * @throws ReflectionException
      */
     protected function analyseClassOrInterface(string $name): void
@@ -119,6 +124,11 @@ class TypeAnalyser
         $this->types[$name] = new TypeInfoClass($name, $members, $hint, $link);
     }
 
+    /**
+     * @param string $line
+     *
+     * @return TypeInfoMember|null
+     */
     protected function parseDocBlockPropOrParam(string $line): ?TypeInfoMember
     {
         $regex = '/^([\\w\\|\\\\]+)\\s+(\\$\\w+)\\s*(.*)$/';
@@ -136,6 +146,11 @@ class TypeAnalyser
         return null;
     }
 
+    /**
+     * @param ReflectionParameter $param
+     *
+     * @return TypeInfoMember|null
+     */
     protected function parseReflectedParams(ReflectionParameter $param): ?TypeInfoMember
     {
         $types = [];
@@ -154,6 +169,11 @@ class TypeAnalyser
         );
     }
 
+    /**
+     * @param ReflectionProperty $property
+     *
+     * @return TypeInfoMember
+     */
     protected function propertyToTypeInfoMember(ReflectionProperty $property): TypeInfoMember
     {
         $docb = new DocBlock($property);
@@ -165,6 +185,11 @@ class TypeAnalyser
         return new TypeInfoMember($property->getName(), $types, $hint, $link);
     }
 
+    /**
+     * @param ReflectionMethod $method
+     *
+     * @return TypeInfoMember|null
+     */
     protected function methodToTypeInfoMember(ReflectionMethod $method): ?TypeInfoMember
     {
         if (substr($method->name, 0, 2) === '__') {
@@ -238,6 +263,10 @@ class TypeAnalyser
     }
 
     /**
+     * @param string $name
+     *
+     * @return string
+     *
      * @throws ReflectionException
      */
     protected function handleType(string $name): string
@@ -251,6 +280,11 @@ class TypeAnalyser
         return $name;
     }
 
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
     protected function normalise(string $type): string
     {
         static $typeMap = [

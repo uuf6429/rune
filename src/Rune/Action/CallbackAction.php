@@ -19,7 +19,10 @@ class CallbackAction implements ActionInterface
 
     /**
      * The callback will receive the following arguments:
-     * (EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule).
+     * (EvaluatorInterface $eval, ContextInterface $context, RuleInterface
+     * $rule).
+     *
+     * @param callable $callback
      */
     public function __construct(callable $callback)
     {
@@ -29,8 +32,11 @@ class CallbackAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function execute(EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule): void
-    {
+    public function execute(
+        EvaluatorInterface $eval,
+        ContextInterface $context,
+        RuleInterface $rule
+    ): void {
         call_user_func($this->callback, $eval, $context, $rule);
     }
 }

@@ -3,6 +3,7 @@
 namespace uuf6429\Rune\Context;
 
 use InvalidArgumentException;
+use ReflectionException;
 use uuf6429\Rune\Util\TypeAnalyser;
 use uuf6429\Rune\Util\TypeInfoMember;
 
@@ -43,7 +44,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
             get_class_methods($this->context),
             static function ($name) {
                 return substr($name, 0, 2) !== '__'
-                    && $name !== self::CONTEXT_DESCRIPTOR_METHOD;
+                       && $name !== self::CONTEXT_DESCRIPTOR_METHOD;
             }
         );
 
@@ -63,7 +64,11 @@ class ClassContextDescriptor extends AbstractContextDescriptor
     }
 
     /**
+     * @param TypeAnalyser $analyser
+     *
      * @return TypeInfoMember[]
+     *
+     * @throws ReflectionException
      */
     protected function getMemberTypeInfo(TypeAnalyser $analyser): array
     {
@@ -74,7 +79,8 @@ class ClassContextDescriptor extends AbstractContextDescriptor
             $this->memberTypeInfo = array_filter(
                 isset($types[$class]) ? $types[$class]->members : [],
                 static function (TypeInfoMember $member) {
-                    return $member->getName() !== self::CONTEXT_DESCRIPTOR_METHOD;
+                    return $member->getName()
+                           !== self::CONTEXT_DESCRIPTOR_METHOD;
                 }
             );
         }

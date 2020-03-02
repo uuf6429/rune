@@ -10,6 +10,7 @@ use Throwable;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
+use uuf6429\Rune\Exception\InvalidRuleConditionException;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
@@ -19,6 +20,8 @@ class EngineTest extends TestCase
     protected $matchingRules;
 
     /**
+     * @param bool $withBrokenRules
+     *
      * @return RuleInterface[]
      */
     protected function getRules(bool $withBrokenRules = false): array
@@ -57,6 +60,8 @@ class EngineTest extends TestCase
 
     /**
      * @param array<string,mixed> $productValues
+     *
+     * @return DynamicContext
      */
     protected function getContext(array $productValues): DynamicContext
     {
@@ -298,7 +303,7 @@ class EngineTest extends TestCase
                     ],
                 ],
                 'expectedErrors' => [
-                    RuntimeException::class . ' encountered while processing rule 5 '
+                    InvalidRuleConditionException::class . ' encountered while processing rule 5 '
                     . '(Bad Rule - Result Type) within ' . DynamicContext::class
                     . ': The condition result for rule 5 (Bad Rule - Result '
                     . 'Type) should be boolean, not string.',

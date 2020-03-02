@@ -38,6 +38,12 @@ class SymfonyEvaluator implements EvaluatorInterface
     }
 
     /**
+     * @param int    $code
+     * @param string $message
+     * @param string $file
+     * @param int    $line
+     * @param array  $context
+     *
      * @internal this method should not be called directly
      *
      * @throws \ErrorException

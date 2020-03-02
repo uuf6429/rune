@@ -39,9 +39,5 @@
         "test/integration/Rune"
       ]
     }
-  },
-  "scripts": {
-    "post-install-cmd": "php extra/composer-hooks/post-install-cmd.php",
-    "post-update-cmd": "php extra/composer-hooks/post-update-cmd.php"
   }
 }

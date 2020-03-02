@@ -3,9 +3,13 @@
 namespace uuf6429\Rune\Util;
 
 use PHPUnit\Framework\TestCase;
+use uuf6429\Rune\Exception\InvalidLazyPropertyException;
 
 class LazyPropertiesTest extends TestCase
 {
+    /**
+     * @noinspection PhpUndefinedFieldInspection
+     */
     public function testLazyLoad(): void
     {
         $model = $this->getMockForTrait(
@@ -26,11 +30,14 @@ class LazyPropertiesTest extends TestCase
         $this->assertEquals(42, $model->someVar);
     }
 
+    /**
+     * @noinspection PhpUndefinedFieldInspection
+     */
     public function testBrokenLazyLoad(): void
     {
         $model = $this->getMockForTrait(LazyProperties::class);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InvalidLazyPropertyException::class);
         $this->expectExceptionMessage(
             sprintf(
                 'Missing property %s and method %s in class %s.',

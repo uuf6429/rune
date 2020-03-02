@@ -7,11 +7,6 @@ php:
   - 7.3
   - 7.4
 
-matrix:
-  allow_failures:
-    - php: hhvm
-    - php: nightly
-
 cache:
   directories:
     - $HOME/.composer/cache/files
@@ -34,9 +29,7 @@ script:
       --coverage-clover clover.xml \
       --configuration phpunit.xml.dist
   - |
-    [ "$TRAVIS_PHP_VERSION" != "hhvm" ] \
-    && [ "$TRAVIS_PHP_VERSION" != "nightly" ] \
-    && sonar-scanner \
+    sonar-scanner \
       "-Dsonar.projectVersion=$(git describe --tags)_PHP-$TRAVIS_PHP_VERSION" \
       "-Dsonar.projectKey=Rune" \
       "-Dsonar.projectName=Rune" \

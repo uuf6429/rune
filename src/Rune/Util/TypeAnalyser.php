@@ -3,6 +3,9 @@
 namespace uuf6429\Rune\Util;
 
 use kamermans\Reflection\DocBlock;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
 use RuntimeException;
@@ -40,13 +43,13 @@ class TypeAnalyser
     public function __construct()
     {
         $this->canInspectReflectionParamType = method_exists(ReflectionParameter::class, 'getType');
-        $this->canInspectReflectionReturnType = method_exists(\ReflectionMethod::class, 'getReturnType');
+        $this->canInspectReflectionReturnType = method_exists(ReflectionMethod::class, 'getReturnType');
     }
 
     /**
      * @param string|array $type
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function analyse($type, bool $deep = true): void
     {
@@ -79,14 +82,14 @@ class TypeAnalyser
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function analyseClassOrInterface(string $name): void
     {
         // .-- avoid infinite loop inspecting same type
         $this->types[$name] = 'IN_PROGRESS';
 
-        $reflector = new \ReflectionClass($name);
+        $reflector = new ReflectionClass($name);
 
         $docb = new DocBlock($reflector);
         $hint = $docb->getComment() ?: '';
@@ -108,7 +111,7 @@ class TypeAnalyser
                 ),
                 array_map(
                     [$this, 'methodToTypeInfoMember'],
-                    $reflector->getMethods(\ReflectionMethod::IS_PUBLIC)
+                    $reflector->getMethods(ReflectionMethod::IS_PUBLIC)
                 )
             )
         );
@@ -162,7 +165,7 @@ class TypeAnalyser
         return new TypeInfoMember($property->getName(), $types, $hint, $link);
     }
 
-    protected function methodToTypeInfoMember(\ReflectionMethod $method): ?TypeInfoMember
+    protected function methodToTypeInfoMember(ReflectionMethod $method): ?TypeInfoMember
     {
         if (substr($method->name, 0, 2) === '__') {
             return null;
@@ -232,6 +235,9 @@ class TypeAnalyser
         return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     protected function handleType(string $name): string
     {
         $name = $this->normalise($name);

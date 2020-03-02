@@ -63,11 +63,9 @@ class ClassContextDescriptor extends AbstractContextDescriptor
     }
 
     /**
-     * @param TypeAnalyser $analyser
-     *
      * @return TypeInfoMember[]
      */
-    protected function getMemberTypeInfo($analyser): array
+    protected function getMemberTypeInfo(TypeAnalyser $analyser): array
     {
         if ($this->memberTypeInfo === null) {
             $class = get_class($this->context);

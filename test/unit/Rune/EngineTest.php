@@ -2,12 +2,15 @@
 
 namespace uuf6429\Rune;
 
+use DivisionByZeroError;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Throwable;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
-use uuf6429\Rune\Exception\ContextErrorException;
+use uuf6429\Rune\Exception\InvalidRuleConditionException;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
@@ -21,7 +24,7 @@ class EngineTest extends TestCase
      *
      * @return RuleInterface[]
      */
-    protected function getRules($withBrokenRules = false)
+    protected function getRules(bool $withBrokenRules = false): array
     {
         return array_merge(
             [
@@ -42,18 +45,12 @@ class EngineTest extends TestCase
         );
     }
 
-    /**
-     * @param string $productName
-     *
-     * @return CallbackAction
-     */
-    protected function getAction($productName)
+    protected function getAction(string $productName): CallbackAction
     {
         return  new CallbackAction(
             /**
              * @param EvaluatorInterface $eval,
              * @param ContextInterface   $context,
-             * @param RuleInterface      $rule
              */
             function ($eval, $context, RuleInterface $rule) use ($productName) {
                 $this->matchingRules[$productName][] = $rule->getName();
@@ -66,7 +63,7 @@ class EngineTest extends TestCase
      *
      * @return DynamicContext
      */
-    protected function getContext($productValues)
+    protected function getContext(array $productValues): DynamicContext
     {
         return new DynamicContext($productValues);
     }
@@ -86,7 +83,7 @@ class EngineTest extends TestCase
         $expectedRules,
         $expectedErrors,
         $expectedResult
-    ) {
+    ): void {
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
         $result = 0;
@@ -101,17 +98,17 @@ class EngineTest extends TestCase
             );
         }
 
-        $errorMesgs = array_map(
-            function (\Exception $exception) {
+        $errors = array_map(
+            static function (Throwable $exception) {
                 return $exception->getMessage();
             },
             $exceptionHandler->getExceptions()
         );
 
         if (empty($expectedErrors)) {
-            $this->assertEquals([], $errorMesgs, 'Engine should not have caused errors');
+            $this->assertEquals([], $errors, 'Engine should not have caused errors');
         } else {
-            $this->assertEquals($expectedErrors, $errorMesgs, 'Engine errors were not as expected.');
+            $this->assertEquals($expectedErrors, $errors, 'Engine errors were not as expected.');
         }
 
         $this->assertEquals($expectedRules, $this->matchingRules);
@@ -119,10 +116,7 @@ class EngineTest extends TestCase
         $this->assertSame($result, $expectedResult);
     }
 
-    /**
-     * @return array
-     */
-    public function sampleValuesDataProvider()
+    public function sampleValuesDataProvider(): array
     {
         return [
             'empty condition' => [
@@ -309,7 +303,7 @@ class EngineTest extends TestCase
                     ],
                 ],
                 'expectedErrors' => [
-                    RuntimeException::class . ' encountered while processing rule 5 '
+                    InvalidRuleConditionException::class . ' encountered while processing rule 5 '
                     . '(Bad Rule - Result Type) within ' . DynamicContext::class
                     . ': The condition result for rule 5 (Bad Rule - Result '
                     . 'Type) should be boolean, not string.',
@@ -322,7 +316,7 @@ class EngineTest extends TestCase
                     . '(Bad Rule - Property on a Non-Object) within ' . DynamicContext::class
                     . ': Unable to get a property on a non-object.',
 
-                    ContextErrorException::class . ' encountered while processing rule 8 '
+                    DivisionByZeroError::class . ' encountered while processing rule 8 '
                     . '(Bad Rule - Divide by Zero) within ' . DynamicContext::class
                     . ': Division by zero',
                 ],
@@ -331,7 +325,7 @@ class EngineTest extends TestCase
         ];
     }
 
-    public function testRuleEngineCollectingExceptionHandler()
+    public function testRuleEngineCollectingExceptionHandler(): void
     {
         $productData = [
             'Product 1' => [
@@ -383,17 +377,17 @@ class EngineTest extends TestCase
 
         $this->assertEquals($expectedRules, $this->matchingRules);
 
-        $errorMegs = array_map(
-            function (\Exception $exception) {
+        $errors = array_map(
+            static function (Throwable $exception) {
                 return $exception->getMessage();
             },
             $exceptionHandler->getExceptions()
         );
 
-        $this->assertEquals($expectedExceptions, $errorMegs, 'Engine exceptions were not as expected.');
+        $this->assertEquals($expectedExceptions, $errors, 'Engine exceptions were not as expected.');
     }
 
-    public function testRuleEngineSometimesFaultyAction()
+    public function testRuleEngineSometimesFaultyAction(): void
     {
         $productData = [
             'Product 1' => [],
@@ -424,9 +418,8 @@ class EngineTest extends TestCase
                 /**
                  * @param EvaluatorInterface $eval,
                  * @param DynamicContext     $context,
-                 * @param RuleInterface      $rule
                  */
-                function ($eval, $context, RuleInterface $rule) use ($productName, &$matchingRules) {
+                static function ($eval, $context, RuleInterface $rule) use ($productName, &$matchingRules) {
                     if ($productName === 'Product 2') {
                         throw new \LogicException("Exception thrown for $productName.");
                     }
@@ -444,13 +437,13 @@ class EngineTest extends TestCase
 
         $this->assertEquals($expectedRules, $matchingRules);
 
-        $errorMesgs = array_map(
-            function (\Exception $exception) {
+        $errors = array_map(
+            static function (Throwable $exception) {
                 return $exception->getMessage();
             },
             $exceptionHandler->getExceptions()
         );
 
-        $this->assertEquals($expectedExceptions, $errorMesgs, 'Engine exceptions were not as expected.');
+        $this->assertEquals($expectedExceptions, $errors, 'Engine exceptions were not as expected.');
     }
 }

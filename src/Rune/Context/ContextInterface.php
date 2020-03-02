@@ -7,5 +7,5 @@ interface ContextInterface
     /**
      * @return AbstractContextDescriptor
      */
-    public function getContextDescriptor();
+    public function getContextDescriptor(): AbstractContextDescriptor;
 }

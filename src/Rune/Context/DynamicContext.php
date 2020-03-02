@@ -38,7 +38,7 @@ class DynamicContext implements ContextInterface
     /**
      * @return DynamicContextDescriptor
      */
-    public function getContextDescriptor()
+    public function getContextDescriptor(): AbstractContextDescriptor
     {
         if (!$this->descriptor) {
             $this->descriptor = new DynamicContextDescriptor($this);
@@ -50,7 +50,7 @@ class DynamicContext implements ContextInterface
     /**
      * @return array<string,mixed>
      */
-    public function getVariables()
+    public function getVariables(): array
     {
         return $this->variables;
     }
@@ -58,7 +58,7 @@ class DynamicContext implements ContextInterface
     /**
      * @return array<string,callable>
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return $this->functions;
     }

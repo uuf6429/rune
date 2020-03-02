@@ -24,7 +24,7 @@ class SymfonyEvaluator implements EvaluatorInterface
     /**
      * {@inheritdoc}
      */
-    public function setVariables($variables)
+    public function setVariables(array $variables): void
     {
         $this->variables = $variables;
     }
@@ -32,23 +32,23 @@ class SymfonyEvaluator implements EvaluatorInterface
     /**
      * {@inheritdoc}
      */
-    public function setFunctions($functions)
+    public function setFunctions(array $functions): void
     {
         $this->exprLang->setFunctions($functions);
     }
 
     /**
-     * @internal this method should not be called directly
-     *
      * @param int    $code
      * @param string $message
      * @param string $file
      * @param int    $line
      * @param array  $context
      *
+     * @internal this method should not be called directly
+     *
      * @throws \ErrorException
      */
-    public function errorToErrorException($code, $message, $file = 'unknown', $line = 0, array $context = [])
+    public function errorToErrorException(int $code, string $message, string $file = 'unknown', int $line = 0, array $context = []): void
     {
         restore_error_handler();
         throw new ContextErrorException($message, 0, $code, $file, $line, $context);
@@ -57,7 +57,7 @@ class SymfonyEvaluator implements EvaluatorInterface
     /**
      * {@inheritdoc}
      */
-    public function compile($expression)
+    public function compile(string $expression): string
     {
         set_error_handler([$this, 'errorToErrorException']);
         $result = $this->exprLang->compile($expression, array_keys($this->variables));
@@ -69,7 +69,7 @@ class SymfonyEvaluator implements EvaluatorInterface
     /**
      * {@inheritdoc}
      */
-    public function evaluate($expression)
+    public function evaluate(string $expression)
     {
         set_error_handler([$this, 'errorToErrorException']);
         $result = $this->exprLang->evaluate($expression, $this->variables);

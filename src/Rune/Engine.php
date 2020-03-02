@@ -2,12 +2,14 @@
 
 namespace uuf6429\Rune;
 
+use Throwable;
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Exception\ContextRuleActionException;
 use uuf6429\Rune\Exception\ContextRuleException;
 use uuf6429\Rune\Exception\ExceptionHandlerInterface;
 use uuf6429\Rune\Exception\ExceptionPropagatorHandler;
+use uuf6429\Rune\Exception\InvalidRuleConditionException;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
@@ -66,16 +68,12 @@ class Engine
      *
      * @throws
      */
-    protected function findMatches(&$result, $context, $rules)
+    protected function findMatches(&$result, $context, $rules): void
     {
         foreach ($rules as $rule) {
             try {
                 $this->findMatchesForContextRule($result, $rule);
-            } catch (\Exception $ex) {
-                $this->exceptionHandler->handle(
-                    new ContextRuleException($context, $rule, null, $ex)
-                );
-            } catch (\Throwable $ex) {
+            } catch (Throwable $ex) {
                 $this->exceptionHandler->handle(
                     new ContextRuleException($context, $rule, null, $ex)
                 );
@@ -87,18 +85,13 @@ class Engine
      * @param RuleInterface[] $result
      * @param RuleInterface   $rule
      */
-    protected function findMatchesForContextRule(&$result, $rule)
+    protected function findMatchesForContextRule(&$result, $rule): void
     {
         $cond = $rule->getCondition();
         $match = ($cond === '') ?: $this->evaluator->evaluate($rule->getCondition());
 
         if (!is_bool($match)) {
-            throw new \RuntimeException(sprintf(
-                'The condition result for rule %s (%s) should be boolean, not %s.',
-                $rule->getId(),
-                $rule->getName(),
-                gettype($match)
-            ));
+            throw new InvalidRuleConditionException($rule, $match);
         }
 
         if ($match) {
@@ -113,16 +106,12 @@ class Engine
      *
      * @throws
      */
-    protected function executeActionForRules($action, $context, $rules)
+    protected function executeActionForRules($action, $context, $rules): void
     {
         foreach ($rules as $rule) {
             try {
                 $action->execute($this->evaluator, $context, $rule);
-            } catch (\Exception $ex) {
-                $this->exceptionHandler->handle(
-                    new ContextRuleActionException($context, $rule, $action, null, $ex)
-                );
-            } catch (\Throwable $ex) {
+            } catch (Throwable $ex) {
                 $this->exceptionHandler->handle(
                     new ContextRuleActionException($context, $rule, $action, null, $ex)
                 );

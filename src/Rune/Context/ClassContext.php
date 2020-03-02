@@ -12,7 +12,7 @@ abstract class ClassContext implements ContextInterface
     /**
      * @return ClassContextDescriptor
      */
-    public function getContextDescriptor()
+    public function getContextDescriptor(): AbstractContextDescriptor
     {
         if (!$this->descriptor) {
             $this->descriptor = new ClassContextDescriptor($this);

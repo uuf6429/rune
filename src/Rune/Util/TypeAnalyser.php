@@ -3,6 +3,12 @@
 namespace uuf6429\Rune\Util;
 
 use kamermans\Reflection\DocBlock;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionParameter;
+use ReflectionProperty;
+use uuf6429\Rune\Exception\UnsupportedTypeException;
 
 class TypeAnalyser
 {
@@ -36,15 +42,17 @@ class TypeAnalyser
 
     public function __construct()
     {
-        $this->canInspectReflectionParamType = method_exists(\ReflectionParameter::class, 'getType');
-        $this->canInspectReflectionReturnType = method_exists(\ReflectionMethod::class, 'getReturnType');
+        $this->canInspectReflectionParamType = method_exists(ReflectionParameter::class, 'getType');
+        $this->canInspectReflectionReturnType = method_exists(ReflectionMethod::class, 'getReturnType');
     }
 
     /**
      * @param string|array $type
-     * @param bool         $deep
+     * @param bool $deep
+     *
+     * @throws ReflectionException
      */
-    public function analyse($type, $deep = true)
+    public function analyse($type, bool $deep = true): void
     {
         if (is_array($type)) {
             foreach ($type as $aType) {
@@ -69,11 +77,8 @@ class TypeAnalyser
                     break;
 
                 default:
-                    throw new \RuntimeException(
-                        sprintf(
-                            'Type information for %s cannot be retrieved (unsupported type).',
-                            $type
-                        )
+                    throw new UnsupportedTypeException(
+                        sprintf('Type information for %s cannot be retrieved.', $type)
                     );
             }
         }
@@ -81,13 +86,15 @@ class TypeAnalyser
 
     /**
      * @param string $name
+     *
+     * @throws ReflectionException
      */
-    protected function analyseClassOrInterface($name)
+    protected function analyseClassOrInterface(string $name): void
     {
         // .-- avoid infinite loop inspecting same type
         $this->types[$name] = 'IN_PROGRESS';
 
-        $reflector = new \ReflectionClass($name);
+        $reflector = new ReflectionClass($name);
 
         $docb = new DocBlock($reflector);
         $hint = $docb->getComment() ?: '';
@@ -105,11 +112,11 @@ class TypeAnalyser
                 ),
                 array_map(
                     [$this, 'propertyToTypeInfoMember'],
-                    $reflector->getProperties(\ReflectionProperty::IS_PUBLIC)
+                    $reflector->getProperties(ReflectionProperty::IS_PUBLIC)
                 ),
                 array_map(
                     [$this, 'methodToTypeInfoMember'],
-                    $reflector->getMethods(\ReflectionMethod::IS_PUBLIC)
+                    $reflector->getMethods(ReflectionMethod::IS_PUBLIC)
                 )
             )
         );
@@ -120,9 +127,9 @@ class TypeAnalyser
     /**
      * @param string $line
      *
-     * @return null|TypeInfoMember
+     * @return TypeInfoMember|null
      */
-    protected function parseDocBlockPropOrParam($line)
+    protected function parseDocBlockPropOrParam(string $line): ?TypeInfoMember
     {
         $regex = '/^([\\w\\|\\\\]+)\\s+(\\$\\w+)\\s*(.*)$/';
         if (preg_match($regex, trim($line), $result)) {
@@ -140,11 +147,11 @@ class TypeAnalyser
     }
 
     /**
-     * @param \ReflectionParameter $param
+     * @param ReflectionParameter $param
      *
-     * @return null|TypeInfoMember
+     * @return TypeInfoMember|null
      */
-    protected function parseReflectedParams(\ReflectionParameter $param)
+    protected function parseReflectedParams(ReflectionParameter $param): ?TypeInfoMember
     {
         $types = [];
 
@@ -163,11 +170,11 @@ class TypeAnalyser
     }
 
     /**
-     * @param \ReflectionProperty $property
+     * @param ReflectionProperty $property
      *
      * @return TypeInfoMember
      */
-    protected function propertyToTypeInfoMember(\ReflectionProperty $property)
+    protected function propertyToTypeInfoMember(ReflectionProperty $property): TypeInfoMember
     {
         $docb = new DocBlock($property);
         $hint = $docb->getComment();
@@ -179,23 +186,29 @@ class TypeAnalyser
     }
 
     /**
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
+     *
+     * @return bool
+     */
+    protected function isMagicMethod(ReflectionMethod $method): bool
+    {
+        return substr($method->name, 0, 2) === '__';
+    }
+
+    /**
+     * @param ReflectionMethod $method
      *
      * @return TypeInfoMember|null
      */
-    protected function methodToTypeInfoMember(\ReflectionMethod $method)
+    protected function methodToTypeInfoMember(ReflectionMethod $method): ?TypeInfoMember
     {
-        if (substr($method->name, 0, 2) === '__') {
+        if ($this->isMagicMethod($method)) {
             return null;
         }
 
         $docb = new DocBlock($method);
         $hint = $docb->getComment() ?: '';
-        $link = $docb->getTag('link', '') ?: '';
-
-        if (is_array($link)) {
-            $link = $link[0];
-        }
+        $link = $docb->getTag('link', '')[0] ?? '';
 
         if ($docb->tagExists('param')) {
             // detect return from docblock
@@ -204,6 +217,8 @@ class TypeAnalyser
             // detect return from reflection
             $return = $this->canInspectReflectionReturnType
                 ? $method->getReturnType() : '';
+            $return = ($return && method_exists($return, 'getName'))
+                ? $return->getName() : '';
         }
 
         if ($docb->tagExists('param')) {
@@ -220,17 +235,24 @@ class TypeAnalyser
             );
         }
 
-        $signature = sprintf(
+        $signature = $this->buildMethodSignature($method->name, $params, $return);
+
+        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
+    }
+
+    protected function buildMethodSignature($name, $params, $return): string
+    {
+        return sprintf(
             '<div class="cm-signature">'
-                    . '<span class="type">%s</span> <span class="name">%s</span>'
-                    . '(<span class="args">%s</span>)</span>'
-                . '</div>',
+            . '<span class="type">%s</span> <span class="name">%s</span>'
+            . '(<span class="args">%s</span>)</span>'
+            . '</div>',
             $return,
-            $method->name,
+            $name,
             implode(
                 ', ',
                 array_map(
-                    function (TypeInfoMember $param) {
+                    static function (TypeInfoMember $param) {
                         $result = '???';
 
                         if ($param) {
@@ -249,16 +271,16 @@ class TypeAnalyser
                 )
             )
         );
-
-        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
     }
 
     /**
      * @param string $name
      *
      * @return string
+     *
+     * @throws ReflectionException
      */
-    protected function handleType($name)
+    protected function handleType(string $name): string
     {
         $name = $this->normalise($name);
 
@@ -274,7 +296,7 @@ class TypeAnalyser
      *
      * @return string
      */
-    protected function normalise($type)
+    protected function normalise(string $type): string
     {
         static $typeMap = [
             'int' => 'integer',
@@ -288,13 +310,13 @@ class TypeAnalyser
 
         $type = ltrim($type, '\\');
 
-        return isset($typeMap[$type]) ? $typeMap[$type] : $type;
+        return $typeMap[$type] ?? $type;
     }
 
     /**
      * @return array<string,TypeInfoClass>
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->types;
     }

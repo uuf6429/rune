@@ -2,12 +2,15 @@
 
 namespace uuf6429\Rune\Exception;
 
-use uuf6429\Rune\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use stdClass;
+use Throwable;
 
 class ExceptionHandlerInterfaceTest extends TestCase
 {
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExceptionHandlerInterface
+     * @return MockObject|ExceptionHandlerInterface
      */
     protected function getHandler()
     {
@@ -20,7 +23,7 @@ class ExceptionHandlerInterfaceTest extends TestCase
      * @param string $expectedMessageRegex
      * @dataProvider handlingNonExceptionsDataProvider
      */
-    public function testHandlingNonException($value, $expectedMessageRegex)
+    public function testHandlingNonException($value, $expectedMessageRegex): void
     {
         $handler = new ExceptionPropagatorHandler();
 
@@ -28,48 +31,43 @@ class ExceptionHandlerInterfaceTest extends TestCase
 
         try {
             $handler->handle($value);
-        } catch (\TypeError $ex) {
-        } catch (\Exception $ex) {
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
         }
 
         $this->assertNotNull($ex);
         $this->assertRegExp('/' . $expectedMessageRegex . '/', $ex->getMessage());
     }
 
-    /**
-     * @return array
-     */
-    public function handlingNonExceptionsDataProvider()
+    public function handlingNonExceptionsDataProvider(): array
     {
         return [
             'number' => [
                 '$value' => 12345,
                 '$expectedMessage' => 'Argument 1 passed to '
                     . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
-                    . ' must be an instance of Exception,'
-                    . '(.*?)int(.*?)given',
+                    . ' must implement interface Throwable,'
+                    . '(.*?)int(.*?)given(.*?)',
             ],
             'string' => [
                 '$value' => 'Exception',
                 '$expectedMessage' => 'Argument 1 passed to '
                     . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
-                    . ' must be an instance of Exception,'
-                    . '(.*?)string given',
+                    . ' must implement interface Throwable,'
+                    . '(.*?)string given(.*?)',
             ],
             'object' => [
-                '$value' => new \stdClass(),
+                '$value' => new stdClass(),
                 '$expectedMessage' => 'Argument 1 passed to '
                     . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
-                    . ' must be an instance of Exception,'
-                    . '(.*?)stdClass given',
+                    . ' must implement interface Throwable,'
+                    . '(.*?)stdClass given(.*?)',
             ],
             'array' => [
                 '$value' => [],
                 '$expectedMessage' => 'Argument 1 passed to '
                     . preg_quote(ExceptionPropagatorHandler::class . '::handle()', '/')
-                    . ' must be an instance of Exception,'
-                    . '(.*?)array given',
+                    . ' must implement interface Throwable,'
+                    . '(.*?)array given(.*?)',
             ],
         ];
     }

@@ -2,20 +2,23 @@
 
 namespace uuf6429\Rune\Context;
 
+use DateTime;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 use uuf6429\Rune\Rule\GenericRule;
-use uuf6429\Rune\TestCase;
 use uuf6429\Rune\Util\TypeInfoClass;
 use uuf6429\Rune\Util\TypeInfoMember;
 
 class DynamicContextDescriptorTest extends TestCase
 {
-    public function testUnsupportedContext()
+    public function testUnsupportedContext(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Context must be or extends DynamicContext.');
 
         /* @noinspection PhpParamsInspection */
-        new DynamicContextDescriptor(new \stdClass());
+        new DynamicContextDescriptor(new stdClass());
     }
 
     /**
@@ -27,7 +30,7 @@ class DynamicContextDescriptorTest extends TestCase
      *
      * @dataProvider typeInfoDataProvider
      */
-    public function testTypeInfo($variables, $functions, $expectedVTI, $expectedFTI, $expectedDTI)
+    public function testTypeInfo($variables, $functions, $expectedVTI, $expectedFTI, $expectedDTI): void
     {
         $context = new DynamicContext($variables, $functions);
         $descriptor = $context->getContextDescriptor();
@@ -37,7 +40,7 @@ class DynamicContextDescriptorTest extends TestCase
         $this->assertEquals($expectedDTI, $descriptor->getDetailedTypeInfo());
     }
 
-    public function typeInfoDataProvider()
+    public function typeInfoDataProvider(): array
     {
         return [
             'Simple scalar values test' => [
@@ -70,9 +73,9 @@ class DynamicContextDescriptorTest extends TestCase
                     GenericRule::class => new TypeInfoClass(
                         GenericRule::class,
                         [
-                            new TypeInfoMember('getId', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getId</span>(<span class="args"></span>)</span></div>'),
-                            new TypeInfoMember('getName', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getName</span>(<span class="args"></span>)</span></div>'),
-                            new TypeInfoMember('getCondition', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getCondition</span>(<span class="args"></span>)</span></div>'),
+                            new TypeInfoMember('getId', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getId</span>(<span class="args"></span>)</span></div>'),
+                            new TypeInfoMember('getName', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getName</span>(<span class="args"></span>)</span></div>'),
+                            new TypeInfoMember('getCondition', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getCondition</span>(<span class="args"></span>)</span></div>'),
                         ]
                     ),
                 ],
@@ -81,7 +84,7 @@ class DynamicContextDescriptorTest extends TestCase
                 '$variables' => [],
                 '$functions' => [
                     'round' => 'round',
-                    'now' => [new \DateTime(), 'getTimestamp'],
+                    'now' => [new DateTime(), 'getTimestamp'],
                 ],
                 '$expectedVTI' => [],
                 '$expectedFTI' => [

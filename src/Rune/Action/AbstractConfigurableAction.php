@@ -11,7 +11,7 @@ abstract class AbstractConfigurableAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    final public function execute($eval, $context, $rule)
+    final public function execute(EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule): void
     {
         $configExpr = $this->getConfigExpression();
         $config = $configExpr === null ? [] : $eval->evaluate($configExpr);
@@ -24,7 +24,7 @@ abstract class AbstractConfigurableAction implements ActionInterface
      *
      * @return array array of [name => expression] pairs
      */
-    abstract protected function getConfigDefinition();
+    abstract protected function getConfigDefinition(): array;
 
     /**
      * Do whatever you want here.
@@ -34,14 +34,12 @@ abstract class AbstractConfigurableAction implements ActionInterface
      * @param RuleInterface      $rule    the rule that triggered this action
      * @param array              $config  array of [name => value] pairs
      */
-    abstract protected function executeWithConfig($eval, $context, $rule, $config);
+    abstract protected function executeWithConfig($eval, $context, $rule, $config): void;
 
     /**
      * Returns config expression or null if not applicable.
-     *
-     * @return string|null
      */
-    private function getConfigExpression()
+    private function getConfigExpression(): ?string
     {
         $result = [];
 

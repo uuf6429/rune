@@ -34,7 +34,7 @@ class GenericRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -42,7 +42,7 @@ class GenericRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -50,7 +50,7 @@ class GenericRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getCondition()
+    public function getCondition(): string
     {
         return $this->condition;
     }

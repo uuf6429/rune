@@ -2,10 +2,12 @@
 
 namespace uuf6429\Rune\Exception;
 
+use RuntimeException;
+use Throwable;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 
-class ContextRuleException extends \RuntimeException
+class ContextRuleException extends RuntimeException
 {
     /**
      * @var ContextInterface
@@ -21,7 +23,7 @@ class ContextRuleException extends \RuntimeException
      * @param ContextInterface $context
      * @param RuleInterface    $rule
      * @param string|null      $message
-     * @param \Exception|null  $previous
+     * @param Throwable|null  $previous
      */
     public function __construct($context, $rule, $message = null, $previous = null)
     {
@@ -42,18 +44,12 @@ class ContextRuleException extends \RuntimeException
         parent::__construct($message, 0, $previous);
     }
 
-    /**
-     * @return ContextInterface
-     */
-    public function getContext()
+    public function getContext(): ContextInterface
     {
         return $this->context;
     }
 
-    /**
-     * @return RuleInterface
-     */
-    public function getRule()
+    public function getRule(): RuleInterface
     {
         return $this->rule;
     }

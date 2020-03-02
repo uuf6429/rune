@@ -4,18 +4,9 @@ namespace uuf6429\Rune\Rule;
 
 interface RuleInterface
 {
-    /**
-     * @return string
-     */
-    public function getId();
+    public function getId(): string;
 
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @return string
-     */
-    public function getCondition();
+    public function getCondition(): string;
 }

@@ -188,21 +188,27 @@ class TypeAnalyser
     /**
      * @param ReflectionMethod $method
      *
+     * @return bool
+     */
+    protected function isMagicMethod(ReflectionMethod $method): bool
+    {
+        return substr($method->name, 0, 2) === '__';
+    }
+
+    /**
+     * @param ReflectionMethod $method
+     *
      * @return TypeInfoMember|null
      */
     protected function methodToTypeInfoMember(ReflectionMethod $method): ?TypeInfoMember
     {
-        if (substr($method->name, 0, 2) === '__') {
+        if ($this->isMagicMethod($method)) {
             return null;
         }
 
         $docb = new DocBlock($method);
         $hint = $docb->getComment() ?: '';
-        $link = $docb->getTag('link', '') ?: '';
-
-        if (is_array($link)) {
-            $link = $link[0];
-        }
+        $link = $docb->getTag('link', '')[0] ?? '';
 
         if ($docb->tagExists('param')) {
             // detect return from docblock
@@ -229,13 +235,20 @@ class TypeAnalyser
             );
         }
 
-        $signature = sprintf(
+        $signature = $this->buildMethodSignature($method->name, $params, $return);
+
+        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
+    }
+
+    protected function buildMethodSignature($name, $params, $return): string
+    {
+        return sprintf(
             '<div class="cm-signature">'
-                    . '<span class="type">%s</span> <span class="name">%s</span>'
-                    . '(<span class="args">%s</span>)</span>'
-                . '</div>',
+            . '<span class="type">%s</span> <span class="name">%s</span>'
+            . '(<span class="args">%s</span>)</span>'
+            . '</div>',
             $return,
-            $method->name,
+            $name,
             implode(
                 ', ',
                 array_map(
@@ -258,8 +271,6 @@ class TypeAnalyser
                 )
             )
         );
-
-        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
     }
 
     /**

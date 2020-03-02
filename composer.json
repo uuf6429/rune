@@ -18,8 +18,8 @@
   ],
   "require": {
     "php": "^7.2",
-    "symfony/expression-language": "~3.0",
-    "kamermans/docblock-reflection": "~1.0",
+    "symfony/expression-language": "^3.0 || ^4.0",
+    "kamermans/docblock-reflection": "^1.0",
     "ext-json": "*"
   },
   "require-dev": {

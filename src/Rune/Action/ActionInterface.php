@@ -12,9 +12,9 @@ interface ActionInterface
      * Do something with regards to triggering rule using data from context,
      * optionally using evaluator for further processing.
      *
-     * @param \uuf6429\Rune\Util\EvaluatorInterface  $eval
-     * @param \uuf6429\Rune\Context\ContextInterface $context
-     * @param \uuf6429\Rune\Rule\RuleInterface       $rule
+     * @param EvaluatorInterface $eval
+     * @param ContextInterface $context
+     * @param RuleInterface $rule
      */
     public function execute(
         EvaluatorInterface $eval,

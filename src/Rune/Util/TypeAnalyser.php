@@ -186,6 +186,8 @@ class TypeAnalyser
             // detect return from reflection
             $return = $this->canInspectReflectionReturnType
                 ? $method->getReturnType() : '';
+            $return = ($return && method_exists($return, 'getName'))
+                ? $return->getName() : '';
         }
 
         if ($docb->tagExists('param')) {

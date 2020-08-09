@@ -6,10 +6,11 @@
  * @var string $json_products
  * @var string $json_rules
  * @var string $output_result
+ * @var string $output_generated
  * @var string $output_errors
  */
 ?><!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Rule Engine Example</title>
         <!-- jQuery -->
@@ -42,7 +43,7 @@
     <body>
         <div class="container">
             <h1>Rule Engine Shop Example</h1>
-            
+
             <form action="<?php echo APP_ROOT; ?>#results" method="post">
                 &nbsp;
                 <div class="row">
@@ -64,6 +65,7 @@
                         <table class="table table-hover table-condensed" id="products">
                             <thead>
                                 <tr>
+                                    <th width="32px">ID</th>
                                     <th>Name</th>
                                     <th>Colour</th>
                                     <th width="80px">Category</th>
@@ -114,23 +116,23 @@
                 ?></pre>
             </fieldset>
         </div>
-        
+
         <script>
             $(document).ready(function(){
-                var globalRowCount = 0,
+                let globalRowCount = 0,
                 // default rune editor settings
                     runeEditorOptions = {
                         tokens: <?php echo $json_tokens; ?>
                     },
                 // a simple data table populator
                     setupTable = function(table, data, rowGenerator){
-                        var $table = $(table),
+                        let $table = $(table),
                             $tbody = $table.find('tbody:last'),
                             updateEmptyRows = function(){
                                 $tbody
                                     .find('tr')
                                     .filter(function(){
-                                        var empty = true;
+                                        let empty = true;
                                         $(this).find('input, textarea, select').each(function(){
                                             if($(this).val()){
                                                 empty = false;
@@ -143,7 +145,7 @@
                                 addRow();
                             },
                             addRow = function(rowData){
-                                var $tr = rowGenerator($tbody, rowData || {});
+                                const $tr = rowGenerator($tbody, rowData || {});
                                 $tr.find('input, textarea, select').on('change, blur', updateEmptyRows);
                                 $tbody.find('.row-num-autogen').each(function(num, el){
                                     el.innerHTML = (num + 1).toString();
@@ -163,7 +165,7 @@
                     '#categories',
                     <?php echo $json_categories; ?>,
                     function($tbody, data){
-                        var rowIndex = ++globalRowCount,
+                        const rowIndex = ++globalRowCount,
                             $tr = $('<tr/>');
                         $tbody.append(
                             $tr.append(
@@ -183,10 +185,11 @@
                     '#products',
                     <?php echo $json_products; ?>,
                     function($tbody, data){
-                        var rowIndex = ++globalRowCount,
+                        const rowIndex = ++globalRowCount,
                             $tr = $('<tr/>');
                         $tbody.append(
                             $tr.append(
+                                $('<td/>').append($('<div style="padding: 5px 0;" class="row-num-autogen"/>')),
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]"'
                                     + ' class="form-control input-sm" placeholder="Product Name"/>').val(data[0] || '')),
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]"'
@@ -204,7 +207,7 @@
                     '#rules',
                     <?php echo $json_rules; ?>,
                     function($tbody, data){
-                        var rowIndex = ++globalRowCount,
+                        const rowIndex = ++globalRowCount,
                             $tr = $('<tr/>'),
                             $numCell = $('<td/>').append($('<div style="padding: 7px 0;" class="row-num-autogen"/>')),
                             $nameCell = $('<td/>').append($('<input type="text" name="rules['+rowIndex+'][]"'

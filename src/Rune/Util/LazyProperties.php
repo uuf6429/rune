@@ -14,6 +14,11 @@ use uuf6429\Rune\Exception\ReadOnlyPropertyException;
 trait LazyProperties
 {
     /**
+     * @var string
+     */
+    private $methodVerb = 'get';
+
+    /**
      * @var bool
      */
     private $readonlyLock = true;
@@ -25,7 +30,7 @@ trait LazyProperties
      */
     public function __get(string $name)
     {
-        $method = 'get' . ucfirst($name);
+        $method = $this->methodVerb . ucfirst($name);
 
         if (!method_exists($this, $method)) {
             throw new InvalidLazyPropertyException(get_class($this), $method, $name);
@@ -62,7 +67,7 @@ trait LazyProperties
      */
     public function __isset(string $name): bool
     {
-        $method = 'get' . ucfirst($name);
+        $method = $this->methodVerb . ucfirst($name);
 
         return method_exists($this, $method) && $this->__get($name) !== null;
     }

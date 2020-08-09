@@ -318,7 +318,7 @@ class EngineTest extends TestCase
 
                     DivisionByZeroError::class . ' encountered while processing rule 8 '
                     . '(Bad Rule - Divide by Zero) within ' . DynamicContext::class
-                    . ': Division by zero',
+                    . ': Division by zero.',
                 ],
                 'expectedResult' => 1,
             ],

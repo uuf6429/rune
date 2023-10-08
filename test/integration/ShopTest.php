@@ -52,6 +52,7 @@ class ShopTest extends TestCase
     public function testExampleTypeInfo(): void
     {
         $context = new Context\ProductContext();
+
         $descriptor = $context->getContextDescriptor();
 
         $this->assertEquals(
@@ -60,24 +61,19 @@ class ShopTest extends TestCase
                 'String' => new Util\TypeInfoMember('String', [StringUtils::class]),
             ],
             $descriptor->getVariableTypeInfo(),
-            'Assert variable type information'
+            'Check variable type information'
         );
-
         $this->assertEquals(
-            [
-                //'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
-            ],
+            [],
             $descriptor->getFunctionTypeInfo(),
-            'Assert function type information'
+            'Check function type information'
         );
-
         $this->assertEquals(
             [
                 ProductContext::class => new Util\TypeInfoClass(
                     ProductContext::class,
                     [
                         'product' => new Util\TypeInfoMember('product', [Product::class, 'null']),
-                        'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type">uuf6429\Rune\Context\ClassContextDescriptor</span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
                         'String' => new Util\TypeInfoMember('String', [StringUtils::class], ''),
                     ]
                 ),
@@ -95,8 +91,8 @@ class ShopTest extends TestCase
                     [
                         'id' => new Util\TypeInfoMember('id', ['integer']),
                         'name' => new Util\TypeInfoMember('name', ['string']),
-                        'in' => new Util\TypeInfoMember('in', ['method'], '<div class="cm-signature"><span class="type">bool</span> <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span>)</span></div>Returns true if category name or any of its parents are identical to $name.'),
-                        'parent' => new Util\TypeInfoMember('parent', [Category::class]),
+                        'in' => new Util\TypeInfoMember('in', ['method'], '<div class="cm-signature"><span class="type">boolean</span> <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span>)</span></div>Returns true if category name or any of its parents are identical to $name.'),
+                        'parent' => new Util\TypeInfoMember('parent', ['null', Category::class]),
                     ]
                 ),
                 StringUtils::class => new Util\TypeInfoClass(
@@ -108,7 +104,7 @@ class ShopTest extends TestCase
                 ),
             ],
             $descriptor->getDetailedTypeInfo(),
-            'Assert detailed type information'
+            'Check detailed type information'
         );
     }
 

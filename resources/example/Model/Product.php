@@ -11,42 +11,27 @@ class Product
 {
     use LazyProperties;
 
-    /** @var int */
-    public $id;
+    public int $id;
 
-    /** @var string */
-    public $name;
+    public string $name;
 
-    /** @var string */
-    public $colour;
+    public string $colour;
 
-    /** @var int */
-    protected $categoryId;
+    protected int $categoryId;
 
     /** @var callable */
     protected $categoryProvider;
 
-    /**
-     * @param int      $id
-     * @param string   $name
-     * @param string   $colour
-     * @param int      $categoryId
-     * @param callable $categoryProvider returns category given $id as first param
-     */
-    public function __construct($id, $name, $colour, $categoryId, $categoryProvider)
+    public function __construct(int $id, string $name, string $colour, int $categoryId, callable $categoryProvider)
     {
         $this->id = $id;
         $this->name = $name;
         $this->colour = $colour;
-
         $this->categoryId = $categoryId;
         $this->categoryProvider = $categoryProvider;
     }
 
-    /**
-     * @return Category
-     */
-    protected function getCategory()
+    protected function getCategory(): Category
     {
         $call = $this->categoryProvider;
 

@@ -5,43 +5,30 @@ namespace uuf6429\Rune\Example\Model;
 use uuf6429\Rune\Util\LazyProperties;
 
 /**
- * @property \uuf6429\Rune\Example\Model\Category $parent
+ * @property null|\uuf6429\Rune\Example\Model\Category $parent
  */
 class Category
 {
     use LazyProperties;
 
-    /** @var int */
-    public $id;
+    public int $id;
 
-    /** @var string */
-    public $name;
+    public string $name;
 
-    /** @var int */
-    protected $parentId;
+    protected int $parentId;
 
     /** @var callable */
     protected $categoryProvider;
 
-    /**
-     * @param int      $id
-     * @param string   $name
-     * @param int      $parentId
-     * @param callable $categoryProvider returns category given $id as first param
-     */
-    public function __construct($id, $name, $parentId, $categoryProvider)
+    public function __construct(int $id, string $name, int $parentId, callable $categoryProvider)
     {
         $this->id = $id;
         $this->name = $name;
-
         $this->parentId = $parentId;
         $this->categoryProvider = $categoryProvider;
     }
 
-    /**
-     * @return Category
-     */
-    protected function getParent()
+    protected function getParent(): ?Category
     {
         $call = $this->categoryProvider;
 
@@ -50,12 +37,8 @@ class Category
 
     /**
      * Returns true if category name or any of its parents are identical to $name.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
-    public function in($name)
+    public function in(string $name): bool
     {
         if (strtolower($this->name) === strtolower($name)) {
             return true;

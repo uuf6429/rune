@@ -2,35 +2,26 @@
 
 namespace uuf6429\Rune\Util;
 
-class TypeInfoMember implements \JsonSerializable
+use JsonSerializable;
+use ReturnTypeWillChange;
+
+class TypeInfoMember implements JsonSerializable
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string[]
      */
-    protected $types;
+    protected array $types;
+
+    protected ?string $hint;
+
+    protected ?string $link;
 
     /**
-     * @var string
-     */
-    protected $hint;
-
-    /**
-     * @var string
-     */
-    protected $link;
-
-    /**
-     * @param string   $name
      * @param string[] $types
-     * @param string   $hint
-     * @param string   $link
      */
-    public function __construct($name, array $types = [], $hint = '', $link = '')
+    public function __construct(string $name, array $types, ?string $hint = null, ?string $link = null)
     {
         $this->name = $name;
         $this->types = $types;
@@ -38,58 +29,40 @@ class TypeInfoMember implements \JsonSerializable
         $this->link = $link;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasTypes()
+    public function hasTypes(): bool
     {
-        return (bool) count($this->types);
+        return (bool)count($this->types);
     }
 
     /**
-     * @return array|string[]
+     * @return string[]
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->types;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasHint()
+    public function hasHint(): bool
     {
-        return (bool) $this->hint;
+        return (bool)strlen(trim((string)$this->hint));
     }
 
-    /**
-     * @return string
-     */
-    public function getHint()
+    public function getHint(): ?string
     {
         return $this->hint;
     }
 
-    /**
-     * @return string
-     */
-    public function getLink()
+    public function getLink(): ?string
     {
         return $this->link;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCallable()
+    public function isCallable(): bool
     {
         // Note: __invoke is not supported here... would have been nice of PHP to have an Invokable interface
         static $callableTypes = ['callable', 'Closure', 'method'];
@@ -100,6 +73,7 @@ class TypeInfoMember implements \JsonSerializable
     /**
      * {@inheritdoc}
      */
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [

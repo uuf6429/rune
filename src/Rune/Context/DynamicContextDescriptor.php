@@ -7,27 +7,17 @@ use uuf6429\Rune\Util\TypeInfoMember;
 
 class DynamicContextDescriptor extends AbstractContextDescriptor
 {
-    /**
-     * @var DynamicContext
-     */
-    protected $context;
+    protected DynamicContext $context;
 
-    /**
-     * @param DynamicContext $context
-     */
-    public function __construct($context)
+    public function __construct(DynamicContext $context)
     {
-        if (!($context instanceof DynamicContext)) {
-            throw new \InvalidArgumentException('Context must be or extends DynamicContext.');
-        }
-
-        parent::__construct($context);
+        $this->context = $context;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getVariables()
+    public function getVariables(): array
     {
         return $this->context->getVariables();
     }
@@ -35,7 +25,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return $this->context->getFunctions();
     }
@@ -43,7 +33,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getVariableTypeInfo($analyser = null)
+    public function getVariableTypeInfo($analyser = null): array
     {
         $result = [];
         foreach ($this->context->getVariables() as $name => $value) {
@@ -57,7 +47,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getFunctionTypeInfo($analyser = null)
+    public function getFunctionTypeInfo($analyser = null): array
     {
         $result = [];
         foreach (array_keys($this->context->getFunctions()) as $name) {
@@ -70,7 +60,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getDetailedTypeInfo($analyser = null)
+    public function getDetailedTypeInfo($analyser = null): array
     {
         $analyser = $analyser ?: new TypeAnalyser();
 

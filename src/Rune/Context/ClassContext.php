@@ -4,20 +4,10 @@ namespace uuf6429\Rune\Context;
 
 abstract class ClassContext implements ContextInterface
 {
-    /**
-     * @var ClassContextDescriptor
-     */
-    private $descriptor;
+    private ?ClassContextDescriptor $descriptor;
 
-    /**
-     * @return ClassContextDescriptor
-     */
-    public function getContextDescriptor()
+    public function getContextDescriptor(): ClassContextDescriptor
     {
-        if (!$this->descriptor) {
-            $this->descriptor = new ClassContextDescriptor($this);
-        }
-
-        return $this->descriptor;
+        return $this->descriptor ?? ($this->descriptor = new ClassContextDescriptor($this));
     }
 }

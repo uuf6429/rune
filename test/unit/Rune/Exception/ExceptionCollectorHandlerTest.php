@@ -2,25 +2,20 @@
 
 namespace uuf6429\Rune\Exception;
 
-class ExceptionCollectorHandlerTest extends ExceptionHandlerInterfaceTest
-{
-    /**
-     * {@inheritdoc}
-     */
-    protected function getHandler()
-    {
-        return new ExceptionCollectorHandler();
-    }
+use Exception;
+use PHPUnit\Framework\TestCase;
 
-    public function testCommonOperations()
+class ExceptionCollectorHandlerTest extends TestCase
+{
+    public function testCommonOperations(): void
     {
-        $handler = $this->getHandler();
+        $handler = new ExceptionCollectorHandler();
 
         $this->assertFalse($handler->hasExceptions());
         $this->assertCount(0, $handler->getExceptions());
 
-        $handler->handle(new \Exception('Error 1.'));
-        $handler->handle(new \Exception('Error 2.'));
+        $handler->handle(new Exception('Error 1.'));
+        $handler->handle(new Exception('Error 2.'));
 
         $this->assertTrue($handler->hasExceptions());
         $this->assertCount(2, $handler->getExceptions());

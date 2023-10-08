@@ -2,10 +2,9 @@
 
 namespace uuf6429\Rune\Exception;
 
+use Throwable;
+
 interface ExceptionHandlerInterface
 {
-    /**
-     * @param \Exception $exception
-     */
-    public function handle(\Exception $exception);
+    public function handle(Throwable $exception);
 }

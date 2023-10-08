@@ -4,27 +4,13 @@ namespace uuf6429\Rune\Rule;
 
 class GenericRule implements RuleInterface
 {
-    /**
-     * @var string
-     */
-    protected $id;
+    protected string $id;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $condition;
+    protected string $condition;
 
-    /**
-     * @param string $id
-     * @param string $name
-     * @param string $condition
-     */
-    public function __construct($id, $name, $condition)
+    public function __construct(string $id, string $name, string $condition)
     {
         $this->id = $id;
         $this->name = $name;
@@ -34,7 +20,7 @@ class GenericRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -42,7 +28,7 @@ class GenericRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -50,7 +36,7 @@ class GenericRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getCondition()
+    public function getCondition(): string
     {
         return $this->condition;
     }

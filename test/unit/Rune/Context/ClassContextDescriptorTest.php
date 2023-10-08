@@ -2,24 +2,20 @@
 
 namespace uuf6429\Rune\Context;
 
-use uuf6429\Rune\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ClassContextDescriptorTest extends TestCase
 {
-    public function testUnsupportedContext()
+    public function testContextFunctions(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Context must be or extends ClassContext.');
-
-        /* @noinspection PhpParamsInspection */
-        new ClassContextDescriptor(new \stdClass());
-    }
-
-    public function testContextFunctions()
-    {
+        /**
+         * @var MockObject|ClassContext|stdClass $mockContext
+         */
         $mockContext = $this
             ->getMockBuilder(ClassContext::class)
-            ->setMethods(['someFunction'])
+            ->addMethods(['someFunction'])
             ->getMock();
         $mockContext->someProperty = true;
 

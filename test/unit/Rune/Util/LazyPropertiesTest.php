@@ -2,11 +2,11 @@
 
 namespace uuf6429\Rune\Util;
 
-use uuf6429\Rune\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class LazyPropertiesTest extends TestCase
 {
-    public function testLazyLoad()
+    public function testLazyLoad(): void
     {
         $model = $this->getMockForTrait(
             LazyProperties::class,
@@ -26,7 +26,7 @@ class LazyPropertiesTest extends TestCase
         $this->assertEquals(42, $model->someVar);
     }
 
-    public function testBrokenLazyLoad()
+    public function testBrokenLazyLoad(): void
     {
         $model = $this->getMockForTrait(LazyProperties::class);
 
@@ -34,7 +34,9 @@ class LazyPropertiesTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'Missing property %s and method %s in class %s.',
-                'someVar', 'getSomeVar', get_class($model)
+                'someVar',
+                'getSomeVar',
+                get_class($model)
             )
         );
 

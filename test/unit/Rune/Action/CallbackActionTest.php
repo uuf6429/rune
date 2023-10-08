@@ -2,27 +2,14 @@
 
 namespace uuf6429\Rune\Action;
 
-use uuf6429\Rune\TestCase;
+use PHPUnit\Framework\TestCase;
+use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Rule\RuleInterface;
+use uuf6429\Rune\Util\EvaluatorInterface;
 
 class CallbackActionTest extends TestCase
 {
-    public function testFunctionIsCalled()
-    {
-        if (version_compare(PHP_VERSION, '7.2') >= 0) {
-            $this->markTestSkipped('"create_function" is not supported in this PHP version and therefore will not be tested.');
-        }
-
-        $GLOBALS['called'] = false;
-
-        /* @noinspection PhpDeprecationInspection */
-        $callback = create_function('', '$GLOBALS["called"] = true;');
-        $action = new CallbackAction($callback);
-        $action->execute(null, null, null);
-
-        $this->assertTrue($GLOBALS['called']);
-    }
-
-    public function testCallableIsCalled()
+    public function testCallableIsCalled(): void
     {
         $called = false;
 
@@ -30,12 +17,16 @@ class CallbackActionTest extends TestCase
             $called = true;
         };
         $action = new CallbackAction($callback);
-        $action->execute(null, null, null);
+        $action->execute(
+            $this->createMock(EvaluatorInterface::class),
+            $this->createMock(ContextInterface::class),
+            $this->createMock(RuleInterface::class)
+        );
 
         $this->assertTrue($called);
     }
 
-    public function testMethodIsCalled()
+    public function testMethodIsCalled(): void
     {
         $mock = $this->getMockBuilder(\stdClass::class)
             ->setMethods(['exec'])
@@ -45,6 +36,10 @@ class CallbackActionTest extends TestCase
         $callback = [$mock, 'exec'];
 
         $action = new CallbackAction($callback);
-        $action->execute(null, null, null);
+        $action->execute(
+            $this->createMock(EvaluatorInterface::class),
+            $this->createMock(ContextInterface::class),
+            $this->createMock(RuleInterface::class)
+        );
     }
 }

@@ -2,8 +2,11 @@
 
 namespace uuf6429\Rune;
 
+use RuntimeException;
+use Throwable;
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Exception\ContextErrorException;
 use uuf6429\Rune\Exception\ContextRuleActionException;
 use uuf6429\Rune\Exception\ContextRuleException;
 use uuf6429\Rune\Exception\ExceptionHandlerInterface;
@@ -14,34 +17,22 @@ use uuf6429\Rune\Util\SymfonyEvaluator;
 
 class Engine
 {
-    /**
-     * @var ExceptionHandlerInterface
-     */
-    protected $exceptionHandler;
+    protected ExceptionHandlerInterface $exceptionHandler;
 
-    /**
-     * @var EvaluatorInterface
-     */
-    protected $evaluator;
+    protected EvaluatorInterface $evaluator;
 
-    /**
-     * @param ExceptionHandlerInterface|null $exceptionHandler
-     * @param EvaluatorInterface|null        $evaluator
-     */
-    public function __construct($exceptionHandler = null, $evaluator = null)
+    public function __construct(?ExceptionHandlerInterface $exceptionHandler = null, ?EvaluatorInterface $evaluator = null)
     {
         $this->exceptionHandler = $exceptionHandler ?: new ExceptionPropagatorHandler();
         $this->evaluator = $evaluator ?: new SymfonyEvaluator();
     }
 
     /**
-     * @param ContextInterface $context
-     * @param RuleInterface[]  $rules
-     * @param ActionInterface  $action
-     *
+     * @param RuleInterface[] $rules
      * @return int|false
+     * @throws Throwable
      */
-    public function execute($context, $rules, $action)
+    public function execute(ContextInterface $context, array $rules, ActionInterface $action)
     {
         $descriptor = $context->getContextDescriptor();
         $this->evaluator->setVariables($descriptor->getVariables());
@@ -60,22 +51,16 @@ class Engine
     }
 
     /**
-     * @param RuleInterface[]  $result
-     * @param ContextInterface $context
-     * @param RuleInterface[]  $rules
-     *
-     * @throws
+     * @param RuleInterface[] $result
+     * @param RuleInterface[] $rules
+     * @throws Throwable
      */
-    protected function findMatches(&$result, $context, $rules)
+    protected function findMatches(array &$result, ContextInterface $context, array $rules): void
     {
         foreach ($rules as $rule) {
             try {
                 $this->findMatchesForContextRule($result, $rule);
-            } catch (\Exception $ex) {
-                $this->exceptionHandler->handle(
-                    new ContextRuleException($context, $rule, null, $ex)
-                );
-            } catch (\Throwable $ex) {
+            } catch (Throwable $ex) {
                 $this->exceptionHandler->handle(
                     new ContextRuleException($context, $rule, null, $ex)
                 );
@@ -85,15 +70,15 @@ class Engine
 
     /**
      * @param RuleInterface[] $result
-     * @param RuleInterface   $rule
+     * @throws ContextErrorException
      */
-    protected function findMatchesForContextRule(&$result, $rule)
+    protected function findMatchesForContextRule(array &$result, RuleInterface $rule): void
     {
         $cond = $rule->getCondition();
         $match = ($cond === '') ?: $this->evaluator->evaluate($rule->getCondition());
 
         if (!is_bool($match)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'The condition result for rule %s (%s) should be boolean, not %s.',
                 $rule->getId(),
                 $rule->getName(),
@@ -107,22 +92,15 @@ class Engine
     }
 
     /**
-     * @param ActionInterface  $action
-     * @param ContextInterface $context
-     * @param RuleInterface[]  $rules
-     *
-     * @throws
+     * @param RuleInterface[] $rules
+     * @throws Throwable
      */
-    protected function executeActionForRules($action, $context, $rules)
+    protected function executeActionForRules(ActionInterface $action, ContextInterface $context, array $rules): void
     {
         foreach ($rules as $rule) {
             try {
                 $action->execute($this->evaluator, $context, $rule);
-            } catch (\Exception $ex) {
-                $this->exceptionHandler->handle(
-                    new ContextRuleActionException($context, $rule, $action, null, $ex)
-                );
-            } catch (\Throwable $ex) {
+            } catch (Throwable $ex) {
                 $this->exceptionHandler->handle(
                     new ContextRuleActionException($context, $rule, $action, null, $ex)
                 );

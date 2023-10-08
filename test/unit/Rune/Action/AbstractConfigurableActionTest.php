@@ -2,29 +2,28 @@
 
 namespace uuf6429\Rune\Action;
 
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Engine;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\TestCase;
 use uuf6429\Rune\Util\EvaluatorInterface;
 
 class AbstractConfigurableActionTest extends TestCase
 {
     /**
-     * @param array $configDefinitions
-     * @param array $expectedConfig
      * @dataProvider configurableActionScenarioDataProvider
      */
-    public function testConfigurableActionScenario($configDefinitions, $expectedConfig)
+    public function testConfigurableActionScenario(array $configDefinitions, array $expectedConfig): void
     {
         $engine = new Engine();
         $action = $this->getActionMock($configDefinitions, $expectedConfig);
         $context = new DynamicContext(
             [
                 'everything' => 42,
-                'numbers' => (object) [
+                'numbers' => (object)[
                     'fifty' => 50,
                 ],
             ]
@@ -33,10 +32,7 @@ class AbstractConfigurableActionTest extends TestCase
         $engine->execute($context, $rules, $action);
     }
 
-    /**
-     * @return array
-     */
-    public function configurableActionScenarioDataProvider()
+    public static function configurableActionScenarioDataProvider(): iterable
     {
         return [
             'no config' => [
@@ -99,12 +95,9 @@ class AbstractConfigurableActionTest extends TestCase
     }
 
     /**
-     * @param array $configDefinitions
-     * @param array $expectedConfig
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject|ActionInterface
+     * @return MockObject|ActionInterface
      */
-    protected function getActionMock($configDefinitions, $expectedConfig)
+    protected function getActionMock(array $configDefinitions, array $expectedConfig)
     {
         $mock = $this
             ->getMockBuilder(AbstractConfigurableAction::class)

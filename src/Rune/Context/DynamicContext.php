@@ -13,20 +13,17 @@ class DynamicContext implements ContextInterface
     /**
      * @var array<string,mixed>
      */
-    private $variables;
+    private array $variables;
 
     /**
      * @var array<string,callable>
      */
-    private $functions;
+    private array $functions;
+
+    private DynamicContextDescriptor $descriptor;
 
     /**
-     * @var DynamicContextDescriptor
-     */
-    private $descriptor;
-
-    /**
-     * @param array<string,mixed>    $variables
+     * @param array<string,mixed> $variables
      * @param array<string,callable> $functions
      */
     public function __construct(array $variables = [], array $functions = [])
@@ -38,19 +35,15 @@ class DynamicContext implements ContextInterface
     /**
      * @return DynamicContextDescriptor
      */
-    public function getContextDescriptor()
+    public function getContextDescriptor(): AbstractContextDescriptor
     {
-        if (!$this->descriptor) {
-            $this->descriptor = new DynamicContextDescriptor($this);
-        }
-
-        return $this->descriptor;
+        return $this->descriptor ?? ($this->descriptor = new DynamicContextDescriptor($this));
     }
 
     /**
      * @return array<string,mixed>
      */
-    public function getVariables()
+    public function getVariables(): array
     {
         return $this->variables;
     }
@@ -58,7 +51,7 @@ class DynamicContext implements ContextInterface
     /**
      * @return array<string,callable>
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return $this->functions;
     }

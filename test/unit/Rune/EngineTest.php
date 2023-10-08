@@ -1,27 +1,33 @@
 <?php
 
+/**
+ * @noinspection PhpUnhandledExceptionInspection
+ */
+
 namespace uuf6429\Rune;
 
+use Exception;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Throwable;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Exception\ContextErrorException;
+use uuf6429\Rune\Exception\ExceptionCollectorHandler;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
 
 class EngineTest extends TestCase
 {
-    protected $matchingRules;
+    private array $matchingRules;
 
     /**
-     * @param bool $withBrokenRules
-     *
      * @return RuleInterface[]
      */
-    protected function getRules($withBrokenRules = false)
+    protected function getRules(bool $withBrokenRules = false): array
     {
         return array_merge(
             [
@@ -31,31 +37,19 @@ class EngineTest extends TestCase
                 new GenericRule('3', 'Small, Blue Products', 'SIZE in ["S"] and COLOR == "blue"'),
                 new GenericRule('4', 'Unsupported Products', 'not IS_SUPPORTED'),
             ],
-            $withBrokenRules
-            ? [
+            $withBrokenRules ? [
                 new GenericRule('5', 'Bad Rule - Result Type', 'SIZE'),
                 new GenericRule('6', 'Bad Rule - Syntax Error', 'SIZE =  = "hm'),
                 new GenericRule('7', 'Bad Rule - Property on a Non-Object', 'SIZE.TEST == 12'),
-                new GenericRule('8', 'Bad Rule - Divide by Zero', '50 / 0'),
-            ]
-            : []
+                new GenericRule('8', 'Bad Rule - Triggers error', 'ERROR("some error")'),
+            ] : []
         );
     }
 
-    /**
-     * @param string $productName
-     *
-     * @return CallbackAction
-     */
-    protected function getAction($productName)
+    protected function getAction(string $productName): CallbackAction
     {
-        return  new CallbackAction(
-            /**
-             * @param EvaluatorInterface $eval,
-             * @param ContextInterface   $context,
-             * @param RuleInterface      $rule
-             */
-            function ($eval, $context, RuleInterface $rule) use ($productName) {
+        return new CallbackAction(
+            function (EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule) use ($productName) {
                 $this->matchingRules[$productName][] = $rule->getName();
             }
         );
@@ -63,34 +57,29 @@ class EngineTest extends TestCase
 
     /**
      * @param array<string,mixed> $productValues
-     *
-     * @return DynamicContext
      */
-    protected function getContext($productValues)
+    protected function getContext(array $productValues): DynamicContext
     {
-        return new DynamicContext($productValues);
+        return new DynamicContext(
+            array_filter($productValues, static fn ($value) => !is_callable($value)),
+            array_filter($productValues, static fn ($value) => is_callable($value)),
+        );
     }
 
     /**
-     * @param bool  $withBadRules
-     * @param array $productData
-     * @param array $expectedRules
-     * @param array $expectedErrors
-     * @param int   $expectedResult
-     *
      * @dataProvider sampleValuesDataProvider
      */
     public function testRuleEngine(
-        $withBadRules,
-        $productData,
-        $expectedRules,
-        $expectedErrors,
-        $expectedResult
-    ) {
+        bool  $withBadRules,
+        array $productData,
+        array $expectedRules,
+        array $expectedErrors,
+        int   $expectedResult
+    ): void {
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
         $result = 0;
-        $exceptionHandler = new Exception\ExceptionCollectorHandler();
+        $exceptionHandler = new ExceptionCollectorHandler();
         $engine = new Engine($exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
@@ -101,17 +90,17 @@ class EngineTest extends TestCase
             );
         }
 
-        $errorMesgs = array_map(
-            function (\Exception $exception) {
+        $errorMsgs = array_map(
+            static function (Exception $exception) {
                 return $exception->getMessage();
             },
             $exceptionHandler->getExceptions()
         );
 
         if (empty($expectedErrors)) {
-            $this->assertEquals([], $errorMesgs, 'Engine should not have caused errors');
+            $this->assertEquals([], $errorMsgs, 'Engine should not have caused errors');
         } else {
-            $this->assertEquals($expectedErrors, $errorMesgs, 'Engine errors were not as expected.');
+            $this->assertEquals($expectedErrors, $errorMsgs, 'Engine errors were not as expected.');
         }
 
         $this->assertEquals($expectedRules, $this->matchingRules);
@@ -119,10 +108,7 @@ class EngineTest extends TestCase
         $this->assertSame($result, $expectedResult);
     }
 
-    /**
-     * @return array
-     */
-    public function sampleValuesDataProvider()
+    public static function sampleValuesDataProvider(): iterable
     {
         return [
             'empty condition' => [
@@ -301,6 +287,7 @@ class EngineTest extends TestCase
                         'COLOR' => 'red',
                         'SIZE' => 'M',
                         'IS_SUPPORTED' => true,
+                        'ERROR' => static fn ($msg) => trigger_error($msg),
                     ],
                 ],
                 'expectedRules' => [
@@ -320,18 +307,18 @@ class EngineTest extends TestCase
 
                     RuntimeException::class . ' encountered while processing rule 7 '
                     . '(Bad Rule - Property on a Non-Object) within ' . DynamicContext::class
-                    . ': Unable to get a property on a non-object.',
+                    . ': Unable to get property "TEST" of non-object "SIZE".',
 
                     ContextErrorException::class . ' encountered while processing rule 8 '
-                    . '(Bad Rule - Divide by Zero) within ' . DynamicContext::class
-                    . ': Division by zero',
+                    . '(Bad Rule - Triggers error) within ' . DynamicContext::class
+                    . ': some error',
                 ],
                 'expectedResult' => 1,
             ],
         ];
     }
 
-    public function testRuleEngineCollectingExceptionHandler()
+    public function testRuleEngineCollectingExceptionHandler(): void
     {
         $productData = [
             'Product 1' => [
@@ -370,7 +357,7 @@ class EngineTest extends TestCase
 
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
-        $exceptionHandler = new Exception\ExceptionCollectorHandler();
+        $exceptionHandler = new ExceptionCollectorHandler();
         $engine = new Engine($exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
@@ -384,16 +371,14 @@ class EngineTest extends TestCase
         $this->assertEquals($expectedRules, $this->matchingRules);
 
         $errorMegs = array_map(
-            function (\Exception $exception) {
-                return $exception->getMessage();
-            },
+            static fn (Throwable $exception) => $exception->getMessage(),
             $exceptionHandler->getExceptions()
         );
 
         $this->assertEquals($expectedExceptions, $errorMegs, 'Engine exceptions were not as expected.');
     }
 
-    public function testRuleEngineSometimesFaultyAction()
+    public function testRuleEngineSometimesFaultyAction(): void
     {
         $productData = [
             'Product 1' => [],
@@ -410,23 +395,18 @@ class EngineTest extends TestCase
         ];
         $expectedExceptions = [
             'LogicException encountered while executing action ' . CallbackAction::class
-                . ' for rule 1 (Always triggered) within ' . DynamicContext::class
-                . ': Exception thrown for Product 2.',
+            . ' for rule 1 (Always triggered) within ' . DynamicContext::class
+            . ': Exception thrown for Product 2.',
         ];
 
         $matchingRules = array_fill_keys(array_keys($productData), []);
 
-        $exceptionHandler = new Exception\ExceptionCollectorHandler();
+        $exceptionHandler = new ExceptionCollectorHandler();
         $engine = new Engine($exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
             $action = new CallbackAction(
-                /**
-                 * @param EvaluatorInterface $eval,
-                 * @param DynamicContext     $context,
-                 * @param RuleInterface      $rule
-                 */
-                function ($eval, $context, RuleInterface $rule) use ($productName, &$matchingRules) {
+                function (EvaluatorInterface $eval, DynamicContext $context, RuleInterface $rule) use ($productName, &$matchingRules) {
                     if ($productName === 'Product 2') {
                         throw new \LogicException("Exception thrown for $productName.");
                     }
@@ -444,13 +424,11 @@ class EngineTest extends TestCase
 
         $this->assertEquals($expectedRules, $matchingRules);
 
-        $errorMesgs = array_map(
-            function (\Exception $exception) {
-                return $exception->getMessage();
-            },
+        $errorMsgs = array_map(
+            static fn (Throwable $exception) => $exception->getMessage(),
             $exceptionHandler->getExceptions()
         );
 
-        $this->assertEquals($expectedExceptions, $errorMesgs, 'Engine exceptions were not as expected.');
+        $this->assertEquals($expectedExceptions, $errorMsgs, 'Engine exceptions were not as expected.');
     }
 }

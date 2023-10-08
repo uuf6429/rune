@@ -2,27 +2,21 @@
 
 namespace uuf6429\Rune\example\Context;
 
-class ProductContext extends AbstractContext
-{
-    /**
-     * @var \uuf6429\Rune\example\Model\Product
-     */
-    public $product;
+use Stringable;
+use uuf6429\Rune\example\Model\Product;
 
-    /**
-     * @param null|\uuf6429\Rune\example\Model\Product $product
-     */
-    public function __construct($product = null)
+class ProductContext extends AbstractContext implements Stringable
+{
+    public ?Product $product;
+
+    public function __construct(?Product $product = null)
     {
         parent::__construct();
 
         $this->product = $product;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return ucwords(trim($this->product->colour . ' ' . $this->product->name));
     }

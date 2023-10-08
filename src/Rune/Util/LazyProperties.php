@@ -2,30 +2,24 @@
 
 namespace uuf6429\Rune\Util;
 
+use RuntimeException;
+
 /**
- * This trait will delay loading of properties, helping in performance. Usage:
- * 1. Use the trait in your class. :)
- * 2. Add '@property' to class PHPDoc for your lazy properties.
- * 3. Add getter methods that initialize and return the actual property value.
+ * This trait will delay loading of properties, helping in performance.
  */
 trait LazyProperties
 {
-    /**
-     * @var bool
-     */
-    private $readonlyLock = true;
+    private bool $readonlyLock = true;
 
     /**
-     * @param string $name
-     *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         $method = 'get' . ucfirst($name);
 
         if (!method_exists($this, $method)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Missing property %s and method %s in class %s.',
                     $name, $method, get_class($this)
@@ -45,13 +39,12 @@ trait LazyProperties
     }
 
     /**
-     * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value): void
     {
         if ($this->readonlyLock) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Property %s in class %s is read only and cannot be set.',
                     $name, get_class($this)
@@ -62,12 +55,7 @@ trait LazyProperties
         $this->$name = $value;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         $method = 'get' . ucfirst($name);
 

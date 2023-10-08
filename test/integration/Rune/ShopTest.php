@@ -1,7 +1,12 @@
 <?php
 
+/**
+ * @noinspection PhpUnhandledExceptionInspection
+ */
+
 namespace uuf6429\Rune;
 
+use PHPUnit\Framework\TestCase;
 use uuf6429\Rune\example\Action;
 use uuf6429\Rune\example\Context;
 use uuf6429\Rune\example\Context\ProductContext;
@@ -12,19 +17,21 @@ use uuf6429\Rune\example\Model\StringUtils;
 
 class ShopTest extends TestCase
 {
-    public function testSimpleEngine()
+    public function testSimpleEngine(): void
     {
-        $this->expectOutputString(implode(PHP_EOL, [
-            'Rule 1 (Red Products) triggered for Red Bricks.',
-            'Rule 5 (Toys) triggered for Red Bricks.',
-            'Rule 3 (Green Socks) triggered for Green Soft Socks.',
-            'Rule 4 (Socks) triggered for Green Soft Socks.',
-            'Rule 6 (Clothes) triggered for Green Soft Socks.',
-            'Rule 4 (Socks) triggered for Yellow Sporty Socks.',
-            'Rule 6 (Clothes) triggered for Yellow Sporty Socks.',
-            'Rule 5 (Toys) triggered for Lego Blocks.',
-            'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
-        ]) . PHP_EOL);
+        $this->expectOutputString(
+            implode(PHP_EOL, [
+                'Rule 1 (Red Products) triggered for Red Bricks.',
+                'Rule 5 (Toys) triggered for Red Bricks.',
+                'Rule 3 (Green Socks) triggered for Green Soft Socks.',
+                'Rule 4 (Socks) triggered for Green Soft Socks.',
+                'Rule 6 (Clothes) triggered for Green Soft Socks.',
+                'Rule 4 (Socks) triggered for Yellow Sporty Socks.',
+                'Rule 6 (Clothes) triggered for Yellow Sporty Socks.',
+                'Rule 5 (Toys) triggered for Lego Blocks.',
+                'Rule 6 (Clothes) triggered for Black Adidas Jacket.',
+            ]) . PHP_EOL
+        );
 
         $exceptions = new Exception\ExceptionCollectorHandler();
         $engine = new Engine($exceptions);
@@ -42,7 +49,7 @@ class ShopTest extends TestCase
         );
     }
 
-    public function testExampleTypeInfo()
+    public function testExampleTypeInfo(): void
     {
         $context = new Context\ProductContext();
         $descriptor = $context->getContextDescriptor();
@@ -108,7 +115,7 @@ class ShopTest extends TestCase
     /**
      * @return Rule\GenericRule[]
      */
-    protected function getRules()
+    protected function getRules(): array
     {
         return [
             new Rule\GenericRule(1, 'Red Products', 'product.colour == String.lower("Red")'),
@@ -123,7 +130,7 @@ class ShopTest extends TestCase
     /**
      * @return Model\Product[]
      */
-    protected function getProducts()
+    protected function getProducts(): array
     {
         $cp = $this->getCategoryProvider();
 
@@ -139,7 +146,7 @@ class ShopTest extends TestCase
     /**
      * @return Model\Category[]
      */
-    protected function getCategories()
+    protected function getCategories(): array
     {
         $cp = $this->getCategoryProvider();
 
@@ -153,20 +160,12 @@ class ShopTest extends TestCase
         ];
     }
 
-    /**
-     * @return callable
-     */
-    protected function getCategoryProvider()
+    protected function getCategoryProvider(): callable
     {
         return [$this, 'getCategory'];
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Model\Category|null
-     */
-    public function getCategory($id)
+    public function getCategory(int $id): ?Category
     {
         foreach ($this->getCategories() as $category) {
             if ($category->id === $id) {

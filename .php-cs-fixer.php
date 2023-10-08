@@ -1,9 +1,9 @@
 <?php
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setCacheFile(__DIR__ . '/.php_cs.cache')
     ->setRules([
-        '@Symfony' => true,
+        '@PSR12' => true,
         'array_syntax' => ['syntax' => 'short'],
         'blank_line_after_opening_tag' => true,
         'concat_space' => ['spacing' => 'one'],

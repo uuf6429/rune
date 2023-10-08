@@ -4,40 +4,31 @@ namespace uuf6429\Rune\Util;
 
 class TypeInfoClass
 {
-    /**
-     * @var string
-     */
-    public $name;
+    public string $name;
 
     /**
      * @var TypeInfoMember[]
      */
-    public $members = [];
+    public array $members = [];
+
+    public ?string $hint;
+
+    public ?string $link;
 
     /**
-     * @var string
-     */
-    public $hint;
-
-    /**
-     * @var string
-     */
-    public $link;
-
-    /**
-     * @param string           $name
      * @param TypeInfoMember[] $members
-     * @param string           $hint
-     * @param string           $link
      */
-    public function __construct($name, array $members = [], $hint = '', $link = '')
+    public function __construct(string $name, array $members, ?string $hint = null, ?string $link = null)
     {
         $this->name = $name;
+        $this->members = array_combine(
+            array_map(
+                static fn (TypeInfoMember $member) => $member->getName(),
+                $members
+            ),
+            $members
+        );
         $this->hint = $hint;
         $this->link = $link;
-
-        foreach ($members as $member) {
-            $this->members[$member->getName()] = $member;
-        }
     }
 }

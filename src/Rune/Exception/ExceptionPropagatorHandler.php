@@ -2,14 +2,14 @@
 
 namespace uuf6429\Rune\Exception;
 
+use Throwable;
+
 class ExceptionPropagatorHandler implements ExceptionHandlerInterface
 {
     /**
-     * {@inheritdoc}
-     *
-     * @throws \Exception|\Throwable
+     * @throws Throwable
      */
-    public function handle(\Exception $exception)
+    public function handle(Throwable $exception): void
     {
         throw $exception;
     }

@@ -2,11 +2,17 @@
 
 namespace uuf6429\Rune\Util;
 
-use kamermans\Reflection\DocBlock;
+use phpDocumentor\Reflection\DocBlock;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionParameter;
+use ReflectionProperty;
+use RuntimeException;
 
 class TypeAnalyser
 {
-    protected static $simpleTypes = [
+    protected static array $simpleTypes = [
         'object', 'array', 'string', 'boolean', 'integer', 'double',
     ];
 
@@ -15,46 +21,38 @@ class TypeAnalyser
      *
      * @var array<string,TypeInfoClass>
      */
-    protected $types = [];
+    protected array $types = [];
 
     /**
      * Enables deep analysis (recursively analyses class members and their types).
-     *
-     * @var bool
      */
-    protected $deep = false;
+    protected bool $deep = false;
 
     /**
-     * @var bool
+     * @param string[] $types
+     * @throws ReflectionException
      */
-    protected $canInspectReflectionParamType;
-
-    /**
-     * @var bool
-     */
-    protected $canInspectReflectionReturnType;
-
-    public function __construct()
+    public function analyse(array $types, bool $deep = true): void
     {
-        $this->canInspectReflectionParamType = method_exists(\ReflectionParameter::class, 'getType');
-        $this->canInspectReflectionReturnType = method_exists(\ReflectionMethod::class, 'getReturnType');
+        $this->deep = $deep;
+        foreach ($types as $type) {
+            $this->analyseType($type);
+        }
     }
 
     /**
-     * @param string|array $type
-     * @param bool         $deep
+     * @return array<string,TypeInfoClass>
      */
-    public function analyse($type, $deep = true)
+    public function getTypes(): array
     {
-        if (is_array($type)) {
-            foreach ($type as $aType) {
-                $this->analyse($aType, $deep);
-            }
+        return $this->types;
+    }
 
-            return;
-        }
-
-        $this->deep = $deep;
+    /**
+     * @throws ReflectionException
+     */
+    private function analyseType(string $type): void
+    {
         $type = $this->normalise($type);
 
         if ($type && !isset($this->types[$type]) && !in_array($type, static::$simpleTypes, true)) {
@@ -69,7 +67,7 @@ class TypeAnalyser
                     break;
 
                 default:
-                    throw new \RuntimeException(
+                    throw new RuntimeException(
                         sprintf(
                             'Type information for %s cannot be retrieved (unsupported type).',
                             $type
@@ -80,201 +78,173 @@ class TypeAnalyser
     }
 
     /**
-     * @param string $name
+     * @throws ReflectionException
      */
-    protected function analyseClassOrInterface($name)
+    private function analyseClassOrInterface(string $name): void
     {
         // .-- avoid infinite loop inspecting same type
         $this->types[$name] = 'IN_PROGRESS';
 
-        $reflector = new \ReflectionClass($name);
+        $reflector = new ReflectionClass($name);
 
         $docb = new DocBlock($reflector);
-        $hint = $docb->getComment() ?: '';
-        $link = $docb->getTag('link', '') ?: '';
-
-        if (is_array($link)) {
-            $link = $link[0];
-        }
-
-        $members = array_filter(
-            array_merge(
+        $this->types[$name] = new TypeInfoClass(
+            $name,
+            array_filter(
                 array_map(
-                    [$this, 'parseDocBlockPropOrParam'],
-                    $docb->getTag('property', [], true)
-                ),
-                array_map(
-                    [$this, 'propertyToTypeInfoMember'],
-                    $reflector->getProperties(\ReflectionProperty::IS_PUBLIC)
-                ),
-                array_map(
-                    [$this, 'methodToTypeInfoMember'],
-                    $reflector->getMethods(\ReflectionMethod::IS_PUBLIC)
+                    [$this, 'extractTypeInfoMember'],
+                    array_merge(
+                        $reflector->getProperties(ReflectionProperty::IS_PUBLIC),
+                        $reflector->getMethods(ReflectionMethod::IS_PUBLIC),
+                        $docb->getTagsByName('property'),
+                        $docb->getTagsByName('property-read'),
+                        $docb->getTagsByName('method')
+                    )
                 )
-            )
-        );
-
-        $this->types[$name] = new TypeInfoClass($name, $members, $hint, $link);
-    }
-
-    /**
-     * @param string $line
-     *
-     * @return null|TypeInfoMember
-     */
-    protected function parseDocBlockPropOrParam($line)
-    {
-        $regex = '/^([\\w\\|\\\\]+)\\s+(\\$\\w+)\\s*(.*)$/';
-        if (preg_match($regex, trim($line), $result)) {
-            $types = explode('|', $result[1]);
-            $types = array_filter(array_map([$this, 'handleType'], $types));
-
-            return new TypeInfoMember(
-                substr($result[2], 1),
-                $types,
-                $result[3]
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * @param \ReflectionParameter $param
-     *
-     * @return null|TypeInfoMember
-     */
-    protected function parseReflectedParams(\ReflectionParameter $param)
-    {
-        $types = [];
-
-        if ($this->canInspectReflectionParamType && (bool) ($type = $param->getType())) {
-            $types[] = (string) $type;
-            if ($type->allowsNull()) {
-                $type[] = 'null';
-            }
-        }
-
-        return new TypeInfoMember(
-            $param->getName(),
-            $types,
-            ''
+            ),
+            (string)$docb->getDescription() ?: null,
+            $this->extractLinkURL($docb)
         );
     }
 
     /**
-     * @param \ReflectionProperty $property
-     *
-     * @return TypeInfoMember
+     * @throws ReflectionException
      */
-    protected function propertyToTypeInfoMember(\ReflectionProperty $property)
+    private function extractTypeInfoMember(object $element): ?TypeInfoMember
     {
-        $docb = new DocBlock($property);
-        $hint = $docb->getComment();
-        $link = $docb->getTag('link', '');
-        $types = explode('|', $docb->getTag('var', ''));
-        $types = array_filter(array_map([$this, 'handleType'], $types));
+        switch (true) {
+            case $element instanceof ReflectionProperty:
+                $docb = new DocBlock($element);
+                return new TypeInfoMember(
+                    $element->getName(),
+                    array_filter(
+                        array_map(
+                            fn (DocBlock\Tags\Var_ $tag) => $this->handleType((string)$tag->getType()),
+                            $docb->getTagsByName('var')
+                        )
+                    ),
+                    (string)$docb->getDescription() ?: null,
+                    $this->extractLinkURL($docb)
+                );
 
-        return new TypeInfoMember($property->getName(), $types, $hint, $link);
+            case $element instanceof ReflectionMethod:
+                $docb = new DocBlock($element);
+                return $this->handleMethod(
+                    $element->name,
+                    (string)$docb->getDescription() ?: null,
+                    $this->extractLinkURL($docb),
+                    $docb->hasTag('param')
+                        ? // detect params from docblock
+                        array_map(
+                            [$this, 'extractTypeInfoMember'],
+                            $docb->getTagsByName('param')
+                        )
+                        : // detect params from reflection
+                        array_map(
+                            [$this, 'extractTypeInfoMember'],
+                            $element->getParameters()
+                        ),
+                    $docb->hasTag('return')
+                        ? // detect return from docblock
+                        implode('|', array_map(
+                            fn (DocBlock\Tags\Return_ $tag) => $this->handleType((string)$tag->getType()),
+                            $docb->getTagsByName('return')
+                        ))
+                        : // detect return from reflection
+                        (string)$element->getReturnType()
+                );
+
+            case $element instanceof ReflectionParameter:
+                $types = [];
+                if (($type = $element->getType()) !== null) {
+                    $types[] = (string)$type;
+                    if ($type->allowsNull()) {
+                        $types[] = 'null';
+                    }
+                }
+                return new TypeInfoMember($element->getName(), $types);
+
+            case $element instanceof DocBlock\Tags\Method:
+                return $this->handleMethod(
+                    $element->getMethodName(),
+                    (string)$element->getDescription() ?: null,
+                    null,
+                    array_map(
+                        static fn ($arg) => new TypeInfoMember($arg['name'], $arg['type']),
+                        $element->getArguments()
+                    ),
+                    (string)$element->getReturnType()
+                );
+
+            case $element instanceof DocBlock\Tags\Property:
+            case $element instanceof DocBlock\Tags\PropertyRead:
+            case $element instanceof DocBlock\Tags\Param:
+                return new TypeInfoMember(
+                    $element->getVariableName(),
+                    [(string)$element->getType()]
+                );
+
+            default:
+                throw new RuntimeException('Unsupported element type: ' . get_class($element));
+        }
     }
 
-    /**
-     * @param \ReflectionMethod $method
-     *
-     * @return TypeInfoMember|null
-     */
-    protected function methodToTypeInfoMember(\ReflectionMethod $method)
+    private function handleMethod(string $name, ?string $description, ?string $link, array $params, string $return): ?TypeInfoMember
     {
-        if (substr($method->name, 0, 2) === '__') {
+        if (substr($name, 0, 2) === '__') {
             return null;
         }
 
-        $docb = new DocBlock($method);
-        $hint = $docb->getComment() ?: '';
-        $link = $docb->getTag('link', '') ?: '';
+        return new TypeInfoMember(
+            $name,
+            ['method'],
+            sprintf(
+                '<div class="cm-signature">'
+                . '<span class="type">%s</span> <span class="name">%s</span>'
+                . '(<span class="args">%s</span>)</span>'
+                . '</div>%s',
+                $return ?: 'void',
+                $name,
+                implode(
+                    ', ',
+                    array_map(
+                        static function (?TypeInfoMember $param) {
+                            if (!$param) {
+                                return '???';
+                            }
 
-        if (is_array($link)) {
-            $link = $link[0];
-        }
-
-        if ($docb->tagExists('param')) {
-            // detect return from docblock
-            $return = explode(' ', $docb->getTag('return', 'void'), 2)[0];
-        } else {
-            // detect return from reflection
-            $return = $this->canInspectReflectionReturnType
-                ? $method->getReturnType() : '';
-        }
-
-        if ($docb->tagExists('param')) {
-            // detect params from docblock
-            $params = array_map(
-                [$this, 'parseDocBlockPropOrParam'],
-                $docb->getTag('param', [], true)
-            );
-        } else {
-            // detect params from reflection
-            $params = array_map(
-                [$this, 'parseReflectedParams'],
-                $method->getParameters()
-            );
-        }
-
-        $signature = sprintf(
-            '<div class="cm-signature">'
-                    . '<span class="type">%s</span> <span class="name">%s</span>'
-                    . '(<span class="args">%s</span>)</span>'
-                . '</div>',
-            $return,
-            $method->name,
-            implode(
-                ', ',
-                array_map(
-                    function (TypeInfoMember $param) {
-                        $result = '???';
-
-                        if ($param) {
-                            $result = sprintf(
+                            return sprintf(
                                 '<span class="%s" title="%s"><span class="type">%s</span>$%s</span>',
                                 $param->hasHint() ? 'arg hint' : 'arg',
                                 $param->getHint(),
                                 $param->hasTypes() ? (implode('|', $param->getTypes()) . ' ') : '',
                                 $param->getName()
                             );
-                        }
-
-                        return $result;
-                    },
-                    $params
-                )
-            )
+                        },
+                        $params
+                    )
+                ),
+                $description
+            ),
+            $link
         );
-
-        return new TypeInfoMember($method->name, ['method'], $signature . $hint, $link);
     }
 
     /**
-     * @param string $name
-     *
-     * @return string
+     * @throws ReflectionException
      */
-    protected function handleType($name)
+    private function handleType(string $name): string
     {
         $name = $this->normalise($name);
 
         if ($this->deep) {
-            $this->analyse($name);
+            $this->analyseType($name);
         }
 
         return $name;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    protected function normalise($type)
+    protected function normalise(string $type): string
     {
         static $typeMap = [
             'int' => 'integer',
@@ -288,14 +258,12 @@ class TypeAnalyser
 
         $type = ltrim($type, '\\');
 
-        return isset($typeMap[$type]) ? $typeMap[$type] : $type;
+        return $typeMap[$type] ?? $type;
     }
 
-    /**
-     * @return array<string,TypeInfoClass>
-     */
-    public function getTypes()
+    private function extractLinkURL(DocBlock $docb): ?string
     {
-        return $this->types;
+        $link = $docb->getTagsByName('link')[0] ?? null;
+        return $link instanceof DocBlock\Tags\Link ? $link->getLink() : null;
     }
 }

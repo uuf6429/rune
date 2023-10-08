@@ -5,17 +5,17 @@ namespace uuf6429\Rune\Rule;
 interface RuleInterface
 {
     /**
-     * @return string
+     * Unique ID for the rule.
      */
-    public function getId();
+    public function getId(): string;
 
     /**
-     * @return string
+     * Human-readable name for the rule.
      */
-    public function getName();
+    public function getName(): string;
 
     /**
-     * @return string
+     * Rule condition expression.
      */
-    public function getCondition();
+    public function getCondition(): string;
 }

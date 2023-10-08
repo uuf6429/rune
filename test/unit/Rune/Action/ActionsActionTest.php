@@ -2,11 +2,15 @@
 
 namespace uuf6429\Rune\Action;
 
-use uuf6429\Rune\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Rule\RuleInterface;
+use uuf6429\Rune\Util\EvaluatorInterface;
 
 class ActionsActionTest extends TestCase
 {
-    public function testExecuteThreeActionsInActionChain()
+    public function testExecuteThreeActionsInActionChain(): void
     {
         $actions = [
             $this->getActionMock(),
@@ -14,11 +18,15 @@ class ActionsActionTest extends TestCase
             $this->getActionMock(),
         ];
         $actionChain = new ActionsAction($actions);
-        $actionChain->execute(null, null, null);
+        $actionChain->execute(
+            $this->createMock(EvaluatorInterface::class),
+            $this->createMock(ContextInterface::class),
+            $this->createMock(RuleInterface::class)
+        );
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ActionInterface
+     * @return MockObject|ActionInterface
      */
     protected function getActionMock()
     {

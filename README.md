@@ -1,7 +1,7 @@
 # Rune
 
 [![Build Status](https://travis-ci.org/uuf6429/rune.svg?branch=master)](https://travis-ci.org/uuf6429/rune)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/rune/master/LICENSE)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=coverage)](https://sonarcloud.io/component_measures?id=Rune&metric=coverage)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Rune)
@@ -26,7 +26,7 @@ This library is an implementation of a Business Rule Engine (a type of Business 
 The recommended and easiest way to install Rune is through [Composer](https://getcomposer.org/):
 
 ```bash
-composer require uuf6429/rune "~2.0"
+composer require uuf6429/rune "^3"
 ```
 
 ## Usage
@@ -46,7 +46,7 @@ The library is made up of several parts:
 
 ## Screenshot
 
-The following is a screen shot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
+The following is a screenshot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
 ![Screenshot](http://i.imgur.com/YLFAwxI.png)
 
 ## Example Code

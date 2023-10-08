@@ -7,23 +7,19 @@ class StringUtils
     /**
      * Lowercases some text.
      *
-     * @param string $text
+     * @param mixed $text
      *
      * @return string
      */
     public function lower($text)
     {
-        return strtolower($text);
+        return strtolower((string)$text);
     }
 
     /**
      * Uppercases some text.
-     *
-     * @param string $text
-     *
-     * @return string
      */
-    public function upper($text)
+    public function upper(string $text): string
     {
         return strtoupper($text);
     }

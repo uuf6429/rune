@@ -2,12 +2,13 @@
 
 namespace uuf6429\Rune\Util;
 
-use phpDocumentor\Reflection\DocBlock;
+use phpDocumentor\Reflection as PhpDoc;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionParameter;
 use ReflectionProperty;
+use Reflector;
 use RuntimeException;
 
 class TypeAnalyser
@@ -27,6 +28,13 @@ class TypeAnalyser
      * Enables deep analysis (recursively analyses class members and their types).
      */
     protected bool $deep = false;
+
+    private PhpDoc\DocBlockFactory $docBlockFactory;
+
+    public function __construct()
+    {
+        $this->docBlockFactory = PhpDoc\DocBlockFactory::createInstance();
+    }
 
     /**
      * @param string[] $types
@@ -87,7 +95,7 @@ class TypeAnalyser
 
         $reflector = new ReflectionClass($name);
 
-        $docb = new DocBlock($reflector);
+        $docb = $this->getDocBlock($reflector);
         $this->types[$name] = new TypeInfoClass(
             $name,
             array_filter(
@@ -114,13 +122,22 @@ class TypeAnalyser
     {
         switch (true) {
             case $element instanceof ReflectionProperty:
-                $docb = new DocBlock($element);
+                $docb = $this->getDocBlock($element);
+                $type = $element->getType();
                 return new TypeInfoMember(
                     $element->getName(),
-                    array_filter(
-                        array_map(
-                            fn (DocBlock\Tags\Var_ $tag) => $this->handleType((string)$tag->getType()),
-                            $docb->getTagsByName('var')
+                    array_unique(
+                        array_filter(
+                            array_merge(
+                                array_map(
+                                    fn (PhpDoc\DocBlock\Tags\Var_ $tag) => $this->handleType((string)$tag->getType()),
+                                    $docb->getTagsByName('var')
+                                ),
+                                [
+                                    $type ? $type->getName() : null,
+                                    $type && $type->allowsNull() ? 'null' : null,
+                                ]
+                            )
                         )
                     ),
                     (string)$docb->getDescription() ?: null,
@@ -128,7 +145,7 @@ class TypeAnalyser
                 );
 
             case $element instanceof ReflectionMethod:
-                $docb = new DocBlock($element);
+                $docb = $this->getDocBlock($element);
                 return $this->handleMethod(
                     $element->name,
                     (string)$docb->getDescription() ?: null,
@@ -147,7 +164,7 @@ class TypeAnalyser
                     $docb->hasTag('return')
                         ? // detect return from docblock
                         implode('|', array_map(
-                            fn (DocBlock\Tags\Return_ $tag) => $this->handleType((string)$tag->getType()),
+                            fn (PhpDoc\DocBlock\Tags\Return_ $tag) => $this->handleType((string)$tag->getType()),
                             $docb->getTagsByName('return')
                         ))
                         : // detect return from reflection
@@ -164,7 +181,7 @@ class TypeAnalyser
                 }
                 return new TypeInfoMember($element->getName(), $types);
 
-            case $element instanceof DocBlock\Tags\Method:
+            case $element instanceof PhpDoc\DocBlock\Tags\Method:
                 return $this->handleMethod(
                     $element->getMethodName(),
                     (string)$element->getDescription() ?: null,
@@ -176,9 +193,9 @@ class TypeAnalyser
                     (string)$element->getReturnType()
                 );
 
-            case $element instanceof DocBlock\Tags\Property:
-            case $element instanceof DocBlock\Tags\PropertyRead:
-            case $element instanceof DocBlock\Tags\Param:
+            case $element instanceof PhpDoc\DocBlock\Tags\Property:
+            case $element instanceof PhpDoc\DocBlock\Tags\PropertyRead:
+            case $element instanceof PhpDoc\DocBlock\Tags\Param:
                 return new TypeInfoMember(
                     $element->getVariableName(),
                     [(string)$element->getType()]
@@ -261,9 +278,16 @@ class TypeAnalyser
         return $typeMap[$type] ?? $type;
     }
 
-    private function extractLinkURL(DocBlock $docb): ?string
+    private function extractLinkURL(PhpDoc\DocBlock $docb): ?string
     {
         $link = $docb->getTagsByName('link')[0] ?? null;
-        return $link instanceof DocBlock\Tags\Link ? $link->getLink() : null;
+        return $link instanceof PhpDoc\DocBlock\Tags\Link ? $link->getLink() : null;
+    }
+
+    private function getDocBlock(Reflector $element): PhpDoc\DocBlock
+    {
+        return (method_exists($element, 'getDocComment') && ($docComment = $element->getDocComment()))
+            ? $this->docBlockFactory->create($docComment)
+            : new PhpDoc\DocBlock();
     }
 }

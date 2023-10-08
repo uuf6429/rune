@@ -56,7 +56,7 @@ class ShopTest extends TestCase
 
         $this->assertEquals(
             [
-                'product' => new Util\TypeInfoMember('product', [Product::class]),
+                'product' => new Util\TypeInfoMember('product', [Product::class, 'null']),
                 'String' => new Util\TypeInfoMember('String', [StringUtils::class]),
             ],
             $descriptor->getVariableTypeInfo(),
@@ -76,8 +76,8 @@ class ShopTest extends TestCase
                 ProductContext::class => new Util\TypeInfoClass(
                     ProductContext::class,
                     [
-                        'product' => new Util\TypeInfoMember('product', [Product::class]),
-                        'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type"></span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
+                        'product' => new Util\TypeInfoMember('product', [Product::class, 'null']),
+                        'getContextDescriptor' => new Util\TypeInfoMember('getContextDescriptor', ['method'], '<div class="cm-signature"><span class="type">uuf6429\Rune\Context\ClassContextDescriptor</span> <span class="name">getContextDescriptor</span>(<span class="args"></span>)</span></div>'),
                         'String' => new Util\TypeInfoMember('String', [StringUtils::class], ''),
                     ]
                 ),
@@ -102,7 +102,7 @@ class ShopTest extends TestCase
                 StringUtils::class => new Util\TypeInfoClass(
                     StringUtils::class,
                     [
-                        'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Lowercases some text.'),
+                        'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">mixed </span>$text</span></span>)</span></div>Lowercases some text.'),
                         'upper' => new Util\TypeInfoMember('upper', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Uppercases some text.'),
                     ]
                 ),

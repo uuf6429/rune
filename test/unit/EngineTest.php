@@ -102,10 +102,8 @@ class EngineTest extends TestCase
         } else {
             $this->assertEquals($expectedErrors, $errorMsgs, 'Engine errors were not as expected.');
         }
-
         $this->assertEquals($expectedRules, $this->matchingRules);
-
-        $this->assertSame($result, $expectedResult);
+        $this->assertSame($expectedResult, $result);
     }
 
     public static function sampleValuesDataProvider(): iterable

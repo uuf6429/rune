@@ -34,7 +34,12 @@ abstract class AbstractConfigurableAction implements ActionInterface
      * @param RuleInterface $rule the rule that triggered this action
      * @param array $config array of [name => value] pairs
      */
-    abstract protected function executeWithConfig(EvaluatorInterface $eval, ContextInterface $context, RuleInterface $rule, array $config): void;
+    abstract protected function executeWithConfig(
+        EvaluatorInterface $eval,
+        ContextInterface   $context,
+        RuleInterface      $rule,
+        array              $config
+    ): void;
 
     /**
      * Returns config expression or null if not applicable.

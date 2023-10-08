@@ -235,29 +235,38 @@ class TypeAnalyser
                         ),
                     implode(
                         '|',
-                        array_map(
-                            [$this, 'handleType'],
-                            $docb->hasTag('return')
-                                ? // detect return from docblock
-                                array_map(
-                                    static fn (PhpDoc\DocBlock\Tags\Return_ $tag) => (string)$tag->getType(),
-                                    $docb->getTagsByName('return')
-                                )
-                                : // detect return from reflection
-                                [(string)$element->getReturnType()]
+                        array_filter(
+                            array_map(
+                                [$this, 'handleType'],
+                                $docb->hasTag('return')
+                                    ? // detect return from docblock
+                                    array_map(
+                                        static fn (PhpDoc\DocBlock\Tags\Return_ $tag) => (string)$tag->getType(),
+                                        $docb->getTagsByName('return')
+                                    )
+                                    : // detect return from reflection
+                                    [
+                                        ($type = $element->getReturnType()) instanceof ReflectionNamedType ? $type->getName() : null,
+                                        $type && $type->allowsNull() ? 'null' : null,
+                                    ]
+                            )
                         )
                     )
                 );
 
             case $element instanceof ReflectionParameter:
-                $types = [];
-                if (($type = $element->getType()) !== null) {
-                    $types[] = $this->handleType($type->getName());
-                    if ($type->allowsNull()) {
-                        $types[] = 'null';
-                    }
-                }
-                return new TypeInfoMember($element->getName(), $types);
+                return new TypeInfoMember(
+                    $element->getName(),
+                    array_filter(
+                        array_map(
+                            [$this, 'handleType'],
+                            [
+                                ($type = $element->getType()) instanceof ReflectionNamedType ? $type->getName() : null,
+                                $type && $type->allowsNull() ? 'null' : null,
+                            ]
+                        )
+                    )
+                );
 
             case $element instanceof PhpDoc\DocBlock\Tags\Method:
                 if (in_array($element->getMethodName(), $this->prohibitedMethodNames, true)) {
@@ -290,8 +299,13 @@ class TypeAnalyser
         }
     }
 
-    private function handleMethod(string $name, ?string $description, ?string $link, array $params, string $return): ?TypeInfoMember
-    {
+    private function handleMethod(
+        string  $name,
+        ?string $description,
+        ?string $link,
+        array   $params,
+        string  $return
+    ): ?TypeInfoMember {
         if (substr($name, 0, 2) === '__') {
             return null;
         }
@@ -334,8 +348,12 @@ class TypeAnalyser
     /**
      * @throws ReflectionException
      */
-    protected function handleType(string $name): ?string
+    protected function handleType(?string $name): ?string
     {
+        if (!$name) {
+            return null;
+        }
+
         $name = $this->normalise($name);
 
         if ($this->deep) {

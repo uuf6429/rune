@@ -10,17 +10,7 @@ class ClassContextDescriptorTest extends TestCase
 {
     public function testContextFunctions(): void
     {
-        /**
-         * @var MockObject|ClassContext|stdClass $mockContext
-         */
-        $mockContext = $this
-            ->getMockBuilder(ClassContext::class)
-            ->addMethods(['someFunction'])
-            ->getMock();
-        $mockContext->someProperty = true;
-
-        /* @var ClassContext $mockContext */
-        $desc = $mockContext->getContextDescriptor();
+        $desc = (new SampleContext())->getContextDescriptor();
 
         $this->assertArrayHasKey('someFunction', $desc->getFunctions());
         $this->assertArrayHasKey('someProperty', $desc->getVariables());

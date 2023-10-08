@@ -9,33 +9,25 @@ use RuntimeException;
  */
 trait LazyProperties
 {
-    private bool $readonlyLock = true;
+    private array $lazyPropertyData = [];
 
     /**
      * @return mixed
      */
     public function __get(string $name)
     {
-        $method = 'get' . ucfirst($name);
+        if (array_key_exists($name, $this->lazyPropertyData)) {
+            return $this->lazyPropertyData[$name];
+        }
 
+        $method = 'get' . ucfirst($name);
         if (!method_exists($this, $method)) {
             throw new RuntimeException(
-                sprintf(
-                    'Missing property %s and method %s in class %s.',
-                    $name, $method, get_class($this)
-                )
+                sprintf('Missing property %s and method %s in class %s.', $name, $method, get_class($this))
             );
         }
 
-        $result = $this->$method();
-        try {
-            $this->readonlyLock = false;
-            $this->$name = $result;
-        } finally {
-            $this->readonlyLock = true;
-        }
-
-        return $result;
+        return $this->lazyPropertyData[$name] = $this->$method();
     }
 
     /**
@@ -43,22 +35,15 @@ trait LazyProperties
      */
     public function __set(string $name, $value): void
     {
-        if ($this->readonlyLock) {
-            throw new RuntimeException(
-                sprintf(
-                    'Property %s in class %s is read only and cannot be set.',
-                    $name, get_class($this)
-                )
-            );
-        }
-
-        $this->$name = $value;
+        throw new RuntimeException(
+            sprintf('Property %s in class %s is read only and cannot be set.', $name, get_class($this))
+        );
     }
 
     public function __isset(string $name): bool
     {
         $method = 'get' . ucfirst($name);
 
-        return method_exists($this, $method) && $this->__get($name) !== null;
+        return method_exists($this, $method) && isset($this->lazyPropertyData[$name]);
     }
 }

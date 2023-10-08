@@ -252,7 +252,7 @@ class TypeAnalyser
             case $element instanceof ReflectionParameter:
                 $types = [];
                 if (($type = $element->getType()) !== null) {
-                    $types[] = $this->handleType((string)$type);
+                    $types[] = $this->handleType($type->getName());
                     if ($type->allowsNull()) {
                         $types[] = 'null';
                     }

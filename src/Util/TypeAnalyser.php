@@ -110,7 +110,7 @@ class TypeAnalyser
                     )
                 )
             ),
-            (string)$docb->getDescription() ?: null,
+            $docb->getSummary() ?: null,
             $this->extractLinkURL($docb)
         );
     }
@@ -140,7 +140,7 @@ class TypeAnalyser
                             )
                         )
                     ),
-                    (string)$docb->getDescription() ?: null,
+                    $docb->getSummary() ?: null,
                     $this->extractLinkURL($docb)
                 );
 
@@ -148,7 +148,7 @@ class TypeAnalyser
                 $docb = $this->getDocBlock($element);
                 return $this->handleMethod(
                     $element->name,
-                    (string)$docb->getDescription() ?: null,
+                    $docb->getSummary() ?: null,
                     $this->extractLinkURL($docb),
                     $docb->hasTag('param')
                         ? // detect params from docblock

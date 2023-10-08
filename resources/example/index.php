@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\Rune\example;
+namespace uuf6429\Rune\Example;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

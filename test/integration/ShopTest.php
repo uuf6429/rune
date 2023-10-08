@@ -7,13 +7,13 @@
 namespace uuf6429\Rune;
 
 use PHPUnit\Framework\TestCase;
-use uuf6429\Rune\example\Action;
-use uuf6429\Rune\example\Context;
-use uuf6429\Rune\example\Context\ProductContext;
-use uuf6429\Rune\example\Model;
-use uuf6429\Rune\example\Model\Category;
-use uuf6429\Rune\example\Model\Product;
-use uuf6429\Rune\example\Model\StringUtils;
+use uuf6429\Rune\Example\Action;
+use uuf6429\Rune\Example\Context;
+use uuf6429\Rune\Example\Context\ProductContext;
+use uuf6429\Rune\Example\Model;
+use uuf6429\Rune\Example\Model\Category;
+use uuf6429\Rune\Example\Model\Product;
+use uuf6429\Rune\Example\Model\StringUtils;
 
 class ShopTest extends TestCase
 {

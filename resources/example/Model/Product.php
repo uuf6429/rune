@@ -1,11 +1,11 @@
 <?php
 
-namespace uuf6429\Rune\example\Model;
+namespace uuf6429\Rune\Example\Model;
 
 use uuf6429\Rune\Util\LazyProperties;
 
 /**
- * @property \uuf6429\Rune\example\Model\Category $category
+ * @property \uuf6429\Rune\Example\Model\Category $category
  */
 class Product
 {

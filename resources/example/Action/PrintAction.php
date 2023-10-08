@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\Rune\example\Action;
+namespace uuf6429\Rune\Example\Action;
 
 use Stringable;
 use uuf6429\Rune\Action\ActionInterface;

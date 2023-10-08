@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\Rune\example\Model;
+namespace uuf6429\Rune\Example\Model;
 
 class StringUtils
 {

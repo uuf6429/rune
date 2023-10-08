@@ -24,15 +24,15 @@
     },
     "autoload": {
         "psr-4": {
-            "uuf6429\\Rune\\": "src/Rune",
-            "uuf6429\\Rune\\example\\": "example"
+            "uuf6429\\Rune\\": "src/",
+            "uuf6429\\Rune\\Example\\": "resources/example/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "uuf6429\\Rune\\": [
-                "test/unit/Rune",
-                "test/integration/Rune"
+                "test/unit/",
+                "test/integration/"
             ]
         }
     }

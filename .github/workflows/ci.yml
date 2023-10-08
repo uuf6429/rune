@@ -43,6 +43,7 @@ jobs:
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
+        if: php == '8.2'
         with:
           args: >
             -Dsonar.organization=uuf6429

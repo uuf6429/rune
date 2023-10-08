@@ -49,6 +49,7 @@ jobs:
             -Dsonar.projectKey=uuf6429_rune
             -Dsonar.sources=src/
             -Dsonar.tests=test/
+            -Dsonar.php.coverage.reportPaths=coverage.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

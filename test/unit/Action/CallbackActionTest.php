@@ -29,7 +29,7 @@ class CallbackActionTest extends TestCase
     public function testMethodIsCalled(): void
     {
         $mock = $this->getMockBuilder(\stdClass::class)
-            ->setMethods(['exec'])
+            ->addMethods(['exec'])
             ->getMock();
         $mock->expects($this->once())
             ->method('exec');

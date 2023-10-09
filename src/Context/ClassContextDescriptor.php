@@ -2,6 +2,7 @@
 
 namespace uuf6429\Rune\Context;
 
+use ReflectionException;
 use uuf6429\Rune\Util\TypeAnalyser;
 use uuf6429\Rune\Util\TypeInfoMember;
 
@@ -53,6 +54,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
 
     /**
      * @return TypeInfoMember[]
+     * @throws ReflectionException
      */
     protected function getMemberTypeInfo(TypeAnalyser $analyser): array
     {

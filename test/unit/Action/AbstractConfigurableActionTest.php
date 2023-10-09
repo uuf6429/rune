@@ -28,7 +28,7 @@ class AbstractConfigurableActionTest extends TestCase
                 ],
             ]
         );
-        $rules = [new GenericRule(0, 'A Rule', 'true')];
+        $rules = [new GenericRule('0', 'A Rule', 'true')];
         $engine->execute($context, $rules, $action);
     }
 
@@ -95,13 +95,13 @@ class AbstractConfigurableActionTest extends TestCase
     }
 
     /**
-     * @return MockObject|ActionInterface
+     * @return MockObject&ActionInterface
      */
-    protected function getActionMock(array $configDefinitions, array $expectedConfig)
+    protected function getActionMock(array $configDefinitions, array $expectedConfig): ActionInterface
     {
         $mock = $this
             ->getMockBuilder(AbstractConfigurableAction::class)
-            ->setMethods(['getConfigDefinition', 'executeWithConfig'])
+            ->onlyMethods(['getConfigDefinition', 'executeWithConfig'])
             ->getMock();
 
         $mock->expects($this->once())

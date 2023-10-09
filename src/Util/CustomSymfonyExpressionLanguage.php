@@ -7,7 +7,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class CustomSymfonyExpressionLanguage extends ExpressionLanguage
 {
-    protected function registerFunctions()
+    protected function registerFunctions(): void
     {
         // disable default Symfony ExpressionLanguage functions
     }
@@ -15,7 +15,7 @@ class CustomSymfonyExpressionLanguage extends ExpressionLanguage
     /**
      * @param array<string,callable> $functions
      */
-    public function setFunctions($functions)
+    public function setFunctions(array $functions): void
     {
         $this->functions = [];
 

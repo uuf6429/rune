@@ -14,7 +14,7 @@ abstract class AbstractContextDescriptor
     abstract public function getVariables(): array;
 
     /**
-     * @return array<string,callable> An array of functions available in the context. Array index is the function name.
+     * @return array<string,callable|array{0:object,1:string}> An array of functions available in the context. Array index is the function name.
      */
     abstract public function getFunctions(): array;
 

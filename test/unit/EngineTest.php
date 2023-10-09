@@ -6,7 +6,7 @@
 
 namespace uuf6429\Rune;
 
-use Exception;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
@@ -91,7 +91,7 @@ class EngineTest extends TestCase
         }
 
         $errorMsgs = array_map(
-            static function (Exception $exception) {
+            static function (Throwable $exception) {
                 return $exception->getMessage();
             },
             $exceptionHandler->getExceptions()
@@ -330,9 +330,9 @@ class EngineTest extends TestCase
             ],
         ];
         $rules = [
-            new GenericRule(1, 'Good Rule 1', 'COLOR == "red"'),
-            new GenericRule(2, 'Bad Rule', 'COLOR == black'),
-            new GenericRule(3, 'Good Rule 3', 'COLOR == "red" or COLOR == "blue"'),
+            new GenericRule('1', 'Good Rule 1', 'COLOR == "red"'),
+            new GenericRule('2', 'Bad Rule', 'COLOR == black'),
+            new GenericRule('3', 'Good Rule 3', 'COLOR == "red" or COLOR == "blue"'),
         ];
         $expectedRules = [
             'Product 1' => ['Good Rule 1', 'Good Rule 3'],
@@ -384,7 +384,7 @@ class EngineTest extends TestCase
             'Product 3' => [],
         ];
         $rules = [
-            new GenericRule(1, 'Always triggered', 'true'),
+            new GenericRule('1', 'Always triggered', 'true'),
         ];
         $expectedRules = [
             'Product 1' => ['Always triggered'],
@@ -406,7 +406,7 @@ class EngineTest extends TestCase
             $action = new CallbackAction(
                 function (EvaluatorInterface $eval, DynamicContext $context, RuleInterface $rule) use ($productName, &$matchingRules) {
                     if ($productName === 'Product 2') {
-                        throw new \LogicException("Exception thrown for $productName.");
+                        throw new LogicException("Exception thrown for $productName.");
                     }
 
                     $matchingRules[$productName][] = $rule->getName();

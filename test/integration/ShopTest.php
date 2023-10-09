@@ -114,12 +114,12 @@ class ShopTest extends TestCase
     protected function getRules(): array
     {
         return [
-            new Rule\GenericRule(1, 'Red Products', 'product.colour == String.lower("Red")'),
-            new Rule\GenericRule(2, 'Red Socks', 'String.upper(product.colour) == "RED" and (product.name matches "/socks/i") > 0'),
-            new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
-            new Rule\GenericRule(4, 'Socks', 'product.category.in("Socks")'),
-            new Rule\GenericRule(5, 'Toys', 'product.category.in("Toys")'),
-            new Rule\GenericRule(6, 'Clothes', 'product.category.in("Clothes")'),
+            new Rule\GenericRule('1', 'Red Products', 'product.colour == String.lower("Red")'),
+            new Rule\GenericRule('2', 'Red Socks', 'String.upper(product.colour) == "RED" and (product.name matches "/socks/i") > 0'),
+            new Rule\GenericRule('3', 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
+            new Rule\GenericRule('4', 'Socks', 'product.category.in("Socks")'),
+            new Rule\GenericRule('5', 'Toys', 'product.category.in("Toys")'),
+            new Rule\GenericRule('6', 'Clothes', 'product.category.in("Clothes")'),
         ];
     }
 

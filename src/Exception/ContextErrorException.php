@@ -8,9 +8,9 @@ class ContextErrorException extends ErrorException
 {
     private array $context;
 
-    public function __construct($message, $code, $severity, $filename, $lineno, array $context = [])
+    public function __construct(string $message, int $code, int $severity, ?string $file, ?int $line, array $context = [])
     {
-        parent::__construct($message, $code, $severity, $filename, $lineno);
+        parent::__construct($message, $code, $severity, $file, $line);
 
         $this->context = $context;
     }

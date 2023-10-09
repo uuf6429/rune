@@ -37,7 +37,7 @@ class TypeAnalyser
     /**
      * List of discovered types, key is the fully qualified type name.
      *
-     * @var array<string,TypeInfoClass>
+     * @var array<string,TypeInfoClass|'IN_PROGRESS'>
      */
     protected array $types = [];
 
@@ -72,7 +72,7 @@ class TypeAnalyser
      */
     public function getTypes(): array
     {
-        return $this->types;
+        return array_filter($this->types, 'is_object');
     }
 
     /**
@@ -105,6 +105,8 @@ class TypeAnalyser
     }
 
     /**
+     * @param class-string $name
+     * @return void
      * @throws ReflectionException
      */
     private function analyseClassOrInterface(string $name): void
@@ -192,13 +194,13 @@ class TypeAnalyser
                 $type = $element->getType();
                 return new TypeInfoMember(
                     $element->getName(),
-                    array_map(
-                        [$this, 'handleType'],
-                        array_unique(
-                            array_filter(
+                    array_filter(
+                        array_map(
+                            [$this, 'handleType'],
+                            array_unique(
                                 array_merge(
                                     array_map(
-                                        static fn (PhpDoc\DocBlock\Tags\Var_ $tag) => (string)$tag->getType(),
+                                        static fn ($tag) => $tag instanceof PhpDoc\DocBlock\Tags\Var_ ? (string)$tag->getType() : null,
                                         $docb->getTagsByName('var')
                                     ),
                                     [
@@ -222,17 +224,19 @@ class TypeAnalyser
                     $element->name,
                     $this->extractSummary($element, $docb),
                     $this->extractLinkURL($docb),
-                    $docb->hasTag('param')
-                        ? // detect params from docblock
-                        array_map(
-                            [$this, 'extractTypeInfoMember'],
-                            $docb->getTagsByName('param')
-                        )
-                        : // detect params from reflection
-                        array_map(
-                            [$this, 'extractTypeInfoMember'],
-                            $element->getParameters()
-                        ),
+                    array_filter(
+                        $docb->hasTag('param')
+                            ? // detect params from docblock
+                            array_map(
+                                [$this, 'extractTypeInfoMember'],
+                                $docb->getTagsByName('param')
+                            )
+                            : // detect params from reflection
+                            array_map(
+                                [$this, 'extractTypeInfoMember'],
+                                $element->getParameters()
+                            )
+                    ),
                     implode(
                         '|',
                         array_filter(
@@ -241,7 +245,7 @@ class TypeAnalyser
                                 $docb->hasTag('return')
                                     ? // detect return from docblock
                                     array_map(
-                                        static fn (PhpDoc\DocBlock\Tags\Return_ $tag) => (string)$tag->getType(),
+                                        static fn ($tag) => $tag instanceof PhpDoc\DocBlock\Tags\Return_ ? (string)$tag->getType() : null,
                                         $docb->getTagsByName('return')
                                     )
                                     : // detect return from reflection
@@ -276,22 +280,28 @@ class TypeAnalyser
                     $element->getMethodName(),
                     (string)$element->getDescription() ?: null,
                     null,
-                    array_map(
-                        static fn ($arg) => new TypeInfoMember($arg['name'], $arg['type']),
+                    array_filter(array_map(
+                        fn ($arg) => new TypeInfoMember(
+                            $arg['name'],
+                            array_filter([$this->handleType($arg['type'])])
+                        ),
                         $element->getArguments()
-                    ),
-                    $this->handleType((string)$element->getReturnType())
+                    )),
+                    $this->handleType((string)$element->getReturnType()) ?? 'mixed'
                 );
 
             case $element instanceof PhpDoc\DocBlock\Tags\Property:
             case $element instanceof PhpDoc\DocBlock\Tags\PropertyRead:
             case $element instanceof PhpDoc\DocBlock\Tags\Param:
+                if (($paramName = $element->getVariableName()) === null) {
+                    throw new RuntimeException('Parameter name must not be null');
+                }
                 return new TypeInfoMember(
-                    $element->getVariableName(),
-                    array_map(
+                    $paramName,
+                    array_filter(array_map(
                         [$this, 'handleType'],
                         explode('|', (string)$element->getType())
-                    )
+                    ))
                 );
 
             default:
@@ -299,6 +309,9 @@ class TypeAnalyser
         }
     }
 
+    /**
+     * @param TypeInfoMember[] $params
+     */
     private function handleMethod(
         string  $name,
         ?string $description,

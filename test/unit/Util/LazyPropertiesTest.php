@@ -11,7 +11,7 @@ class LazyPropertiesTest extends TestCase
 {
     public function testLazyLoad(): void
     {
-        /** @var MockObject|stdClass $model */
+        /** @var MockObject&stdClass $model */
         $model = $this->getMockForTrait(
             LazyProperties::class,
             [],
@@ -33,7 +33,7 @@ class LazyPropertiesTest extends TestCase
 
     public function testBrokenLazyLoad(): void
     {
-        /** @var MockObject|stdClass $model */
+        /** @var MockObject&stdClass $model */
         $model = $this->getMockForTrait(LazyProperties::class);
 
         $this->expectException(RuntimeException::class);
@@ -46,6 +46,23 @@ class LazyPropertiesTest extends TestCase
             )
         );
 
-        $model->someVar;
+        $this->assertNull($model->someVar);
+    }
+
+    public function testReadonlyLazyLoad(): void
+    {
+        /** @var MockObject&stdClass $model */
+        $model = $this->getMockForTrait(LazyProperties::class);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Property %s in class %s is read only and cannot be set.',
+                'someVar',
+                get_class($model)
+            )
+        );
+
+        $model->someVar = 123;
     }
 }

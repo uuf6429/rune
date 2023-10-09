@@ -26,13 +26,13 @@ class ActionsActionTest extends TestCase
     }
 
     /**
-     * @return MockObject|ActionInterface
+     * @return MockObject&ActionInterface
      */
-    protected function getActionMock()
+    protected function getActionMock(): ActionInterface
     {
         $mock = $this
             ->getMockBuilder(ActionInterface::class)
-            ->setMethods(['execute'])
+            ->onlyMethods(['execute'])
             ->getMock();
 
         $mock->expects($this->once())

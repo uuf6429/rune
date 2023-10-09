@@ -33,7 +33,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getVariableTypeInfo($analyser = null): array
+    public function getVariableTypeInfo(?TypeAnalyser $analyser = null): array
     {
         $result = [];
         foreach ($this->context->getVariables() as $name => $value) {
@@ -47,7 +47,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getFunctionTypeInfo($analyser = null): array
+    public function getFunctionTypeInfo(?TypeAnalyser $analyser = null): array
     {
         $result = [];
         foreach (array_keys($this->context->getFunctions()) as $name) {
@@ -60,7 +60,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     /**
      * {@inheritdoc}
      */
-    public function getDetailedTypeInfo($analyser = null): array
+    public function getDetailedTypeInfo(?TypeAnalyser $analyser = null): array
     {
         $analyser = $analyser ?: new TypeAnalyser();
 

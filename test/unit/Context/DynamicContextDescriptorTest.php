@@ -46,7 +46,7 @@ class DynamicContextDescriptorTest extends TestCase
                 '$expectedDTI' => [],
             ],
             'GenericRule object test' => [
-                '$variables' => ['rule' => new GenericRule(0, '', '')],
+                '$variables' => ['rule' => new GenericRule('0', '', '')],
                 '$functions' => [],
                 '$expectedVTI' => [
                     'rule' => new TypeInfoMember('rule', [GenericRule::class]),

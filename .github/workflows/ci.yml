@@ -20,7 +20,7 @@ jobs:
       - run: composer validate --strict --no-check-lock
 
   phpcsfixer:
-    name: Static analysis
+    name: Check code style
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

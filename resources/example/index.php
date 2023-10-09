@@ -2,44 +2,46 @@
 
 namespace uuf6429\Rune\Example;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use uuf6429\Rune;
 
 // This check prevents access to demo on live systems if uploaded by mistake.
 // Shamelessly copied from silex-skeleton
-if (!defined('SHOW_EXAMPLE') && (isset($_SERVER['HTTP_CLIENT_IP'])
-    || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-    || !in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', 'fe80::1', '::1'])
+if (!defined('SHOW_EXAMPLE') && (
+    isset($_SERVER['HTTP_CLIENT_IP'])
+        || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
+        || !in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', 'fe80::1', '::1'])
 )) {
     header('HTTP/1.0 403 Forbidden');
     exit('You are not allowed to access this file. Check <code>example/index.php</code> for more information.');
 }
 
-defined('APP_ROOT') || define('APP_ROOT', '/');
-defined('CDN_ROOT') || define('CDN_ROOT', '/../');
+$appRoot = '';
+$cdnRoot = '/../';
 
 // serve static files
 if (in_array($_SERVER['SCRIPT_NAME'], [
-    APP_ROOT . 'extra/codemirror/rune.js',
-    APP_ROOT . 'extra/codemirror/rune.css',
+    "$appRoot/extra/codemirror/rune.js",
+    "$appRoot/extra/codemirror/rune.css",
 ], true)) {
     return false;
 }
 
 // load simple example
 if (in_array($_SERVER['SCRIPT_NAME'], [
-    APP_ROOT . 'simple',
-    APP_ROOT . 'simple.php',
+    "$appRoot/simple",
+    "$appRoot/simple.php",
 ], true)) {
     return require 'simple.php';
 }
 
 // load default data and override it with $_POST data (do some cleanup here)
+/** @var array{rules:array[],categories:array[],products:array[]} $data */
 $data = array_merge(
     require __DIR__ . '/data.php',
     array_map(
-        function ($group) {
+        static function ($group) {
             return !is_array($group) ? $group : array_filter(
                 array_values($group),
                 'array_filter'
@@ -49,10 +51,9 @@ $data = array_merge(
     )
 );
 
-/** @var Rune\Rule\GenericRule[] $rules */
 $rules = array_map(
-    function ($index, $data) {
-        return new Rune\Rule\GenericRule($index + 1, $data[0], $data[1]);
+    static function ($index, $data): Rune\Rule\GenericRule {
+        return new Rune\Rule\GenericRule((string)($index + 1), $data[0], $data[1]);
     },
     array_keys($data['rules']),
     $data['rules']
@@ -60,21 +61,21 @@ $rules = array_map(
 
 $categories = [];
 
-$categoryProvider = function ($id) use (&$categories) {
+$categoryProvider = static function ($id) use (&$categories) {
     return $id ? $categories[$id - 1] : null;
 };
 
 $categories = array_map(
-    function ($index, $data) use ($categoryProvider) {
-        return new Model\Category($index + 1, $data[0], $data[1], $categoryProvider);
+    static function ($index, $data) use ($categoryProvider): Model\Category {
+        return new Model\Category($index + 1, $data[0], isset($data[1]) ? (int)$data[1] : null, $categoryProvider);
     },
     array_keys($data['categories']),
     $data['categories']
 );
 
 $products = array_map(
-    function ($index, $data) use ($categoryProvider) {
-        return new Model\Product($index + 1, $data[0], $data[1], $data[2], $categoryProvider);
+    static function ($index, $data) use ($categoryProvider): Model\Product {
+        return new Model\Product($index + 1, $data[0], $data[1], (int)$data[2], $categoryProvider);
     },
     array_keys($data['products']),
     $data['products']
@@ -111,7 +112,7 @@ foreach ($products as $product) {
     $context = new Context\ProductContext($product);
     $engine->execute($context, $rules, $action);
 }
-$output_result = htmlspecialchars(ob_get_clean(), ENT_QUOTES);
+$output_result = htmlspecialchars((string)ob_get_clean(), ENT_QUOTES);
 $output_errors = implode(PHP_EOL, $exceptionHandler->getExceptions());
 
 // Provide some details use for dynamic editor
@@ -143,9 +144,9 @@ $json_tokens = json_encode([
     'variables' => array_values($descriptor->getVariableTypeInfo()),
     'functions' => array_values($descriptor->getFunctionTypeInfo()),
     'typeinfo' => $descriptor->getDetailedTypeInfo(),
-]);
-$json_categories = json_encode($data['categories']);
-$json_products = json_encode($data['products']);
-$json_rules = json_encode($data['rules']);
+], JSON_THROW_ON_ERROR);
+$json_categories = json_encode($data['categories'], JSON_THROW_ON_ERROR);
+$json_products = json_encode($data['products'], JSON_THROW_ON_ERROR);
+$json_rules = json_encode($data['rules'], JSON_THROW_ON_ERROR);
 
 require_once 'view.php';

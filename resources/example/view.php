@@ -1,15 +1,17 @@
 <?php
 /**
- * @var string APP_ROOT
+ * @var string $appRoot
+ * @var string $cdnRoot
  * @var string $json_tokens
  * @var string $json_categories
  * @var string $json_products
  * @var string $json_rules
  * @var string $output_result
+ * @var string $output_generated
  * @var string $output_errors
  */
 ?><!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Rule Engine Example</title>
         <!-- jQuery -->
@@ -26,8 +28,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/hint/show-hint.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.2/addon/hint/show-hint.js"></script>
         <!-- Rune CodeMirror Support -->
-        <link rel="stylesheet" href="<?php echo CDN_ROOT; ?>/extra/codemirror/rune.css">
-        <script src="<?php echo CDN_ROOT; ?>/extra/codemirror/rune.js"></script>
+        <link rel="stylesheet" href="<?= "$cdnRoot/extra/codemirror/rune.css" ?>">
+        <script src="<?= "$cdnRoot/extra/codemirror/rune.js" ?>"></script>
         <!-- Some custom CSS -->
         <style type="text/css">
             .cm-hint-icon-uuf6429-Rune-example-Model-Product:before {
@@ -42,8 +44,8 @@
     <body>
         <div class="container">
             <h1>Rule Engine Shop Example</h1>
-            
-            <form action="<?php echo APP_ROOT; ?>#results" method="post">
+
+            <form action="<?= $appRoot ?>/#results" method="post">
                 &nbsp;
                 <div class="row">
                     <fieldset class="col-md-4">
@@ -91,7 +93,7 @@
                 <div class="row">
                     <div class="text-center">
                         <input type="submit" class="btn btn-primary btn-lg" value="Execute"/>
-                        <a class="btn btn-link" href="<?php echo APP_ROOT; ?>">Reset Changes</a>
+                        <a class="btn btn-link" href="<?= $appRoot ?>/">Reset Changes</a>
                     </div>
                 </div>
                 &nbsp;
@@ -99,8 +101,8 @@
 
             <fieldset id="results">
                 <legend>Rule Engine Result</legend>
-                <pre><?php
-                    echo implode(
+                <pre><?=
+                    implode(
                         PHP_EOL,
                         [
                             '<b>Result:</b>',
@@ -110,19 +112,19 @@
                             '<b>Errors:</b>',
                             $output_errors ? htmlspecialchars($output_errors, ENT_QUOTES) : '<i>None</i>',
                         ]
-                    );
-                ?></pre>
+                    )
+?></pre>
             </fieldset>
         </div>
-        
+
         <script>
             $(document).ready(function(){
-                var globalRowCount = 0,
-                // default rune editor settings
+                let globalRowCount = 0,
+                    // default rune editor settings
                     runeEditorOptions = {
                         tokens: <?php echo $json_tokens; ?>
                     },
-                // a simple data table populator
+                    // a simple data table populator
                     setupTable = function(table, data, rowGenerator){
                         var $table = $(table),
                             $tbody = $table.find('tbody:last'),
@@ -130,7 +132,7 @@
                                 $tbody
                                     .find('tr')
                                     .filter(function(){
-                                        var empty = true;
+                                        let empty = true;
                                         $(this).find('input, textarea, select').each(function(){
                                             if($(this).val()){
                                                 empty = false;
@@ -143,7 +145,7 @@
                                 addRow();
                             },
                             addRow = function(rowData){
-                                var $tr = rowGenerator($tbody, rowData || {});
+                                let $tr = rowGenerator($tbody, rowData || {});
                                 $tr.find('input, textarea, select').on('change, blur', updateEmptyRows);
                                 $tbody.find('.row-num-autogen').each(function(num, el){
                                     el.innerHTML = (num + 1).toString();
@@ -161,10 +163,11 @@
                 // category table
                 setupTable(
                     '#categories',
-                    <?php echo $json_categories; ?>,
+                    <?= $json_categories ?>,
                     function($tbody, data){
-                        var rowIndex = ++globalRowCount,
+                        let rowIndex = ++globalRowCount,
                             $tr = $('<tr/>');
+
                         $tbody.append(
                             $tr.append(
                                 $('<td/>').append($('<div style="padding: 5px 0;" class="row-num-autogen"/>')),
@@ -174,6 +177,7 @@
                                     + ' class="form-control input-sm" placeholder="ID"/>').val(data[1] || ''))
                             )
                         );
+
                         return $tr;
                     }
                 );
@@ -181,10 +185,11 @@
                 // products table
                 setupTable(
                     '#products',
-                    <?php echo $json_products; ?>,
+                    <?= $json_products ?>,
                     function($tbody, data){
-                        var rowIndex = ++globalRowCount,
+                        let rowIndex = ++globalRowCount,
                             $tr = $('<tr/>');
+
                         $tbody.append(
                             $tr.append(
                                 $('<td/>').append($('<input type="text" name="products['+rowIndex+'][]"'
@@ -195,6 +200,7 @@
                                     + ' class="form-control input-sm" placeholder="ID"/>').val(data[2] || ''))
                             )
                         );
+
                         return $tr;
                     }
                 );
@@ -202,18 +208,20 @@
                 // rules table
                 setupTable(
                     '#rules',
-                    <?php echo $json_rules; ?>,
+                    <?= $json_rules ?>,
                     function($tbody, data){
-                        var rowIndex = ++globalRowCount,
+                        let rowIndex = ++globalRowCount,
                             $tr = $('<tr/>'),
                             $numCell = $('<td/>').append($('<div style="padding: 7px 0;" class="row-num-autogen"/>')),
                             $nameCell = $('<td/>').append($('<input type="text" name="rules['+rowIndex+'][]"'
                                 + ' class="form-control" placeholder="Rule Name"/>').val(data[0] || '')),
                             $condCell = $('<td/>').append($('<input type="text" name="rules['+rowIndex+'][]"'
                                 + ' class="form-control" data-lines="1" data-addclass="form-control" placeholder="Condition"/>').val(data[1] || ''));
+
                         $tbody.append($tr);
                         $tr.append($numCell, $nameCell, $condCell);
                         $condCell.find('input').RuneEditor(runeEditorOptions);
+
                         return $tr;
                     }
                 );

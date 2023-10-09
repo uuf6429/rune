@@ -15,12 +15,12 @@ class Category
 
     public string $name;
 
-    protected int $parentId;
+    protected ?int $parentId;
 
     /** @var callable */
     protected $categoryProvider;
 
-    public function __construct(int $id, string $name, int $parentId, callable $categoryProvider)
+    public function __construct(int $id, string $name, ?int $parentId, callable $categoryProvider)
     {
         $this->id = $id;
         $this->name = $name;

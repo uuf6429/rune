@@ -7,6 +7,8 @@ use PHPUnit\Framework\TestCase;
 class SymfonyEvaluatorTest extends TestCase
 {
     /**
+     * @param array<string,mixed> $variables
+     * @param array<string,callable> $functions
      * @param mixed $expectedExecuteResult
      *
      * @dataProvider evaluatorDataProvider

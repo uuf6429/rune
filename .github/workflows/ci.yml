@@ -8,7 +8,42 @@ on:
 
 jobs:
 
-  build:
+  composer:
+    name: Validate composer.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+      - run: composer validate --strict --no-check-lock
+
+  phpcsfixer:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+      - run: composer update --ansi --no-progress --prefer-dist --no-interaction
+      - run: vendor/bin/php-cs-fixer check
+
+  phpstan:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+      - run: composer update --ansi --no-progress --prefer-dist --no-interaction
+      - run: vendor/bin/phpstan analyze src test
+
+  phpunit:
     name: Test
     runs-on: ubuntu-latest
     strategy:

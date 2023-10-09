@@ -2,12 +2,16 @@
 
 namespace uuf6429\Rune\Util;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use stdClass;
 
 class LazyPropertiesTest extends TestCase
 {
     public function testLazyLoad(): void
     {
+        /** @var MockObject|stdClass $model */
         $model = $this->getMockForTrait(
             LazyProperties::class,
             [],
@@ -23,14 +27,16 @@ class LazyPropertiesTest extends TestCase
             ->willReturn(42);
 
         $this->assertEquals(42, $model->someVar);
+        /** @noinspection PhpConditionAlreadyCheckedInspection */
         $this->assertEquals(42, $model->someVar);
     }
 
     public function testBrokenLazyLoad(): void
     {
+        /** @var MockObject|stdClass $model */
         $model = $this->getMockForTrait(LazyProperties::class);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             sprintf(
                 'Missing property %s and method %s in class %s.',

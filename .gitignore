@@ -1,4 +1,5 @@
 phpunit.xml
+phpstan.neon
 composer.lock
 vendor
 .php_cs.cache

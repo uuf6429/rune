@@ -44,7 +44,7 @@ jobs:
       - run: vendor/bin/phpstan analyze src test
 
   phpunit:
-    name: Test
+    name: Run Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

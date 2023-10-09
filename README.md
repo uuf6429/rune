@@ -91,7 +91,7 @@ $rules = [
     new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"'),
     new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"'),
     new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"'),
-    new Rule\GenericRule(4, 'Socks', 'product.name matches "/socks/"'),
+    new Rule\GenericRule(4, 'Socks', 'product.name matches "/socks/" > 0'),
 ];
 
 // Declare available products (to run rules against).
@@ -106,7 +106,7 @@ $action = new Action\CallbackAction(
     function ($eval, ProductContext $context, $rule)
     {
         printf(
-            'Rule %s triggered for %s %s<br/>',
+            "Rule %s triggered for %s %s\n",
             $rule->getId(),
             ucwords($context->product->colour),
             $context->product->name

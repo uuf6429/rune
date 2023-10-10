@@ -1,10 +1,12 @@
 # Rune
 
-[![Build Status](https://travis-ci.org/uuf6429/rune.svg?branch=master)](https://travis-ci.org/uuf6429/rune)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)](https://php.net/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/uuf6429/rune/master/LICENSE)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=coverage)](https://sonarcloud.io/component_measures?id=Rune&metric=coverage)
-[![Reliability](https://sonarcloud.io/api/project_badges/measure?project=Rune&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Rune)
+![Build Status](https://github.com/uuf6429/rune/actions/workflows/ci.yml/badge.svg)
+[![Latest Stable Version](https://poser.pugx.org/uuf6429/rune/version.svg)](https://packagist.org/packages/uuf6429/rune)
+[![Latest Unstable Version](https://poser.pugx.org/uuf6429/rune/v/unstable.svg)](https://packagist.org/packages/uuf6429/rune)
+[![PHP Version Require](http://poser.pugx.org/uuf6429/rune/require/php)](https://www.php.net/supported-versions.php)
+[![License](https://poser.pugx.org/uuf6429/rune/license.svg)](https://raw.githubusercontent.com/uuf6429/rune/master/LICENSE)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=uuf6429_rune&metric=coverage)](https://sonarcloud.io/summary/new_code?id=uuf6429_rune)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=uuf6429_rune&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=uuf6429_rune)
 [![Packagist](https://img.shields.io/packagist/v/uuf6429/Rune.svg)](https://packagist.org/packages/uuf6429/rune)
 
 Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.

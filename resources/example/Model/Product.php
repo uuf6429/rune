@@ -2,10 +2,12 @@
 
 namespace uuf6429\Rune\Example\Model;
 
+// We use a class alias for testing and showcasing phpdoc class resolving mechanism.
+use uuf6429\Rune\Example\Model\Category as CategoryModel;
 use uuf6429\Rune\Util\LazyProperties;
 
 /**
- * @property \uuf6429\Rune\Example\Model\Category $category
+ * @property CategoryModel $category
  */
 class Product
 {
@@ -31,7 +33,7 @@ class Product
         $this->categoryProvider = $categoryProvider;
     }
 
-    protected function getCategory(): Category
+    protected function getCategory(): CategoryModel
     {
         $call = $this->categoryProvider;
 

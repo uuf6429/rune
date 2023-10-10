@@ -48,11 +48,14 @@ class TypeAnalyser
 
     private PhpDoc\DocBlockFactory $docBlockFactory;
 
+    private PhpDoc\Types\ContextFactory $docBlockContextFactory;
+
     private array $prohibitedMethodNames = ['getContextDescriptor'];
 
     public function __construct()
     {
         $this->docBlockFactory = PhpDoc\DocBlockFactory::createInstance();
+        $this->docBlockContextFactory = new PhpDoc\Types\ContextFactory();
     }
 
     /**
@@ -391,7 +394,7 @@ class TypeAnalyser
     private function getDocBlock(Reflector $element): PhpDoc\DocBlock
     {
         return (method_exists($element, 'getDocComment') && ($docComment = $element->getDocComment()))
-            ? $this->docBlockFactory->create($docComment)
+            ? $this->docBlockFactory->create($docComment, $this->docBlockContextFactory->createFromReflector($element))
             : new PhpDoc\DocBlock();
     }
 }

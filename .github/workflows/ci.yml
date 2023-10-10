@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+
+  composer:
+    name: Validate composer.json
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+      - run: composer validate --strict --no-check-lock
+
+  phpcsfixer:
+    name: Check code style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+      - run: composer update --ansi --no-progress --prefer-dist --no-interaction
+      - run: vendor/bin/php-cs-fixer check
+
+  phpstan:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+      - run: composer update --ansi --no-progress --prefer-dist --no-interaction
+      - run: vendor/bin/phpstan analyze src test
+
+  phpunit:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - 7.4
+          - 8.0
+          - 8.1
+          - 8.2
+          - nightly
+
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug2
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download dependencies
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit --coverage-clover coverage.xml
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=uuf6429
+            -Dsonar.projectKey=uuf6429_rune
+            -Dsonar.sources=src/
+            -Dsonar.tests=test/
+            -Dsonar.php.coverage.reportPaths=coverage.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

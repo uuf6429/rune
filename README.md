@@ -1,27 +1,27 @@
-# Rune
+# ᚱᚢᚾᛖ
 
-![Build Status](https://github.com/uuf6429/rune/actions/workflows/ci.yml/badge.svg)
+[![Build Status](https://github.com/uuf6429/rune/actions/workflows/ci.yml/badge.svg)](https://github.com/uuf6429/rune/actions)
 [![Latest Stable Version](https://poser.pugx.org/uuf6429/rune/version.svg)](https://packagist.org/packages/uuf6429/rune)
 [![Latest Unstable Version](https://poser.pugx.org/uuf6429/rune/v/unstable.svg)](https://packagist.org/packages/uuf6429/rune)
 [![PHP Version Require](http://poser.pugx.org/uuf6429/rune/require/php)](https://www.php.net/supported-versions.php)
 [![License](https://poser.pugx.org/uuf6429/rune/license.svg)](https://raw.githubusercontent.com/uuf6429/rune/master/LICENSE)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=uuf6429_rune&metric=coverage)](https://sonarcloud.io/summary/new_code?id=uuf6429_rune)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=uuf6429_rune&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=uuf6429_rune)
-[![Packagist](https://img.shields.io/packagist/v/uuf6429/Rune.svg)](https://packagist.org/packages/uuf6429/rune)
 
 Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.
 
-This library is an implementation of a Business Rule Engine (a type of Business Process Automation software).
+This library is an implementation of a [Business Rule Engine](https://en.wikipedia.org/wiki/Business_rules_engine) (a
+type of Business Process Automation software).
 
 ## Table Of Contents
 
-- [Rune](#rune)
-  - [Table Of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Live Example](#live-example)
-  - [Screenshot](#screenshot)
-  - [Example Code](#example-code)
+- [ᚱᚢᚾᛖ](#ᚱᚢᚾᛖ)
+    - [Table Of Contents](#table-of-contents)
+    - [Installation](#installation)
+    - [Usage](#usage)
+    - [Live Example](#live-example)
+    - [Screenshot](#screenshot)
+    - [Example Code](#example-code)
 
 ## Installation
 
@@ -39,8 +39,15 @@ The library is made up of several parts:
 - Context - an object that provides data to the rule engine and action to work with.
   You almost always have to implement your own context since this always depends on your scenario.
 - Rule(s) - a list of rules, objects containing a string expression (for the rule engine) and data (for the action).
-  For complicated scenarios, you might want to extend the rule (by implementing [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)), otherwise [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php) should be enough.
+  For complicated scenarios, you might want to extend the rule (by
+  implementing [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)),
+  otherwise [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php) should be
+  enough.
 - RuleEngine - the object that connects the others together to function.
+
+```plantuml
+class TODO
+```
 
 ## Live Example
 
@@ -48,12 +55,14 @@ The library is made up of several parts:
 
 ## Screenshot
 
-The following is a screenshot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
+The following is a screenshot for the sample provided
+in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
 ![Screenshot](http://i.imgur.com/YLFAwxI.png)
 
 ## Example Code
 
-This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the rule engine.
+This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the
+rule engine.
 
 ```php
 namespace uuf6429\Rune;

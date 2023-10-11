@@ -7,29 +7,29 @@ use Throwable;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 
-class ContextRuleException extends RuntimeException
+class RuleConditionExecutionFailedException extends RuntimeException
 {
     private ContextInterface $context;
 
     private RuleInterface $rule;
 
-    public function __construct(ContextInterface $context, RuleInterface $rule, ?string $message = null, ?Throwable $previous = null)
+    public function __construct(ContextInterface $context, RuleInterface $rule, Throwable $previous)
     {
         $this->context = $context;
         $this->rule = $rule;
 
-        if ($message === null) {
-            $message = sprintf(
-                '%s encountered while processing rule %s (%s) within %s%s',
-                $previous ? get_class($previous) : 'Error',
+        parent::__construct(
+            sprintf(
+                '%s encountered while processing rule %s (%s) within %s: %s',
+                get_class($previous),
                 $this->getRule()->getId(),
                 $this->getRule()->getName(),
                 get_class($this->getContext()),
-                $previous ? (': ' . $previous->getMessage()) : ''
-            );
-        }
-
-        parent::__construct($message, 0, $previous);
+                $previous->getMessage()
+            ),
+            0,
+            $previous
+        );
     }
 
     public function getContext(): ContextInterface

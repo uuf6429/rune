@@ -6,11 +6,11 @@ use RuntimeException;
 use Throwable;
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
+use uuf6429\Rune\Exception\ActionExecutionFailedException;
 use uuf6429\Rune\Exception\ContextErrorException;
-use uuf6429\Rune\Exception\ContextRuleActionException;
-use uuf6429\Rune\Exception\ContextRuleException;
 use uuf6429\Rune\Exception\ExceptionHandlerInterface;
 use uuf6429\Rune\Exception\ExceptionPropagatorHandler;
+use uuf6429\Rune\Exception\RuleConditionExecutionFailedException;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
@@ -61,7 +61,7 @@ class Engine
                 $this->findMatchesForContextRule($result, $rule);
             } catch (Throwable $ex) {
                 $this->exceptionHandler->handle(
-                    new ContextRuleException($context, $rule, null, $ex)
+                    new RuleConditionExecutionFailedException($context, $rule, $ex)
                 );
             }
         }
@@ -101,7 +101,7 @@ class Engine
                 $action->execute($this->evaluator, $context, $rule);
             } catch (Throwable $ex) {
                 $this->exceptionHandler->handle(
-                    new ContextRuleActionException($context, $rule, $action, null, $ex)
+                    new ActionExecutionFailedException($context, $rule, $action, $ex)
                 );
             }
         }

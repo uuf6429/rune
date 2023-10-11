@@ -29,10 +29,9 @@ class Engine
 
     /**
      * @param RuleInterface[] $rules
-     * @return int|false
      * @throws Throwable
      */
-    public function execute(ContextInterface $context, array $rules, ActionInterface $action)
+    public function execute(ContextInterface $context, array $rules, ActionInterface $action): int
     {
         $descriptor = $context->getContextDescriptor();
         $this->evaluator->setVariables($descriptor->getVariables());

@@ -4,12 +4,13 @@ namespace uuf6429\Rune\Exception;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use uuf6429\Rune\Engine\ExceptionHandler\CollectExceptions;
 
 class ExceptionCollectorHandlerTest extends TestCase
 {
     public function testCommonOperations(): void
     {
-        $handler = new ExceptionCollectorHandler();
+        $handler = new CollectExceptions();
 
         $this->assertFalse($handler->hasExceptions());
         $this->assertCount(0, $handler->getExceptions());

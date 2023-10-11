@@ -28,8 +28,8 @@ class AbstractConfigurableActionTest extends TestCase
                 ],
             ]
         );
-        $rules = [new GenericRule('0', 'A Rule', 'true')];
-        $engine->execute($context, $rules, $action);
+        $rules = [new GenericRule('0', 'A Rule', 'true', $action)];
+        $engine->execute($context, $rules);
     }
 
     public static function configurableActionScenarioDataProvider(): iterable

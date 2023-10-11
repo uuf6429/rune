@@ -97,21 +97,6 @@ class ProductContext extends Context\ClassContext
     }
 }
 
-// Declare some sample rules.
-$rules = [
-    new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"'),
-    new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"'),
-    new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"'),
-    new Rule\GenericRule(4, 'Socks', 'product.name matches "/socks/" > 0'),
-];
-
-// Declare available products (to run rules against).
-$products = [
-    new Product('Bricks', 'red'),
-    new Product('Soft Socks', 'green'),
-    new Product('Sporty Socks', 'yellow'),
-];
-
 // Declare an action to be triggered when a rule matches against a product.
 $action = new Action\CallbackAction(
     function ($eval, ProductContext $context, $rule)
@@ -125,11 +110,26 @@ $action = new Action\CallbackAction(
     }
 );
 
+// Declare some sample rules.
+$rules = [
+    new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"', $action),
+    new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"', $action),
+    new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"', $action),
+    new Rule\GenericRule(4, 'Socks', 'product.name matches "/socks/" > 0', $action),
+];
+
+// Declare available products (to run rules against).
+$products = [
+    new Product('Bricks', 'red'),
+    new Product('Soft Socks', 'green'),
+    new Product('Sporty Socks', 'yellow'),
+];
+
 // Create rule engine.
 $engine = new Engine();
 
 // Run rules for each product. Note that each product exists in a separate context.
 foreach ($products as $product) {
-    $engine->execute(new ProductContext($product), $rules, $action);
+    $engine->execute(new ProductContext($product), $rules);
 }
 ```

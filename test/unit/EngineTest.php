@@ -11,11 +11,12 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Throwable;
+use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
+use uuf6429\Rune\Engine\ExceptionHandler\CollectExceptions;
 use uuf6429\Rune\Exception\ContextErrorException;
-use uuf6429\Rune\Exception\ExceptionCollectorHandler;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
@@ -27,21 +28,21 @@ class EngineTest extends TestCase
     /**
      * @return RuleInterface[]
      */
-    protected function getRules(bool $withBrokenRules = false): array
+    protected function getRules(bool $withBrokenRules, ActionInterface $action): array
     {
         return array_merge(
             [
-                new GenericRule('0', 'Empty condition (true by default)', ''),
-                new GenericRule('1', 'Blue Products', 'COLOR == "blue"'),
-                new GenericRule('2', 'Medium or Big, Green Products', 'SIZE in ["XL","XXL"] and COLOR == "green"'),
-                new GenericRule('3', 'Small, Blue Products', 'SIZE in ["S"] and COLOR == "blue"'),
-                new GenericRule('4', 'Unsupported Products', 'not IS_SUPPORTED'),
+                new GenericRule('0', 'Empty condition (true by default)', '', $action),
+                new GenericRule('1', 'Blue Products', 'COLOR == "blue"', $action),
+                new GenericRule('2', 'Medium or Big, Green Products', 'SIZE in ["XL","XXL"] and COLOR == "green"', $action),
+                new GenericRule('3', 'Small, Blue Products', 'SIZE in ["S"] and COLOR == "blue"', $action),
+                new GenericRule('4', 'Unsupported Products', 'not IS_SUPPORTED', $action),
             ],
             $withBrokenRules ? [
-                new GenericRule('5', 'Bad Rule - Result Type', 'SIZE'),
-                new GenericRule('6', 'Bad Rule - Syntax Error', 'SIZE =  = "hm'),
-                new GenericRule('7', 'Bad Rule - Property on a Non-Object', 'SIZE.TEST == 12'),
-                new GenericRule('8', 'Bad Rule - Triggers error', 'ERROR("some error")'),
+                new GenericRule('5', 'Bad Rule - Result Type', 'SIZE', $action),
+                new GenericRule('6', 'Bad Rule - Syntax Error', 'SIZE =  = "hm', $action),
+                new GenericRule('7', 'Bad Rule - Property on a Non-Object', 'SIZE.TEST == 12', $action),
+                new GenericRule('8', 'Bad Rule - Triggers error', 'ERROR("some error")', $action),
             ] : []
         );
     }
@@ -79,14 +80,13 @@ class EngineTest extends TestCase
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
         $result = 0;
-        $exceptionHandler = new ExceptionCollectorHandler();
-        $engine = new Engine($exceptionHandler);
+        $exceptionHandler = new CollectExceptions();
+        $engine = new Engine(null, null, $exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
             $result += $engine->execute(
                 $this->getContext($productValues),
-                $this->getRules($withBadRules),
-                $this->getAction($productName)
+                $this->getRules($withBadRules, $this->getAction($productName))
             );
         }
 
@@ -329,11 +329,6 @@ class EngineTest extends TestCase
                 'COLOR' => 'blue',
             ],
         ];
-        $rules = [
-            new GenericRule('1', 'Good Rule 1', 'COLOR == "red"'),
-            new GenericRule('2', 'Bad Rule', 'COLOR == black'),
-            new GenericRule('3', 'Good Rule 3', 'COLOR == "red" or COLOR == "blue"'),
-        ];
         $expectedRules = [
             'Product 1' => ['Good Rule 1', 'Good Rule 3'],
             'Product 2' => [],
@@ -355,15 +350,19 @@ class EngineTest extends TestCase
 
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
-        $exceptionHandler = new ExceptionCollectorHandler();
-        $engine = new Engine($exceptionHandler);
+        $exceptionHandler = new CollectExceptions();
+        $engine = new Engine(null, null, $exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
-            $engine->execute(
-                $this->getContext($productValues),
-                $rules,
-                $this->getAction($productName)
-            );
+            $action = $this->getAction($productName);
+
+            $rules = [
+                new GenericRule('1', 'Good Rule 1', 'COLOR == "red"', $action),
+                new GenericRule('2', 'Bad Rule', 'COLOR == black', $action),
+                new GenericRule('3', 'Good Rule 3', 'COLOR == "red" or COLOR == "blue"', $action),
+            ];
+
+            $engine->execute($this->getContext($productValues), $rules);
         }
 
         $this->assertEquals($expectedRules, $this->matchingRules);
@@ -383,9 +382,6 @@ class EngineTest extends TestCase
             'Product 2' => [],
             'Product 3' => [],
         ];
-        $rules = [
-            new GenericRule('1', 'Always triggered', 'true'),
-        ];
         $expectedRules = [
             'Product 1' => ['Always triggered'],
             'Product 2' => [],
@@ -399,8 +395,8 @@ class EngineTest extends TestCase
 
         $matchingRules = array_fill_keys(array_keys($productData), []);
 
-        $exceptionHandler = new ExceptionCollectorHandler();
-        $engine = new Engine($exceptionHandler);
+        $exceptionHandler = new CollectExceptions();
+        $engine = new Engine(null, null, $exceptionHandler);
 
         foreach ($productData as $productName => $productValues) {
             $action = new CallbackAction(
@@ -413,11 +409,11 @@ class EngineTest extends TestCase
                 }
             );
 
-            $engine->execute(
-                $this->getContext($productValues),
-                $rules,
-                $action
-            );
+            $rules = [
+                new GenericRule('1', 'Always triggered', 'true', $action),
+            ];
+
+            $engine->execute($this->getContext($productValues), $rules);
         }
 
         $this->assertEquals($expectedRules, $matchingRules);

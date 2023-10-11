@@ -2,6 +2,8 @@
 
 namespace uuf6429\Rune\Rule;
 
+use uuf6429\Rune\Action\ActionInterface;
+
 interface RuleInterface
 {
     /**
@@ -18,4 +20,9 @@ interface RuleInterface
      * Rule condition expression.
      */
     public function getCondition(): string;
+
+    /**
+     * Action to execute when this rule matches.
+     */
+    public function getAction(): ActionInterface;
 }

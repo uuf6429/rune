@@ -4,7 +4,10 @@ namespace uuf6429\Rune\Context;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
+use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Rule\GenericRule;
+use uuf6429\Rune\Rule\RuleInterface;
+use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\TypeInfoClass;
 use uuf6429\Rune\Util\TypeInfoMember;
 
@@ -44,24 +47,6 @@ class DynamicContextDescriptorTest extends TestCase
                 ],
                 '$expectedFTI' => [],
                 '$expectedDTI' => [],
-            ],
-            'GenericRule object test' => [
-                '$variables' => ['rule' => new GenericRule('0', '', '')],
-                '$functions' => [],
-                '$expectedVTI' => [
-                    'rule' => new TypeInfoMember('rule', [GenericRule::class]),
-                ],
-                '$expectedFTI' => [],
-                '$expectedDTI' => [
-                    GenericRule::class => new TypeInfoClass(
-                        GenericRule::class,
-                        [
-                            new TypeInfoMember('getId', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getId</span>(<span class="args"></span>)</span></div>'),
-                            new TypeInfoMember('getName', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getName</span>(<span class="args"></span>)</span></div>'),
-                            new TypeInfoMember('getCondition', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getCondition</span>(<span class="args"></span>)</span></div>'),
-                        ]
-                    ),
-                ],
             ],
             'Functions and methods test' => [
                 '$variables' => [],

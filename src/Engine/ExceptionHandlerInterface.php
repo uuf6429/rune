@@ -1,6 +1,6 @@
 <?php
 
-namespace uuf6429\Rune\Exception;
+namespace uuf6429\Rune\Engine;
 
 use Throwable;
 

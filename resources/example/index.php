@@ -81,7 +81,7 @@ $products = array_map(
     $data['products']
 );
 
-$exceptionHandler = new Rune\Exception\ExceptionCollectorHandler();
+$exceptionHandler = new Rune\Engine\ExceptionHandler\CollectExceptions();
 $engine = new Rune\Engine($exceptionHandler);
 $action = new Action\PrintAction();
 $context = new Context\ProductContext();

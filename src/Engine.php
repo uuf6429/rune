@@ -27,10 +27,14 @@ class Engine
         ?ExceptionHandlerInterface  $exceptionHandler = null,
         ?EvaluatorInterface         $evaluator = null
     ) {
-        $this->exceptionHandler = $exceptionHandler ?? new ThrowExceptions();
-        $this->evaluator = $evaluator ?? new SymfonyEvaluator();
-        $this->ruleFilterHandler = $ruleFilterHandler ?? new AllMatchingRules($this->evaluator, $this->exceptionHandler);
-        $this->actionExecutor = $actionExecutor ?? new DefaultActionExecutor($this->evaluator, $this->exceptionHandler);
+        $this->exceptionHandler = $exceptionHandler
+            ?? new ThrowExceptions();
+        $this->evaluator = $evaluator
+            ?? new SymfonyEvaluator();
+        $this->ruleFilterHandler = $ruleFilterHandler
+            ?? new AllMatchingRules($this->evaluator, $this->exceptionHandler);
+        $this->actionExecutor = $actionExecutor
+            ?? new DefaultActionExecutor($this->evaluator, $this->exceptionHandler);
     }
 
     /**

@@ -16,8 +16,12 @@ class ActionExecutionFailedException extends RuntimeException
 
     private ActionInterface $action;
 
-    public function __construct(ContextInterface $context, RuleInterface $rule, ActionInterface $action, Throwable $previous)
-    {
+    public function __construct(
+        ContextInterface $context,
+        RuleInterface    $rule,
+        ActionInterface  $action,
+        Throwable        $previous
+    ) {
         $this->context = $context;
         $this->rule = $rule;
         $this->action = $action;

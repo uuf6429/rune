@@ -117,6 +117,8 @@ foreach ($products as $product) {
 $output_result = htmlspecialchars((string)ob_get_clean(), ENT_QUOTES);
 $output_errors = implode(PHP_EOL, $exceptionHandler->getExceptions());
 
+$serialize = static fn ($items) => array_map(static fn ($item) => $item->toArray(), $items);
+
 // Provide some details use for dynamic editor
 $json_tokens = json_encode([
     'constants' => [
@@ -138,15 +140,15 @@ $json_tokens = json_encode([
         '&', '|', '^',                                              // bitwise
         '==', '===', '!=', '!==', '<', '>', '<=', '>=', 'matches',  // comparison
         'not', '!', 'and', '&&', 'or', '||',                        // logical
-        '~',                                                        // concatentation
+        '~',                                                        // concatenation
         'in', 'not in',                                             // array
         '..',                                                       // range
         '?', '?:', ':',                                             // ternary
     ],
-    'variables' => array_values($descriptor->getVariableTypeInfo()),
-    'functions' => array_values($descriptor->getFunctionTypeInfo()),
-    'typeinfo' => $descriptor->getDetailedTypeInfo(),
-], JSON_THROW_ON_ERROR);
+    'variables' => $serialize(array_values($descriptor->getVariableTypeInfo())),
+    'functions' => $serialize(array_values($descriptor->getFunctionTypeInfo())),
+    'typeinfo' => $serialize($descriptor->getDetailedTypeInfo()),
+], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 $json_categories = json_encode($data['categories'], JSON_THROW_ON_ERROR);
 $json_products = json_encode($data['products'], JSON_THROW_ON_ERROR);
 $json_rules = json_encode($data['rules'], JSON_THROW_ON_ERROR);

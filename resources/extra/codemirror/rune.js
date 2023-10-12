@@ -176,8 +176,8 @@
 
         $elements: null,
 
-        escapeRegExp: function(str) {
-            return str.replace(/[\-\[\]\/{}()*+?.\\^$|]/g, '\\$&');
+        escapeRegExp: function (str) {
+            return (str || '').replace(/[\-\[\]\/{}()*+?.\\^$|]/g, '\\$&');
         },
 
         initialize: function(mode) {
@@ -618,7 +618,7 @@
         isValidType: function(name){
             return name && (name in this.options.tokens.typeinfo);
         },
-        
+
         isCallableToken: function(token) {
             return token && token.types && token.types.length && (
                 token.types.indexOf('method') !== -1

@@ -66,7 +66,7 @@ class ClassContextDescriptor extends AbstractContextDescriptor
         $analyser->analyse([$class], false);
         $types = $analyser->getTypes();
         $this->memberTypeInfo = array_filter(
-            isset($types[$class]) ? $types[$class]->members : [],
+            isset($types[$class]) ? $types[$class]->getMembers() : [],
             static function (TypeInfoMember $member) {
                 return $member->getName() !== self::CONTEXT_DESCRIPTOR_METHOD;
             }

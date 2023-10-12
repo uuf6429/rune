@@ -2,10 +2,7 @@
 
 namespace uuf6429\Rune\Util;
 
-use JsonSerializable;
-use ReturnTypeWillChange;
-
-class TypeInfoMember implements JsonSerializable
+class TypeInfoMember
 {
     protected string $name;
 
@@ -54,7 +51,7 @@ class TypeInfoMember implements JsonSerializable
 
     public function getHint(): ?string
     {
-        return $this->hint;
+        return $this->hasHint() ? $this->hint : null;
     }
 
     public function hasLink(): bool
@@ -64,7 +61,7 @@ class TypeInfoMember implements JsonSerializable
 
     public function getLink(): ?string
     {
-        return $this->link;
+        return $this->hasLink() ? $this->link : null;
     }
 
     public function isCallable(): bool
@@ -75,17 +72,13 @@ class TypeInfoMember implements JsonSerializable
         return !empty(array_intersect($this->types, $callableTypes));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    #[ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function toArray(): array
     {
         return [
-            'name' => $this->name,
-            'types' => $this->types,
-            'hint' => $this->hint,
-            'link' => $this->link,
+            'name' => $this->getName(),
+            'types' => $this->getTypes(),
+            'hint' => $this->getHint(),
+            'link' => $this->getLink(),
         ];
     }
 }

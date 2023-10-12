@@ -296,10 +296,16 @@ class EngineTest extends TestCase
                     ],
                 ],
                 'expectedErrors' => [
-                    TypeError::class . ' encountered while processing rule 5 '
-                    . '(Bad Rule - Result Type) within ' . DynamicContext::class
-                    . ': ' . FilterAllMatchingRules::class . '::filterRule()'
-                    . ': Return value must be of type bool, string returned',
+                    [
+                        8 => TypeError::class . ' encountered while processing rule 5 '
+                            . '(Bad Rule - Result Type) within ' . DynamicContext::class
+                            . ': ' . FilterAllMatchingRules::class . '::filterRule()'
+                            . ': Return value must be of type bool, string returned',
+                        7 => TypeError::class . ' encountered while processing rule 5 '
+                            . '(Bad Rule - Result Type) within ' . DynamicContext::class
+                            . ': Return value of ' . FilterAllMatchingRules::class . '::filterRule()'
+                            . ' must be of the type bool, string returned',
+                    ][PHP_MAJOR_VERSION],
 
                     SyntaxError::class . ' encountered while processing rule 6 '
                     . '(Bad Rule - Syntax Error) within ' . DynamicContext::class

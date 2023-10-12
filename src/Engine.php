@@ -1,40 +1,40 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune;
 
 use Throwable;
 use uuf6429\Rune\Context\ContextInterface;
-use uuf6429\Rune\Engine\ActionExecutor\DefaultActionExecutor;
+use uuf6429\Rune\Engine\ActionExecutor;
 use uuf6429\Rune\Engine\ActionExecutorInterface;
 use uuf6429\Rune\Engine\ExceptionHandler\ThrowExceptions;
 use uuf6429\Rune\Engine\ExceptionHandlerInterface;
-use uuf6429\Rune\Engine\RuleFilterHandler\AllMatchingRules;
-use uuf6429\Rune\Engine\RuleFilterHandlerInterface;
+use uuf6429\Rune\Engine\FilterAllMatchingRules;
+use uuf6429\Rune\Engine\RuleFilterInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
 
 class Engine
 {
-    protected RuleFilterHandlerInterface $ruleFilterHandler;
+    protected RuleFilterInterface $ruleFilterHandler;
     protected ActionExecutorInterface $actionExecutor;
     protected ExceptionHandlerInterface $exceptionHandler;
     protected EvaluatorInterface $evaluator;
 
     public function __construct(
-        ?RuleFilterHandlerInterface $ruleFilterHandler = null,
-        ?ActionExecutorInterface    $actionExecutor = null,
-        ?ExceptionHandlerInterface  $exceptionHandler = null,
-        ?EvaluatorInterface         $evaluator = null
+        ?RuleFilterInterface       $ruleFilterHandler = null,
+        ?ActionExecutorInterface   $actionExecutor = null,
+        ?ExceptionHandlerInterface $exceptionHandler = null,
+        ?EvaluatorInterface        $evaluator = null
     ) {
         $this->exceptionHandler = $exceptionHandler
             ?? new ThrowExceptions();
         $this->evaluator = $evaluator
             ?? new SymfonyEvaluator();
         $this->ruleFilterHandler = $ruleFilterHandler
-            ?? new AllMatchingRules($this->evaluator, $this->exceptionHandler);
+            ?? new FilterAllMatchingRules($this->evaluator, $this->exceptionHandler);
         $this->actionExecutor = $actionExecutor
-            ?? new DefaultActionExecutor($this->evaluator, $this->exceptionHandler);
+            ?? new ActionExecutor($this->evaluator, $this->exceptionHandler);
     }
 
     /**

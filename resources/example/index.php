@@ -1,18 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Example;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use Exception;
 use uuf6429\Rune;
 
 // This check prevents access to demo on live systems if uploaded by mistake.
 // Shamelessly copied from silex-skeleton
 if (!defined('SHOW_EXAMPLE') && (
-    isset($_SERVER['HTTP_CLIENT_IP'])
+        isset($_SERVER['HTTP_CLIENT_IP'])
         || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
         || !in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', 'fe80::1', '::1'])
-)) {
+    )) {
     header('HTTP/1.0 403 Forbidden');
     exit('You are not allowed to access this file. Check <code>example/index.php</code> for more information.');
 }
@@ -51,18 +52,20 @@ $data = array_merge(
     )
 );
 
+$action = new Action\PrintAction();
+
 $rules = array_map(
-    static function ($index, $data): Rune\Rule\GenericRule {
-        return new Rune\Rule\GenericRule((string)($index + 1), $data[0], $data[1]);
+    static function ($index, $data) use ($action): Rune\Rule\GenericRule {
+        return new Rune\Rule\GenericRule((string)($index + 1), $data[0], $data[1], $action);
     },
     array_keys($data['rules']),
     $data['rules']
 );
 
-$categories = [];
+$categories = [null];
 
-$categoryProvider = static function ($id) use (&$categories) {
-    return $id ? $categories[$id - 1] : null;
+$categoryProvider = static function (int $id) use (&$categories) {
+    return $categories[$id - 1] ?? null;
 };
 
 $categories = array_map(
@@ -82,8 +85,7 @@ $products = array_map(
 );
 
 $exceptionHandler = new Rune\Engine\ExceptionHandler\CollectExceptions();
-$engine = new Rune\Engine($exceptionHandler);
-$action = new Action\PrintAction();
+$engine = new Rune\Engine(null, null, $exceptionHandler);
 $context = new Context\ProductContext();
 $descriptor = $context->getContextDescriptor();
 
@@ -99,7 +101,7 @@ foreach ($rules as $rule) {
         $eval->setFunctions($descriptor->getFunctions());
         $eval->setVariables($descriptor->getVariables());
         $code = $eval->compile($rule->getCondition());
-    } catch (\Exception $ex) {
+    } catch (Exception $ex) {
         $code = 'Compile Error (' . get_class($ex) . '): ' . $ex->getMessage();
     }
     $output_generated .= str_pad($rule->getName(), $maxLength)
@@ -110,7 +112,7 @@ foreach ($rules as $rule) {
 ob_start();
 foreach ($products as $product) {
     $context = new Context\ProductContext($product);
-    $engine->execute($context, $rules, $action);
+    $engine->execute($context, $rules);
 }
 $output_result = htmlspecialchars((string)ob_get_clean(), ENT_QUOTES);
 $output_errors = implode(PHP_EOL, $exceptionHandler->getExceptions());

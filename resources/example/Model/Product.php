@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Example\Model;
 
@@ -17,6 +17,10 @@ class Product
 
     public string $name;
 
+    /**
+     * A valid CSS color name.
+     * @link https://www.w3.org/wiki/CSS/Properties/color/keywords
+     */
     public string $colour;
 
     protected int $categoryId;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Util;
 
@@ -55,6 +55,11 @@ class TypeInfoMember implements JsonSerializable
     public function getHint(): ?string
     {
         return $this->hint;
+    }
+
+    public function hasLink(): bool
+    {
+        return (bool)strlen(trim((string)$this->link));
     }
 
     public function getLink(): ?string

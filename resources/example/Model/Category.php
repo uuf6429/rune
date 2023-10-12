@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Example\Model;
 
@@ -36,7 +36,7 @@ class Category
     }
 
     /**
-     * Returns true if category name or any of its parents are identical to $name.
+     * Returns true if category name or any of its parents are identical to `$name`.
      */
     public function in(string $name): bool
     {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * @noinspection PhpUnhandledExceptionInspection
@@ -11,11 +11,13 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Throwable;
+use TypeError;
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Engine\ExceptionHandler\CollectExceptions;
+use uuf6429\Rune\Engine\FilterAllMatchingRules;
 use uuf6429\Rune\Exception\ContextErrorException;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
@@ -294,10 +296,10 @@ class EngineTest extends TestCase
                     ],
                 ],
                 'expectedErrors' => [
-                    RuntimeException::class . ' encountered while processing rule 5 '
+                    TypeError::class . ' encountered while processing rule 5 '
                     . '(Bad Rule - Result Type) within ' . DynamicContext::class
-                    . ': The condition result for rule 5 (Bad Rule - Result '
-                    . 'Type) should be boolean, not string.',
+                    . ': ' . FilterAllMatchingRules::class . '::filterRule()'
+                    . ': Return value must be of type bool, string returned',
 
                     SyntaxError::class . ' encountered while processing rule 6 '
                     . '(Bad Rule - Syntax Error) within ' . DynamicContext::class

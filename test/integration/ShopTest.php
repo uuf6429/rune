@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * @noinspection PhpUnhandledExceptionInspection
@@ -81,7 +81,12 @@ class ShopTest extends TestCase
                     [
                         'id' => new Util\TypeInfoMember('id', ['integer']),
                         'name' => new Util\TypeInfoMember('name', ['string']),
-                        'colour' => new Util\TypeInfoMember('colour', ['string']),
+                        'colour' => new Util\TypeInfoMember(
+                            'colour',
+                            ['string'],
+                            'A valid CSS color name.',
+                            'https://www.w3.org/wiki/CSS/Properties/color/keywords',
+                        ),
                         'category' => new Util\TypeInfoMember('category', [Category::class]),
                     ]
                 ),
@@ -90,15 +95,39 @@ class ShopTest extends TestCase
                     [
                         'id' => new Util\TypeInfoMember('id', ['integer']),
                         'name' => new Util\TypeInfoMember('name', ['string']),
-                        'in' => new Util\TypeInfoMember('in', ['method'], '<div class="cm-signature"><span class="type">boolean</span> <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span>)</span></div>Returns true if category name or any of its parents are identical to $name.'),
+                        'in' => new Util\TypeInfoMember(
+                            'in',
+                            ['method'],
+                            <<<'HTML'
+                            <div class="cm-signature">
+                                <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span></span>): <span class="type">boolean</span>
+                            </div>Returns true if category name or any of its parents are identical to `$name`.
+                            HTML
+                        ),
                         'parent' => new Util\TypeInfoMember('parent', ['null', Category::class]),
                     ]
                 ),
                 StringUtils::class => new Util\TypeInfoClass(
                     StringUtils::class,
                     [
-                        'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">mixed </span>$text</span></span>)</span></div>Lowercases some text.'),
-                        'upper' => new Util\TypeInfoMember('upper', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Uppercases some text.'),
+                        'lower' => new Util\TypeInfoMember(
+                            'lower',
+                            ['method'],
+                            <<<'HTML'
+                            <div class="cm-signature">
+                                <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">mixed </span>$text</span></span></span>): <span class="type">string</span>
+                            </div>Lowercases some text.
+                            HTML
+                        ),
+                        'upper' => new Util\TypeInfoMember(
+                            'upper',
+                            ['method'],
+                            <<<'HTML'
+                            <div class="cm-signature">
+                                <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span></span>): <span class="type">string</span>
+                            </div>Uppercases some text.
+                            HTML
+                        ),
                     ]
                 ),
             ],

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Engine;
 
@@ -6,7 +6,7 @@ use Throwable;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 
-interface RuleFilterHandlerInterface
+interface RuleFilterInterface
 {
     /**
      * @param iterable<RuleInterface> $rules

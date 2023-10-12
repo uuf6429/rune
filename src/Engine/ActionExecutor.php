@@ -1,15 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Engine\ActionExecutor;
+namespace uuf6429\Rune\Engine;
 
 use Throwable;
 use uuf6429\Rune\Context\ContextInterface;
-use uuf6429\Rune\Engine\ActionExecutorInterface;
-use uuf6429\Rune\Engine\ExceptionHandlerInterface;
 use uuf6429\Rune\Exception\ActionExecutionFailedException;
 use uuf6429\Rune\Util\EvaluatorInterface;
 
-class DefaultActionExecutor implements ActionExecutorInterface
+class ActionExecutor implements ActionExecutorInterface
 {
     protected EvaluatorInterface $evaluator;
     protected ExceptionHandlerInterface $exceptionHandler;

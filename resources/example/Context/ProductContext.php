@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Example\Context;
 
@@ -7,8 +7,14 @@ use uuf6429\Rune\Example\Model\Product;
 
 class ProductContext extends AbstractContext implements Stringable
 {
+    /**
+     * @todo This should be non-nullable
+     */
     public ?Product $product;
 
+    /**
+     * @todo $product should be non-nullable
+     */
     public function __construct(?Product $product = null)
     {
         parent::__construct();
@@ -18,6 +24,6 @@ class ProductContext extends AbstractContext implements Stringable
 
     public function __toString(): string
     {
-        return ucwords(trim($this->product->colour . ' ' . $this->product->name));
+        return $this->product ? ucwords(trim($this->product->colour . ' ' . $this->product->name)) : 'empty context';
     }
 }

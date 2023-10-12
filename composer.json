@@ -2,7 +2,13 @@
     "name": "uuf6429/rune",
     "type": "library",
     "description": "PHP Rule Engine.",
-    "keywords": ["rule", "engine", "expression", "uuf6429"],
+    "keywords": [
+        "business",
+        "rule",
+        "engine",
+        "expression",
+        "uuf6429"
+    ],
     "homepage": "https://github.com/uuf6429/rune",
     "license": "MIT",
     "authors": [
@@ -11,6 +17,19 @@
             "homepage": "https://christian.sciberras.me"
         }
     ],
+    "scripts": {
+        "php-cs-fixer-check": "php-cs-fixer check --diff",
+        "php-cs-fixer-fix": "php-cs-fixer fix",
+        "phpstan": "phpstan analyze src test resources/example",
+        "phpunit": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpunit --coverage-clover coverage.xml"
+        ],
+        "example": [
+            "Composer\\Config::disableProcessTimeout",
+            "php -S localhost:80 -t resources resources/example/index.php"
+        ]
+    },
     "require": {
         "php": "^7.4 || ^8",
         "ext-json": "*",

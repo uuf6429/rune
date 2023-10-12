@@ -29,7 +29,7 @@ jobs:
           php-version: '8.2'
           coverage: none
       - run: composer update --ansi --no-progress --prefer-dist --no-interaction
-      - run: vendor/bin/php-cs-fixer check
+      - run: composer run php-cs-fixer-check
 
   phpstan:
     name: Static analysis
@@ -41,7 +41,7 @@ jobs:
           php-version: '8.2'
           coverage: none
       - run: composer update --ansi --no-progress --prefer-dist --no-interaction
-      - run: vendor/bin/phpstan analyze src test
+      - run: composer run phpstan
 
   phpunit:
     name: Run Tests
@@ -50,11 +50,11 @@ jobs:
       fail-fast: false
       matrix:
         php:
-          - 7.4
-          - 8.0
-          - 8.1
-          - 8.2
-          - nightly
+          - '7.4'
+          - '8.0'
+          - '8.1'
+          - '8.2'
+          - 'nightly'
 
     steps:
       - name: Set up PHP
@@ -74,7 +74,7 @@ jobs:
           composer-options: --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Run tests
-        run: ./vendor/bin/phpunit --coverage-clover coverage.xml
+        run: composer run phpunit
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master

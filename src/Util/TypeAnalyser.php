@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Util;
 
@@ -286,7 +286,7 @@ class TypeAnalyser
                     array_filter(array_map(
                         fn ($arg) => new TypeInfoMember(
                             $arg['name'],
-                            array_filter([$this->handleType($arg['type'])])
+                            array_filter([$this->handleType((string)$arg['type'])])
                         ),
                         $element->getArguments()
                     )),
@@ -330,31 +330,35 @@ class TypeAnalyser
             $name,
             ['method'],
             sprintf(
-                '<div class="cm-signature">'
-                . '<span class="type">%s</span> <span class="name">%s</span>'
-                . '(<span class="args">%s</span>)</span>'
-                . '</div>%s',
-                $return ?: 'void',
+                <<<'HTML'
+                <div class="cm-signature">
+                    <span class="name">%s</span>(<span class="args">%s</span>): <span class="type">%s</span>
+                </div>%s
+                HTML,
                 $name,
                 implode(
                     ', ',
                     array_map(
-                        static function (?TypeInfoMember $param) {
-                            if (!$param) {
-                                return '???';
-                            }
-
+                        static function (TypeInfoMember $param) {
                             return sprintf(
-                                '<span class="%s" title="%s"><span class="type">%s</span>$%s</span>',
+                                <<<'HTML'
+                                <span class="%s" title="%s"><span class="type">%s</span>$%s</span>%s</span>
+                                HTML,
                                 $param->hasHint() ? 'arg hint' : 'arg',
                                 $param->getHint(),
-                                $param->hasTypes() ? (implode('|', $param->getTypes()) . ' ') : '',
-                                $param->getName()
+                                $param->hasTypes()
+                                    ? (implode('|', $param->getTypes()) . ' ')
+                                    : '',
+                                $param->getName(),
+                                $param->hasLink()
+                                    ? "<a href=\"{$param->getLink()}\" target='_blank'>🔗</a>"
+                                    : '',
                             );
                         },
                         $params
                     )
                 ),
+                $return ?: 'void',
                 $description
             ),
             $link

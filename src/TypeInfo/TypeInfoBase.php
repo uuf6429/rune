@@ -1,33 +1,19 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace uuf6429\Rune\Util;
+namespace uuf6429\Rune\TypeInfo;
 
-class TypeInfoClass
+abstract class TypeInfoBase
 {
-    protected string $name;
 
-    /**
-     * @var TypeInfoMember[]
-     */
-    protected array $members = [];
+    protected string $name;
 
     protected ?string $hint;
 
     protected ?string $link;
 
-    /**
-     * @param TypeInfoMember[] $members
-     */
-    public function __construct(string $name, array $members, ?string $hint = null, ?string $link = null)
+    public function __construct(string $name, ?string $hint = null, ?string $link = null)
     {
         $this->name = $name;
-        $this->members = array_combine(
-            array_map(
-                static fn (TypeInfoMember $member) => $member->getName(),
-                $members
-            ),
-            $members
-        );
         $this->hint = $hint;
         $this->link = $link;
     }
@@ -35,14 +21,6 @@ class TypeInfoClass
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @return TypeInfoMember[]
-     */
-    public function getMembers(): array
-    {
-        return $this->members;
     }
 
     public function hasHint(): bool
@@ -69,10 +47,6 @@ class TypeInfoClass
     {
         return [
             'name' => $this->getName(),
-            'members' => array_map(
-                static fn (TypeInfoMember $member) => $member->toArray(),
-                $this->getMembers()
-            ),
             'hint' => $this->getHint(),
             'link' => $this->getLink(),
         ];

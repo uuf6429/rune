@@ -3,8 +3,8 @@
 namespace uuf6429\Rune\Context;
 
 use ReflectionException;
-use uuf6429\Rune\Util\TypeAnalyser;
-use uuf6429\Rune\Util\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeAnalyser;
+use uuf6429\Rune\TypeInfo\TypeInfoMember;
 
 class ClassContextDescriptor implements ContextDescriptorInterface
 {

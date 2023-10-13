@@ -1,34 +1,22 @@
 <?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Util;
+namespace uuf6429\Rune\TypeInfo;
 
-class TypeInfoMember
+class TypeInfoMember extends TypeInfoBase
 {
-    protected string $name;
-
     /**
      * @var string[]
      */
     protected array $types;
-
-    protected ?string $hint;
-
-    protected ?string $link;
 
     /**
      * @param string[] $types
      */
     public function __construct(string $name, array $types, ?string $hint = null, ?string $link = null)
     {
-        $this->name = $name;
-        $this->types = $types;
-        $this->hint = $hint;
-        $this->link = $link;
-    }
+        parent::__construct($name, $hint, $link);
 
-    public function getName(): string
-    {
-        return $this->name;
+        $this->types = $types;
     }
 
     public function hasTypes(): bool
@@ -44,26 +32,6 @@ class TypeInfoMember
         return $this->types;
     }
 
-    public function hasHint(): bool
-    {
-        return (bool)strlen(trim((string)$this->hint));
-    }
-
-    public function getHint(): ?string
-    {
-        return $this->hasHint() ? $this->hint : null;
-    }
-
-    public function hasLink(): bool
-    {
-        return (bool)strlen(trim((string)$this->link));
-    }
-
-    public function getLink(): ?string
-    {
-        return $this->hasLink() ? $this->link : null;
-    }
-
     public function isCallable(): bool
     {
         // Note: __invoke is not supported here... would have been nice of PHP to have an Invokable interface
@@ -75,10 +43,8 @@ class TypeInfoMember
     public function toArray(): array
     {
         return [
-            'name' => $this->getName(),
+            ...parent::toArray(),
             'types' => $this->getTypes(),
-            'hint' => $this->getHint(),
-            'link' => $this->getLink(),
         ];
     }
 }

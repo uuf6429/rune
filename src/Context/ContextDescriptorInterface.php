@@ -2,9 +2,9 @@
 
 namespace uuf6429\Rune\Context;
 
-use uuf6429\Rune\Util\TypeAnalyser;
-use uuf6429\Rune\Util\TypeInfoClass;
-use uuf6429\Rune\Util\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeAnalyser;
+use uuf6429\Rune\TypeInfo\TypeInfoClass;
+use uuf6429\Rune\TypeInfo\TypeInfoMember;
 
 interface ContextDescriptorInterface
 {

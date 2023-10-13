@@ -56,8 +56,8 @@ class ShopTest extends TestCase
 
         $this->assertEquals(
             [
-                'product' => new Util\TypeInfoMember('product', [Product::class, 'null']),
-                'String' => new Util\TypeInfoMember('String', [StringUtils::class]),
+                'product' => new TypeInfo\TypeInfoMember('product', [Product::class, 'null']),
+                'String' => new TypeInfo\TypeInfoMember('String', [StringUtils::class]),
             ],
             $descriptor->getVariableTypeInfo(),
             'Check variable type information'
@@ -69,33 +69,33 @@ class ShopTest extends TestCase
         );
         $this->assertEquals(
             [
-                ProductContext::class => new Util\TypeInfoClass(
+                ProductContext::class => new TypeInfo\TypeInfoClass(
                     ProductContext::class,
                     [
-                        'product' => new Util\TypeInfoMember('product', [Product::class, 'null']),
-                        'String' => new Util\TypeInfoMember('String', [StringUtils::class], ''),
+                        'product' => new TypeInfo\TypeInfoMember('product', [Product::class, 'null']),
+                        'String' => new TypeInfo\TypeInfoMember('String', [StringUtils::class], ''),
                     ]
                 ),
-                Product::class => new Util\TypeInfoClass(
+                Product::class => new TypeInfo\TypeInfoClass(
                     Product::class,
                     [
-                        'id' => new Util\TypeInfoMember('id', ['integer']),
-                        'name' => new Util\TypeInfoMember('name', ['string']),
-                        'colour' => new Util\TypeInfoMember(
+                        'id' => new TypeInfo\TypeInfoMember('id', ['integer']),
+                        'name' => new TypeInfo\TypeInfoMember('name', ['string']),
+                        'colour' => new TypeInfo\TypeInfoMember(
                             'colour',
                             ['string'],
                             'A valid CSS color name.',
                             'https://www.w3.org/wiki/CSS/Properties/color/keywords',
                         ),
-                        'category' => new Util\TypeInfoMember('category', [Category::class]),
+                        'category' => new TypeInfo\TypeInfoMember('category', [Category::class]),
                     ]
                 ),
-                Category::class => new Util\TypeInfoClass(
+                Category::class => new TypeInfo\TypeInfoClass(
                     Category::class,
                     [
-                        'id' => new Util\TypeInfoMember('id', ['integer']),
-                        'name' => new Util\TypeInfoMember('name', ['string']),
-                        'in' => new Util\TypeInfoMember(
+                        'id' => new TypeInfo\TypeInfoMember('id', ['integer']),
+                        'name' => new TypeInfo\TypeInfoMember('name', ['string']),
+                        'in' => new TypeInfo\TypeInfoMember(
                             'in',
                             ['method'],
                             <<<'HTML'
@@ -104,13 +104,13 @@ class ShopTest extends TestCase
                             </div>Returns true if category name or any of its parents are identical to `$name`.
                             HTML
                         ),
-                        'parent' => new Util\TypeInfoMember('parent', ['null', Category::class]),
+                        'parent' => new TypeInfo\TypeInfoMember('parent', ['null', Category::class]),
                     ]
                 ),
-                StringUtils::class => new Util\TypeInfoClass(
+                StringUtils::class => new TypeInfo\TypeInfoClass(
                     StringUtils::class,
                     [
-                        'lower' => new Util\TypeInfoMember(
+                        'lower' => new TypeInfo\TypeInfoMember(
                             'lower',
                             ['method'],
                             <<<'HTML'
@@ -119,7 +119,7 @@ class ShopTest extends TestCase
                             </div>Lowercases some text.
                             HTML
                         ),
-                        'upper' => new Util\TypeInfoMember(
+                        'upper' => new TypeInfo\TypeInfoMember(
                             'upper',
                             ['method'],
                             <<<'HTML'

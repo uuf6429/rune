@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Util;
+namespace uuf6429\Rune\TypeInfo;
 
 use phpDocumentor\Reflection as PhpDoc;
 use ReflectionClass;

@@ -3,6 +3,8 @@
 namespace uuf6429\Rune\Util;
 
 use PHPUnit\Framework\TestCase;
+use uuf6429\Rune\TypeInfo\TypeInfoClass;
+use uuf6429\Rune\TypeInfo\TypeInfoMember;
 
 class TypeInfoTest extends TestCase
 {

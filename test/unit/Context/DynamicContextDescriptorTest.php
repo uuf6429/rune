@@ -4,12 +4,7 @@ namespace uuf6429\Rune\Context;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use uuf6429\Rune\Action\ActionInterface;
-use uuf6429\Rune\Rule\GenericRule;
-use uuf6429\Rune\Rule\RuleInterface;
-use uuf6429\Rune\Util\EvaluatorInterface;
-use uuf6429\Rune\Util\TypeInfoClass;
-use uuf6429\Rune\Util\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeInfoMember;
 
 class DynamicContextDescriptorTest extends TestCase
 {

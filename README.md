@@ -18,10 +18,11 @@ type of Business Process Automation software).
 - [ᚱᚢᚾᛖ](#ᚱᚢᚾᛖ)
     - [Table Of Contents](#table-of-contents)
     - [Installation](#installation)
+    - [Architecture](#architecture)
     - [Usage](#usage)
-    - [Live Example](#live-example)
-    - [Screenshot](#screenshot)
-    - [Example Code](#example-code)
+        - [Live Example](#live-example)
+        - [Screenshot](#screenshot)
+        - [Example Code](#example-code)
 
 ## Installation
 
@@ -31,35 +32,68 @@ The recommended and easiest way to install Rune is through [Composer](https://ge
 composer require uuf6429/rune "^3"
 ```
 
-## Usage
+## Architecture
 
-The library is made up of several parts:
+The library is made up of the following main parts:
 
-- Action - an object that performs an action when a rule condition is true. Actions in general can be reused.
-- Context - an object that provides data to the rule engine and action to work with.
+- **Rule** - object representing a business rule. It must
+  implement [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)).
+  For most cases, one can just
+  use [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php). Each rule must
+  have a unique id, descriptive name, the condition (as an expression) of when the rule is triggered and the action
+  (see below) to trigger.
+- **Action** - an object that does something when the associated rule is met. Actions in general can be reused by
+  multiple
+  rules.
+- **Context** - an object that provides data to the rule engine and action to work with.
   You almost always have to implement your own context since this always depends on your scenario.
-- Rule(s) - a list of rules, objects containing a string expression (for the rule engine) and data (for the action).
-  For complicated scenarios, you might want to extend the rule (by
-  implementing [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)),
-  otherwise [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php) should be
-  enough.
-- RuleEngine - the object that connects the others together to function.
+- **RuleEngine** - essentially, the object that connects the others together to function.
 
-```plantuml
-class TODO
+```mermaid
+flowchart LR
+    A("
+<b>Rules</b>
+Rule 1:
+- Condition: <code>product.color=='green'</code>
+- Action: <code>applyDiscount(10)</code>
+Rule 2:
+- Condition: <code>product.color=='red'</code>
+- Action: <code>applyDiscount(20)</code>
+    ") --> C
+
+    B("
+<b>Context</b>
+<pre><code>{
+    product: {
+        name: #quot;Scarf#quot;,
+        color: #quot;red#quot;
+    }
+}</code></pre>
+    ") --> C
+
+    subgraph RuleEngine ["<h2>Rule Engine</h2>"]
+        C{"Filter Rules"} --> D(["Execute Action(s)"])
+    end
+
+    D --> E("<code>applyDiscount(20)</code>")
+
+style A text-align: left
+style B text-align: left
 ```
 
-## Live Example
+## Usage
 
-[Click here](http://192.237.167.233/rune-demo/) to try out the engine and interactive editor!
+### Live Example
 
-## Screenshot
+*coming soon*
+
+### Screenshot
 
 The following is a screenshot for the sample provided
 in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
 ![Screenshot](http://i.imgur.com/YLFAwxI.png)
 
-## Example Code
+### Example Code
 
 This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the
 rule engine.

@@ -56,8 +56,8 @@ class ShopTest extends TestCase
 
         $this->assertEquals(
             [
-                'product' => new TypeInfo\TypeInfoMember('product', [Product::class, 'null']),
-                'String' => new TypeInfo\TypeInfoMember('String', [StringUtils::class]),
+                'product' => new TypeInfo\TypeInfoProperty('product', [Product::class, 'null']),
+                'String' => new TypeInfo\TypeInfoProperty('String', [StringUtils::class]),
             ],
             $descriptor->getVariableTypeInfo(),
             'Check variable type information'
@@ -72,56 +72,62 @@ class ShopTest extends TestCase
                 ProductContext::class => new TypeInfo\TypeInfoClass(
                     ProductContext::class,
                     [
-                        'product' => new TypeInfo\TypeInfoMember('product', [Product::class, 'null']),
-                        'String' => new TypeInfo\TypeInfoMember('String', [StringUtils::class], ''),
+                        'product' => new TypeInfo\TypeInfoProperty('product', [Product::class, 'null']),
+                        'String' => new TypeInfo\TypeInfoProperty('String', [StringUtils::class], ''),
                     ]
                 ),
                 Product::class => new TypeInfo\TypeInfoClass(
                     Product::class,
                     [
-                        'id' => new TypeInfo\TypeInfoMember('id', ['integer']),
-                        'name' => new TypeInfo\TypeInfoMember('name', ['string']),
-                        'colour' => new TypeInfo\TypeInfoMember(
+                        'id' => new TypeInfo\TypeInfoProperty('id', ['integer']),
+                        'name' => new TypeInfo\TypeInfoProperty('name', ['string']),
+                        'colour' => new TypeInfo\TypeInfoProperty(
                             'colour',
                             ['string'],
                             'A valid CSS color name.',
                             'https://www.w3.org/wiki/CSS/Properties/color/keywords',
                         ),
-                        'category' => new TypeInfo\TypeInfoMember('category', [Category::class]),
+                        'category' => new TypeInfo\TypeInfoProperty('category', [Category::class]),
                     ]
                 ),
                 Category::class => new TypeInfo\TypeInfoClass(
                     Category::class,
                     [
-                        'id' => new TypeInfo\TypeInfoMember('id', ['integer']),
-                        'name' => new TypeInfo\TypeInfoMember('name', ['string']),
-                        'in' => new TypeInfo\TypeInfoMember(
+                        'id' => new TypeInfo\TypeInfoProperty('id', ['integer']),
+                        'name' => new TypeInfo\TypeInfoProperty('name', ['string']),
+                        'in' => new TypeInfo\TypeInfoMethod(
                             'in',
-                            ['method'],
+                            [
+                                new TypeInfo\TypeInfoParameter('name', ['string'], null, null),
+                            ],
                             <<<'HTML'
                             <div class="cm-signature">
                                 <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span></span>): <span class="type">boolean</span>
                             </div>Returns true if category name or any of its parents are identical to `$name`.
                             HTML
                         ),
-                        'parent' => new TypeInfo\TypeInfoMember('parent', ['null', Category::class]),
+                        'parent' => new TypeInfo\TypeInfoProperty('parent', ['null', Category::class]),
                     ]
                 ),
                 StringUtils::class => new TypeInfo\TypeInfoClass(
                     StringUtils::class,
                     [
-                        'lower' => new TypeInfo\TypeInfoMember(
+                        'lower' => new TypeInfo\TypeInfoMethod(
                             'lower',
-                            ['method'],
+                            [
+                                new TypeInfo\TypeInfoParameter('text', ['mixed'], null, null),
+                            ],
                             <<<'HTML'
                             <div class="cm-signature">
                                 <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">mixed </span>$text</span></span></span>): <span class="type">string</span>
                             </div>Lowercases some text.
                             HTML
                         ),
-                        'upper' => new TypeInfo\TypeInfoMember(
+                        'upper' => new TypeInfo\TypeInfoMethod(
                             'upper',
-                            ['method'],
+                            [
+                                new TypeInfo\TypeInfoParameter('text', ['string'], null, null),
+                            ],
                             <<<'HTML'
                             <div class="cm-signature">
                                 <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span></span>): <span class="type">string</span>

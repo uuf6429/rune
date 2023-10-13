@@ -3,8 +3,8 @@
 namespace uuf6429\Rune\Context;
 
 use uuf6429\Rune\TypeInfo\TypeAnalyser;
+use uuf6429\Rune\TypeInfo\TypeInfoBase;
 use uuf6429\Rune\TypeInfo\TypeInfoClass;
-use uuf6429\Rune\TypeInfo\TypeInfoMember;
 
 interface ContextDescriptorInterface
 {
@@ -19,12 +19,12 @@ interface ContextDescriptorInterface
     public function getFunctions(): array;
 
     /**
-     * @return array<string,TypeInfoMember> an array of type metadata of all variables available in the context, indexed by member name
+     * @return array<string,TypeInfoBase> an array of type metadata of all variables available in the context, indexed by member name
      */
     public function getVariableTypeInfo(?TypeAnalyser $analyser = null): array;
 
     /**
-     * @return array<string,TypeInfoMember> an array of type metadata of all functions available in the context, indexed by member name
+     * @return array<string,TypeInfoBase> an array of type metadata of all functions available in the context, indexed by member name
      */
     public function getFunctionTypeInfo(?TypeAnalyser $analyser = null): array;
 

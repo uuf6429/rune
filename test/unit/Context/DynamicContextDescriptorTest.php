@@ -4,7 +4,8 @@ namespace uuf6429\Rune\Context;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use uuf6429\Rune\TypeInfo\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeInfoMethod;
+use uuf6429\Rune\TypeInfo\TypeInfoProperty;
 
 class DynamicContextDescriptorTest extends TestCase
 {
@@ -34,11 +35,11 @@ class DynamicContextDescriptorTest extends TestCase
                 ],
                 '$functions' => [],
                 '$expectedVTI' => [
-                    'name' => new TypeInfoMember('name', ['string']),
-                    'age' => new TypeInfoMember('age', ['integer']),
-                    'married' => new TypeInfoMember('married', ['boolean']),
-                    'salary' => new TypeInfoMember('salary', ['double']),
-                    'children' => new TypeInfoMember('children', ['array']),
+                    'name' => new TypeInfoProperty('name', ['string']),
+                    'age' => new TypeInfoProperty('age', ['integer']),
+                    'married' => new TypeInfoProperty('married', ['boolean']),
+                    'salary' => new TypeInfoProperty('salary', ['double']),
+                    'children' => new TypeInfoProperty('children', ['array']),
                 ],
                 '$expectedFTI' => [],
                 '$expectedDTI' => [],
@@ -51,8 +52,8 @@ class DynamicContextDescriptorTest extends TestCase
                 ],
                 '$expectedVTI' => [],
                 '$expectedFTI' => [
-                    'round' => new TypeInfoMember('round', ['callable']),
-                    'now' => new TypeInfoMember('now', ['callable']),
+                    'round' => new TypeInfoMethod('round', []),
+                    'now' => new TypeInfoMethod('now', []),
                 ],
                 '$expectedDTI' => [],
             ],

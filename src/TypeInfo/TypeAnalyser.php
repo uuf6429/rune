@@ -24,6 +24,8 @@ class TypeAnalyser
         'null',
         'mixed',
         'void',
+        'class',
+        'method',
     ];
 
     protected static array $aliasedTypes = [
@@ -99,7 +101,7 @@ class TypeAnalyser
                 default:
                     throw new RuntimeException(
                         sprintf(
-                            'Type information for %s cannot be retrieved (unsupported type).',
+                            'Type information for "%s" cannot be retrieved (unsupported type).',
                             $type
                         )
                     );
@@ -124,7 +126,7 @@ class TypeAnalyser
             $name,
             array_filter(
                 array_map(
-                    [$this, 'extractTypeInfoMember'],
+                    [$this, 'extractTypeInfo'],
                     array_merge(
                         $reflector->getProperties(ReflectionProperty::IS_PUBLIC),
                         $reflector->getMethods(ReflectionMethod::IS_PUBLIC),
@@ -132,7 +134,8 @@ class TypeAnalyser
                         $docb->getTagsByName('property-read'),
                         $docb->getTagsByName('method')
                     )
-                )
+                ),
+                static fn ($item) => $item instanceof TypeInfoProperty || $item instanceof TypeInfoMethod,
             ),
             $this->extractSummary($reflector, $docb),
             $this->extractLinkURL($docb)
@@ -189,13 +192,13 @@ class TypeAnalyser
     /**
      * @throws ReflectionException
      */
-    private function extractTypeInfoMember(object $element): ?TypeInfoMember
+    private function extractTypeInfo(object $element): ?TypeInfoBase
     {
         switch (true) {
             case $element instanceof ReflectionProperty:
                 $docb = $this->getDocBlock($element);
                 $type = $element->getType();
-                return new TypeInfoMember(
+                return new TypeInfoProperty(
                     $element->getName(),
                     array_filter(
                         array_map(
@@ -215,7 +218,7 @@ class TypeAnalyser
                         )
                     ),
                     $this->extractSummary($element, $docb),
-                    $this->extractLinkURL($docb)
+                    $this->extractLinkURL($docb),
                 );
 
             case $element instanceof ReflectionMethod:
@@ -231,14 +234,15 @@ class TypeAnalyser
                         $docb->hasTag('param')
                             ? // detect params from docblock
                             array_map(
-                                [$this, 'extractTypeInfoMember'],
+                                [$this, 'extractTypeInfo'],
                                 $docb->getTagsByName('param')
                             )
                             : // detect params from reflection
                             array_map(
-                                [$this, 'extractTypeInfoMember'],
+                                [$this, 'extractTypeInfo'],
                                 $element->getParameters()
-                            )
+                            ),
+                        static fn ($item) => $item instanceof TypeInfoParameter,
                     ),
                     implode(
                         '|',
@@ -262,7 +266,7 @@ class TypeAnalyser
                 );
 
             case $element instanceof ReflectionParameter:
-                return new TypeInfoMember(
+                return new TypeInfoParameter(
                     $element->getName(),
                     array_filter(
                         array_map(
@@ -272,7 +276,10 @@ class TypeAnalyser
                                 $type && $type->allowsNull() ? 'null' : null,
                             ]
                         )
-                    )
+                    ),
+                    // TODO we could extract this info from the method's PHPDoc
+                    null,
+                    null,
                 );
 
             case $element instanceof PhpDoc\DocBlock\Tags\Method:
@@ -284,9 +291,12 @@ class TypeAnalyser
                     (string)$element->getDescription() ?: null,
                     null,
                     array_filter(array_map(
-                        fn ($arg) => new TypeInfoMember(
+                        fn ($arg) => new TypeInfoParameter(
                             $arg['name'],
-                            array_filter([$this->handleType((string)$arg['type'])])
+                            array_filter([$this->handleType((string)$arg['type'])]),
+                            // PHPDoc methods cannot define argument hint/link
+                            null,
+                            null,
                         ),
                         $element->getArguments()
                     )),
@@ -295,16 +305,31 @@ class TypeAnalyser
 
             case $element instanceof PhpDoc\DocBlock\Tags\Property:
             case $element instanceof PhpDoc\DocBlock\Tags\PropertyRead:
-            case $element instanceof PhpDoc\DocBlock\Tags\Param:
                 if (($paramName = $element->getVariableName()) === null) {
-                    throw new RuntimeException('Parameter name must not be null');
+                    throw new RuntimeException('Property name must not be null');
                 }
-                return new TypeInfoMember(
+                return new TypeInfoProperty(
                     $paramName,
                     array_filter(array_map(
                         [$this, 'handleType'],
                         explode('|', (string)$element->getType())
-                    ))
+                    )),
+                    (string)$element->getDescription() ?: null,
+                    null,
+                );
+
+            case $element instanceof PhpDoc\DocBlock\Tags\Param:
+                if (($paramName = $element->getVariableName()) === null) {
+                    throw new RuntimeException('Parameter name must not be null');
+                }
+                return new TypeInfoParameter(
+                    $paramName,
+                    array_filter(array_map(
+                        [$this, 'handleType'],
+                        explode('|', (string)$element->getType())
+                    )),
+                    (string)$element->getDescription() ?: null,
+                    null,
                 );
 
             default:
@@ -313,7 +338,7 @@ class TypeAnalyser
     }
 
     /**
-     * @param TypeInfoMember[] $params
+     * @param TypeInfoParameter[] $params
      */
     private function handleMethod(
         string  $name,
@@ -321,14 +346,14 @@ class TypeAnalyser
         ?string $link,
         array   $params,
         string  $return
-    ): ?TypeInfoMember {
+    ): ?TypeInfoMethod {
         if (substr($name, 0, 2) === '__') {
             return null;
         }
 
-        return new TypeInfoMember(
+        return new TypeInfoMethod(
             $name,
-            ['method'],
+            $params,
             sprintf(
                 <<<'HTML'
                 <div class="cm-signature">
@@ -339,16 +364,14 @@ class TypeAnalyser
                 implode(
                     ', ',
                     array_map(
-                        static function (TypeInfoMember $param) {
+                        static function (TypeInfoParameter $param) {
                             return sprintf(
                                 <<<'HTML'
                                 <span class="%s" title="%s"><span class="type">%s</span>$%s</span>%s</span>
                                 HTML,
                                 $param->hasHint() ? 'arg hint' : 'arg',
                                 $param->getHint(),
-                                $param->hasTypes()
-                                    ? (implode('|', $param->getTypes()) . ' ')
-                                    : '',
+                                implode('|', $param->getTypes()) . ' ',
                                 $param->getName(),
                                 $param->hasLink()
                                     ? "<a href=\"{$param->getLink()}\" target='_blank'>🔗</a>"

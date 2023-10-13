@@ -4,23 +4,24 @@ namespace uuf6429\Rune\Util;
 
 use PHPUnit\Framework\TestCase;
 use uuf6429\Rune\TypeInfo\TypeInfoClass;
-use uuf6429\Rune\TypeInfo\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeInfoMethod;
+use uuf6429\Rune\TypeInfo\TypeInfoProperty;
 
 class TypeInfoTest extends TestCase
 {
     public function testThatToArrayWorks(): void
     {
         $sut = new TypeInfoClass(
-            'SomeClass',
+            'stdClass',
             [
-                new TypeInfoMember(
+                new TypeInfoProperty(
                     'prop1',
                     ['string', 'null'],
                     '',
                 ),
-                new TypeInfoMember(
+                new TypeInfoMethod(
                     'fun1',
-                    ['method'],
+                    [],
                     null,
                     'https://example.com/2'
                 )
@@ -33,7 +34,7 @@ class TypeInfoTest extends TestCase
 
         $this->assertEquals(
             [
-                'name' => 'SomeClass',
+                'name' => 'stdClass',
                 'members' => [
                     'prop1' => [
                         'name' => 'prop1',
@@ -46,10 +47,12 @@ class TypeInfoTest extends TestCase
                         'types' => ['method'],
                         'hint' => null,
                         'link' => 'https://example.com/2',
+                        'params' => [],
                     ],
                 ],
                 'hint' => 'Class summary',
                 'link' => 'https://example.com',
+                'types' => ['class'],
             ],
             $result
         );

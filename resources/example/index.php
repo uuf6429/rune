@@ -66,7 +66,7 @@ $rules = array_map(
 
 $categories = [null];
 
-$categoryProvider = static function (int $id) use (&$categories) {
+$categoryProvider = static function (?int $id) use (&$categories) {
     return $categories[$id - 1] ?? null;
 };
 

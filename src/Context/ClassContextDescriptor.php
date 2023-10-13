@@ -4,14 +4,16 @@ namespace uuf6429\Rune\Context;
 
 use ReflectionException;
 use uuf6429\Rune\TypeInfo\TypeAnalyser;
-use uuf6429\Rune\TypeInfo\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeInfoBase;
+use uuf6429\Rune\TypeInfo\TypeInfoMethod;
+use uuf6429\Rune\TypeInfo\TypeInfoProperty;
 
 class ClassContextDescriptor implements ContextDescriptorInterface
 {
     private const CONTEXT_DESCRIPTOR_METHOD = 'getContextDescriptor';
 
     /**
-     * @var null|TypeInfoMember[]
+     * @var null|array<TypeInfoProperty|TypeInfoMethod>
      */
     protected ?array $memberTypeInfo = null;
 
@@ -53,7 +55,7 @@ class ClassContextDescriptor implements ContextDescriptorInterface
     }
 
     /**
-     * @return TypeInfoMember[]
+     * @return array<TypeInfoProperty|TypeInfoMethod>
      * @throws ReflectionException
      */
     protected function getMemberTypeInfo(TypeAnalyser $analyser): array
@@ -67,7 +69,7 @@ class ClassContextDescriptor implements ContextDescriptorInterface
         $types = $analyser->getTypes();
         $this->memberTypeInfo = array_filter(
             isset($types[$class]) ? $types[$class]->getMembers() : [],
-            static function (TypeInfoMember $member) {
+            static function (TypeInfoBase $member) {
                 return $member->getName() !== self::CONTEXT_DESCRIPTOR_METHOD;
             }
         );
@@ -83,8 +85,8 @@ class ClassContextDescriptor implements ContextDescriptorInterface
 
         return array_filter(
             $this->getMemberTypeInfo($analyser),
-            static function (TypeInfoMember $member) {
-                return !$member->isCallable();
+            static function (TypeInfoBase $member) {
+                return !$member->isInvokable();
             }
         );
     }
@@ -98,8 +100,8 @@ class ClassContextDescriptor implements ContextDescriptorInterface
 
         return array_filter(
             $this->getMemberTypeInfo($analyser),
-            static function (TypeInfoMember $member) {
-                return $member->isCallable();
+            static function (TypeInfoBase $member) {
+                return $member->isInvokable();
             }
         );
     }

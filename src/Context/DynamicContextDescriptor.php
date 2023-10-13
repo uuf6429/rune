@@ -5,7 +5,7 @@ namespace uuf6429\Rune\Context;
 use uuf6429\Rune\Util\TypeAnalyser;
 use uuf6429\Rune\Util\TypeInfoMember;
 
-class DynamicContextDescriptor extends AbstractContextDescriptor
+class DynamicContextDescriptor implements ContextDescriptorInterface
 {
     protected DynamicContext $context;
 

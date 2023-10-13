@@ -6,7 +6,7 @@ use ReflectionException;
 use uuf6429\Rune\Util\TypeAnalyser;
 use uuf6429\Rune\Util\TypeInfoMember;
 
-class ClassContextDescriptor extends AbstractContextDescriptor
+class ClassContextDescriptor implements ContextDescriptorInterface
 {
     private const CONTEXT_DESCRIPTOR_METHOD = 'getContextDescriptor';
 

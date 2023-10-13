@@ -4,5 +4,5 @@ namespace uuf6429\Rune\Context;
 
 interface ContextInterface
 {
-    public function getContextDescriptor(): AbstractContextDescriptor;
+    public function getContextDescriptor(): ContextDescriptorInterface;
 }

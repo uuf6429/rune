@@ -35,7 +35,7 @@ class DynamicContext implements ContextInterface
     /**
      * @return DynamicContextDescriptor
      */
-    public function getContextDescriptor(): AbstractContextDescriptor
+    public function getContextDescriptor(): ContextDescriptorInterface
     {
         return $this->descriptor ?? ($this->descriptor = new DynamicContextDescriptor($this));
     }

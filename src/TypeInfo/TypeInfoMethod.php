@@ -29,12 +29,11 @@ class TypeInfoMethod extends TypeInfoBase
 
     public function toArray(): array
     {
-        return [
-            ...parent::toArray(),
+        return array_merge(parent::toArray(), [
             'params' => array_map(
                 static fn (TypeInfoParameter $param) => $param->toArray(),
                 $this->getParameters()
             ),
-        ];
+        ]);
     }
 }

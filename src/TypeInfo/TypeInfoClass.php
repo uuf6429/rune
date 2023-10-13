@@ -35,12 +35,11 @@ class TypeInfoClass extends TypeInfoBase
 
     public function toArray(): array
     {
-        return [
-            ...parent::toArray(),
+        return array_merge(parent::toArray(), [
             'members' => array_map(
                 static fn ($member) => $member->toArray(),
                 $this->getMembers()
             ),
-        ];
+        ]);
     }
 }

@@ -14,7 +14,13 @@ class TypeInfoClass extends TypeInfoBase
      */
     public function __construct(string $name, array $members, ?string $hint = null, ?string $link = null)
     {
-        parent::__construct($name, ['class', ...class_parents($name) ?: []], $hint, $link);
+        $types = [
+            'class',
+            ...array_values(class_parents($name) ?: []),
+            ...array_values(class_implements($name) ?: []),
+        ];
+
+        parent::__construct($name, $types, $hint, $link);
 
         $this->members = array_combine(
             array_map(

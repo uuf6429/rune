@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Example\Model;
+namespace uuf6429\Rune\Shop\Model;
 
 use uuf6429\Rune\Util\LazyProperties;
 
 /**
- * @property null|\uuf6429\Rune\Example\Model\Category $parent
+ * @property null|Category $parent
  */
 class Category
 {

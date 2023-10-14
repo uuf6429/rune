@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Example\Model;
+namespace uuf6429\Rune\Shop\Model;
 
 // We use a class alias for testing and showcasing phpdoc class resolving mechanism.
-use uuf6429\Rune\Example\Model\Category as CategoryModel;
+use uuf6429\Rune\Shop\Model\Category as CategoryModel;
 use uuf6429\Rune\Util\LazyProperties;
 
 /**

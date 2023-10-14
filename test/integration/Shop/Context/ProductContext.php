@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Example\Context;
+namespace uuf6429\Rune\Shop\Context;
 
 use Stringable;
-use uuf6429\Rune\Example\Model\Product;
+use uuf6429\Rune\Shop\Model\Product;
 
 class ProductContext extends AbstractContext implements Stringable
 {

@@ -89,9 +89,7 @@ style B text-align: left
 
 ### Screenshot
 
-The following is a screenshot for the sample provided
-in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
-![Screenshot](http://i.imgur.com/YLFAwxI.png)
+*coming soon*
 
 ### Example Code
 

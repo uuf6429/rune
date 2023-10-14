@@ -7,13 +7,12 @@
 namespace uuf6429\Rune;
 
 use PHPUnit\Framework\TestCase;
-use uuf6429\Rune\Example\Action;
-use uuf6429\Rune\Example\Context;
-use uuf6429\Rune\Example\Context\ProductContext;
-use uuf6429\Rune\Example\Model;
-use uuf6429\Rune\Example\Model\Category;
-use uuf6429\Rune\Example\Model\Product;
-use uuf6429\Rune\Example\Model\StringUtils;
+use uuf6429\Rune\Shop\Action\PrintAction;
+use uuf6429\Rune\Shop\Context;
+use uuf6429\Rune\Shop\Context\ProductContext;
+use uuf6429\Rune\Shop\Model\Category;
+use uuf6429\Rune\Shop\Model\Product;
+use uuf6429\Rune\Shop\Model\StringUtils;
 
 class ShopTest extends TestCase
 {
@@ -147,7 +146,7 @@ class ShopTest extends TestCase
      */
     protected function getRules(): array
     {
-        $action = new Action\PrintAction();
+        $action = new PrintAction();
 
         return [
             new Rule\GenericRule('1', 'Red Products', 'product.colour == String.lower("Red")', $action),
@@ -160,35 +159,35 @@ class ShopTest extends TestCase
     }
 
     /**
-     * @return Model\Product[]
+     * @return Product[]
      */
     protected function getProducts(): array
     {
         $cp = $this->getCategoryProvider();
 
         return [
-            new Model\Product(1, 'Bricks', 'red', 3, $cp),
-            new Model\Product(2, 'Soft Socks', 'green', 6, $cp),
-            new Model\Product(3, 'Sporty Socks', 'yellow', 6, $cp),
-            new Model\Product(4, 'Lego Blocks', '', 3, $cp),
-            new Model\Product(6, 'Adidas Jacket', 'black', 5, $cp),
+            new Product(1, 'Bricks', 'red', 3, $cp),
+            new Product(2, 'Soft Socks', 'green', 6, $cp),
+            new Product(3, 'Sporty Socks', 'yellow', 6, $cp),
+            new Product(4, 'Lego Blocks', '', 3, $cp),
+            new Product(6, 'Adidas Jacket', 'black', 5, $cp),
         ];
     }
 
     /**
-     * @return Model\Category[]
+     * @return Category[]
      */
     protected function getCategories(): array
     {
         $cp = $this->getCategoryProvider();
 
         return [
-            new Model\Category(1, 'Root', 0, $cp),
-            new Model\Category(2, 'Clothes', 1, $cp),
-            new Model\Category(3, 'Toys', 1, $cp),
-            new Model\Category(4, 'Underwear', 2, $cp),
-            new Model\Category(5, 'Jackets', 2, $cp),
-            new Model\Category(6, 'Socks', 4, $cp),
+            new Category(1, 'Root', 0, $cp),
+            new Category(2, 'Clothes', 1, $cp),
+            new Category(3, 'Toys', 1, $cp),
+            new Category(4, 'Underwear', 2, $cp),
+            new Category(5, 'Jackets', 2, $cp),
+            new Category(6, 'Socks', 4, $cp),
         ];
     }
 

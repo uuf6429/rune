@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Example\Model;
+namespace uuf6429\Rune\Shop\Model;
 
 class StringUtils
 {

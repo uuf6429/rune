@@ -1,16 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Example\Context;
+namespace uuf6429\Rune\Shop\Context;
 
 use uuf6429\Rune\Context\ClassContext;
-use uuf6429\Rune\Example\Model\StringUtils;
+use uuf6429\Rune\Shop\Model\StringUtils;
 
 abstract class AbstractContext extends ClassContext
 {
-    /**
-     * @var \uuf6429\Rune\Example\Model\StringUtils
-     */
-    public $String;
+    public StringUtils $String;
 
     public function __construct()
     {

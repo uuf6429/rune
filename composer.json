@@ -20,14 +20,10 @@
     "scripts": {
         "php-cs-fixer-check": "php-cs-fixer check --diff",
         "php-cs-fixer-fix": "php-cs-fixer fix",
-        "phpstan": "phpstan analyze src test resources/example",
+        "phpstan": "phpstan analyze src test",
         "phpunit": [
             "Composer\\Config::disableProcessTimeout",
             "phpunit --coverage-clover coverage.xml"
-        ],
-        "example": [
-            "Composer\\Config::disableProcessTimeout",
-            "php -S localhost:80 -t resources resources/example/index.php"
         ]
     },
     "require": {
@@ -44,8 +40,7 @@
     },
     "autoload": {
         "psr-4": {
-            "uuf6429\\Rune\\": "src/",
-            "uuf6429\\Rune\\Example\\": "resources/example/"
+            "uuf6429\\Rune\\": "src/"
         }
     },
     "autoload-dev": {

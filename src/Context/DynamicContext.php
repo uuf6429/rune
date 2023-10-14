@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Context;
 
@@ -35,7 +35,7 @@ class DynamicContext implements ContextInterface
     /**
      * @return DynamicContextDescriptor
      */
-    public function getContextDescriptor(): AbstractContextDescriptor
+    public function getContextDescriptor(): ContextDescriptorInterface
     {
         return $this->descriptor ?? ($this->descriptor = new DynamicContextDescriptor($this));
     }

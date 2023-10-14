@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * @noinspection PhpUnhandledExceptionInspection
@@ -7,13 +7,12 @@
 namespace uuf6429\Rune;
 
 use PHPUnit\Framework\TestCase;
-use uuf6429\Rune\Example\Action;
-use uuf6429\Rune\Example\Context;
-use uuf6429\Rune\Example\Context\ProductContext;
-use uuf6429\Rune\Example\Model;
-use uuf6429\Rune\Example\Model\Category;
-use uuf6429\Rune\Example\Model\Product;
-use uuf6429\Rune\Example\Model\StringUtils;
+use uuf6429\Rune\Shop\Action\PrintAction;
+use uuf6429\Rune\Shop\Context;
+use uuf6429\Rune\Shop\Context\ProductContext;
+use uuf6429\Rune\Shop\Model\Category;
+use uuf6429\Rune\Shop\Model\Product;
+use uuf6429\Rune\Shop\Model\StringUtils;
 
 class ShopTest extends TestCase
 {
@@ -33,13 +32,12 @@ class ShopTest extends TestCase
             ]) . PHP_EOL
         );
 
-        $exceptions = new Exception\ExceptionCollectorHandler();
-        $engine = new Engine($exceptions);
-        $action = new Action\PrintAction();
+        $exceptions = new Engine\ExceptionHandler\CollectExceptions();
+        $engine = new Engine(null, null, $exceptions);
 
         foreach ($this->getProducts() as $product) {
             $context = new Context\ProductContext($product);
-            $engine->execute($context, $this->getRules(), $action);
+            $engine->execute($context, $this->getRules());
         }
 
         $this->assertSame(
@@ -57,8 +55,8 @@ class ShopTest extends TestCase
 
         $this->assertEquals(
             [
-                'product' => new Util\TypeInfoMember('product', [Product::class, 'null']),
-                'String' => new Util\TypeInfoMember('String', [StringUtils::class]),
+                'product' => new TypeInfo\TypeInfoProperty('product', [Product::class, 'null']),
+                'String' => new TypeInfo\TypeInfoProperty('String', [StringUtils::class]),
             ],
             $descriptor->getVariableTypeInfo(),
             'Check variable type information'
@@ -70,36 +68,71 @@ class ShopTest extends TestCase
         );
         $this->assertEquals(
             [
-                ProductContext::class => new Util\TypeInfoClass(
+                ProductContext::class => new TypeInfo\TypeInfoClass(
                     ProductContext::class,
                     [
-                        'product' => new Util\TypeInfoMember('product', [Product::class, 'null']),
-                        'String' => new Util\TypeInfoMember('String', [StringUtils::class], ''),
+                        'product' => new TypeInfo\TypeInfoProperty('product', [Product::class, 'null']),
+                        'String' => new TypeInfo\TypeInfoProperty('String', [StringUtils::class], ''),
                     ]
                 ),
-                Product::class => new Util\TypeInfoClass(
+                Product::class => new TypeInfo\TypeInfoClass(
                     Product::class,
                     [
-                        'id' => new Util\TypeInfoMember('id', ['integer']),
-                        'name' => new Util\TypeInfoMember('name', ['string']),
-                        'colour' => new Util\TypeInfoMember('colour', ['string']),
-                        'category' => new Util\TypeInfoMember('category', [Category::class]),
+                        'id' => new TypeInfo\TypeInfoProperty('id', ['integer']),
+                        'name' => new TypeInfo\TypeInfoProperty('name', ['string']),
+                        'colour' => new TypeInfo\TypeInfoProperty(
+                            'colour',
+                            ['string'],
+                            'A valid CSS color name.',
+                            'https://www.w3.org/wiki/CSS/Properties/color/keywords',
+                        ),
+                        'category' => new TypeInfo\TypeInfoProperty('category', [Category::class]),
                     ]
                 ),
-                Category::class => new Util\TypeInfoClass(
+                Category::class => new TypeInfo\TypeInfoClass(
                     Category::class,
                     [
-                        'id' => new Util\TypeInfoMember('id', ['integer']),
-                        'name' => new Util\TypeInfoMember('name', ['string']),
-                        'in' => new Util\TypeInfoMember('in', ['method'], '<div class="cm-signature"><span class="type">boolean</span> <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span>)</span></div>Returns true if category name or any of its parents are identical to $name.'),
-                        'parent' => new Util\TypeInfoMember('parent', ['null', Category::class]),
+                        'id' => new TypeInfo\TypeInfoProperty('id', ['integer']),
+                        'name' => new TypeInfo\TypeInfoProperty('name', ['string']),
+                        'in' => new TypeInfo\TypeInfoMethod(
+                            'in',
+                            [
+                                new TypeInfo\TypeInfoParameter('name', ['string'], null, null),
+                            ],
+                            <<<'HTML'
+                            <div class="cm-signature">
+                                <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span></span>): <span class="type">boolean</span>
+                            </div>Returns true if category name or any of its parents are identical to `$name`.
+                            HTML
+                        ),
+                        'parent' => new TypeInfo\TypeInfoProperty('parent', ['null', Category::class]),
                     ]
                 ),
-                StringUtils::class => new Util\TypeInfoClass(
+                StringUtils::class => new TypeInfo\TypeInfoClass(
                     StringUtils::class,
                     [
-                        'lower' => new Util\TypeInfoMember('lower', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">mixed </span>$text</span></span>)</span></div>Lowercases some text.'),
-                        'upper' => new Util\TypeInfoMember('upper', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span>)</span></div>Uppercases some text.'),
+                        'lower' => new TypeInfo\TypeInfoMethod(
+                            'lower',
+                            [
+                                new TypeInfo\TypeInfoParameter('text', ['mixed'], null, null),
+                            ],
+                            <<<'HTML'
+                            <div class="cm-signature">
+                                <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">mixed </span>$text</span></span></span>): <span class="type">string</span>
+                            </div>Lowercases some text.
+                            HTML
+                        ),
+                        'upper' => new TypeInfo\TypeInfoMethod(
+                            'upper',
+                            [
+                                new TypeInfo\TypeInfoParameter('text', ['string'], null, null),
+                            ],
+                            <<<'HTML'
+                            <div class="cm-signature">
+                                <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span></span>): <span class="type">string</span>
+                            </div>Uppercases some text.
+                            HTML
+                        ),
                     ]
                 ),
             ],
@@ -113,46 +146,48 @@ class ShopTest extends TestCase
      */
     protected function getRules(): array
     {
+        $action = new PrintAction();
+
         return [
-            new Rule\GenericRule('1', 'Red Products', 'product.colour == String.lower("Red")'),
-            new Rule\GenericRule('2', 'Red Socks', 'String.upper(product.colour) == "RED" and (product.name matches "/socks/i") > 0'),
-            new Rule\GenericRule('3', 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0'),
-            new Rule\GenericRule('4', 'Socks', 'product.category.in("Socks")'),
-            new Rule\GenericRule('5', 'Toys', 'product.category.in("Toys")'),
-            new Rule\GenericRule('6', 'Clothes', 'product.category.in("Clothes")'),
+            new Rule\GenericRule('1', 'Red Products', 'product.colour == String.lower("Red")', $action),
+            new Rule\GenericRule('2', 'Red Socks', 'String.upper(product.colour) == "RED" and (product.name matches "/socks/i") > 0', $action),
+            new Rule\GenericRule('3', 'Green Socks', 'product.colour == "green" and (product.name matches "/socks/i") > 0', $action),
+            new Rule\GenericRule('4', 'Socks', 'product.category.in("Socks")', $action),
+            new Rule\GenericRule('5', 'Toys', 'product.category.in("Toys")', $action),
+            new Rule\GenericRule('6', 'Clothes', 'product.category.in("Clothes")', $action),
         ];
     }
 
     /**
-     * @return Model\Product[]
+     * @return Product[]
      */
     protected function getProducts(): array
     {
         $cp = $this->getCategoryProvider();
 
         return [
-            new Model\Product(1, 'Bricks', 'red', 3, $cp),
-            new Model\Product(2, 'Soft Socks', 'green', 6, $cp),
-            new Model\Product(3, 'Sporty Socks', 'yellow', 6, $cp),
-            new Model\Product(4, 'Lego Blocks', '', 3, $cp),
-            new Model\Product(6, 'Adidas Jacket', 'black', 5, $cp),
+            new Product(1, 'Bricks', 'red', 3, $cp),
+            new Product(2, 'Soft Socks', 'green', 6, $cp),
+            new Product(3, 'Sporty Socks', 'yellow', 6, $cp),
+            new Product(4, 'Lego Blocks', '', 3, $cp),
+            new Product(6, 'Adidas Jacket', 'black', 5, $cp),
         ];
     }
 
     /**
-     * @return Model\Category[]
+     * @return Category[]
      */
     protected function getCategories(): array
     {
         $cp = $this->getCategoryProvider();
 
         return [
-            new Model\Category(1, 'Root', 0, $cp),
-            new Model\Category(2, 'Clothes', 1, $cp),
-            new Model\Category(3, 'Toys', 1, $cp),
-            new Model\Category(4, 'Underwear', 2, $cp),
-            new Model\Category(5, 'Jackets', 2, $cp),
-            new Model\Category(6, 'Socks', 4, $cp),
+            new Category(1, 'Root', 0, $cp),
+            new Category(2, 'Clothes', 1, $cp),
+            new Category(3, 'Toys', 1, $cp),
+            new Category(4, 'Underwear', 2, $cp),
+            new Category(5, 'Jackets', 2, $cp),
+            new Category(6, 'Socks', 4, $cp),
         ];
     }
 

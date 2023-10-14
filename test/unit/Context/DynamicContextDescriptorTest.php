@@ -1,12 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Context;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use uuf6429\Rune\Rule\GenericRule;
-use uuf6429\Rune\Util\TypeInfoClass;
-use uuf6429\Rune\Util\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeInfoMethod;
+use uuf6429\Rune\TypeInfo\TypeInfoProperty;
 
 class DynamicContextDescriptorTest extends TestCase
 {
@@ -36,32 +35,14 @@ class DynamicContextDescriptorTest extends TestCase
                 ],
                 '$functions' => [],
                 '$expectedVTI' => [
-                    'name' => new TypeInfoMember('name', ['string']),
-                    'age' => new TypeInfoMember('age', ['integer']),
-                    'married' => new TypeInfoMember('married', ['boolean']),
-                    'salary' => new TypeInfoMember('salary', ['double']),
-                    'children' => new TypeInfoMember('children', ['array']),
+                    'name' => new TypeInfoProperty('name', ['string']),
+                    'age' => new TypeInfoProperty('age', ['integer']),
+                    'married' => new TypeInfoProperty('married', ['boolean']),
+                    'salary' => new TypeInfoProperty('salary', ['double']),
+                    'children' => new TypeInfoProperty('children', ['array']),
                 ],
                 '$expectedFTI' => [],
                 '$expectedDTI' => [],
-            ],
-            'GenericRule object test' => [
-                '$variables' => ['rule' => new GenericRule('0', '', '')],
-                '$functions' => [],
-                '$expectedVTI' => [
-                    'rule' => new TypeInfoMember('rule', [GenericRule::class]),
-                ],
-                '$expectedFTI' => [],
-                '$expectedDTI' => [
-                    GenericRule::class => new TypeInfoClass(
-                        GenericRule::class,
-                        [
-                            new TypeInfoMember('getId', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getId</span>(<span class="args"></span>)</span></div>'),
-                            new TypeInfoMember('getName', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getName</span>(<span class="args"></span>)</span></div>'),
-                            new TypeInfoMember('getCondition', ['method'], '<div class="cm-signature"><span class="type">string</span> <span class="name">getCondition</span>(<span class="args"></span>)</span></div>'),
-                        ]
-                    ),
-                ],
             ],
             'Functions and methods test' => [
                 '$variables' => [],
@@ -71,8 +52,8 @@ class DynamicContextDescriptorTest extends TestCase
                 ],
                 '$expectedVTI' => [],
                 '$expectedFTI' => [
-                    'round' => new TypeInfoMember('round', ['callable']),
-                    'now' => new TypeInfoMember('now', ['callable']),
+                    'round' => new TypeInfoMethod('round', []),
+                    'now' => new TypeInfoMethod('now', []),
                 ],
                 '$expectedDTI' => [],
             ],

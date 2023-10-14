@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Rule;
+
+use uuf6429\Rune\Action\ActionInterface;
 
 class GenericRule implements RuleInterface
 {
@@ -9,12 +11,14 @@ class GenericRule implements RuleInterface
     protected string $name;
 
     protected string $condition;
+    protected ActionInterface $action;
 
-    public function __construct(string $id, string $name, string $condition)
+    public function __construct(string $id, string $name, string $condition, ActionInterface $action)
     {
         $this->id = $id;
         $this->name = $name;
         $this->condition = $condition;
+        $this->action = $action;
     }
 
     /**
@@ -39,5 +43,13 @@ class GenericRule implements RuleInterface
     public function getCondition(): string
     {
         return $this->condition;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAction(): ActionInterface
+    {
+        return $this->action;
     }
 }

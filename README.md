@@ -1,6 +1,6 @@
-# Rune
+# ᚱᚢᚾᛖ
 
-![Build Status](https://github.com/uuf6429/rune/actions/workflows/ci.yml/badge.svg)
+[![Build Status](https://github.com/uuf6429/rune/actions/workflows/ci.yml/badge.svg)](https://github.com/uuf6429/rune/actions)
 [![Latest Stable Version](https://poser.pugx.org/uuf6429/rune/version.svg)](https://packagist.org/packages/uuf6429/rune)
 [![Latest Unstable Version](https://poser.pugx.org/uuf6429/rune/v/unstable.svg)](https://packagist.org/packages/uuf6429/rune)
 [![PHP Version Require](http://poser.pugx.org/uuf6429/rune/require/php)](https://www.php.net/supported-versions.php)
@@ -10,17 +10,19 @@
 
 Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.
 
-This library is an implementation of a Business Rule Engine (a type of Business Process Automation software).
+This library is an implementation of a [Business Rule Engine](https://en.wikipedia.org/wiki/Business_rules_engine) (a
+type of Business Process Automation software).
 
 ## Table Of Contents
 
-- [Rune](#rune)
-  - [Table Of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Live Example](#live-example)
-  - [Screenshot](#screenshot)
-  - [Example Code](#example-code)
+- [ᚱᚢᚾᛖ](#ᚱᚢᚾᛖ)
+    - [Table Of Contents](#table-of-contents)
+    - [Installation](#installation)
+    - [Architecture](#architecture)
+    - [Usage](#usage)
+        - [Live Example](#live-example)
+        - [Screenshot](#screenshot)
+        - [Example Code](#example-code)
 
 ## Installation
 
@@ -30,32 +32,76 @@ The recommended and easiest way to install Rune is through [Composer](https://ge
 composer require uuf6429/rune "^3"
 ```
 
+## Architecture
+
+The library is made up of the following main parts:
+
+- **Rule** - object representing a business rule. It must
+  implement [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)).
+  For most cases, one can just
+  use [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php). Each rule must
+  have a unique id, descriptive name, the condition (as an expression) of when the rule is triggered and the action
+  (see below) to trigger.
+- **Action** - an object that does something when the associated rule is met. Actions in general can be reused by
+  multiple
+  rules.
+- **Context** - an object that provides data to the rule engine and action to work with.
+  You almost always have to implement your own context since this always depends on your scenario.
+- **RuleEngine** - essentially, the object that connects the others together to function.
+
+```mermaid
+flowchart LR
+    A("
+<center><b>Rules</b></center>
+Rule 1:
+- Condition: <code>product.color == #quot;green#quot;</code>
+- Action: <code>applyDiscount(10)</code>
+
+Rule 2:
+- Condition: <code>product.color == #quot;red#quot;</code>
+- Action: <code>applyDiscount(20)</code>
+    ") --> C
+
+    B("
+<center><b>Context</b></center><pre><code>{
+    product: {
+        name: #quot;Scarf#quot;,
+        color: #quot;red#quot;
+    }
+}</code></pre>
+    ") --> C
+
+    subgraph RuleEngine ["<h2>Rule Engine</h2>"]
+        C{"Filter Rules"} --> D(["Execute Action(s)"])
+    end
+
+    D --> E("<code>applyDiscount(20)</code>")
+
+style A text-align: left
+style B text-align: left
+```
+
 ## Usage
 
-The library is made up of several parts:
+### Live Example
 
-- Action - an object that performs an action when a rule condition is true. Actions in general can be reused.
-- Context - an object that provides data to the rule engine and action to work with.
-  You almost always have to implement your own context since this always depends on your scenario.
-- Rule(s) - a list of rules, objects containing a string expression (for the rule engine) and data (for the action).
-  For complicated scenarios, you might want to extend the rule (by implementing [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)), otherwise [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php) should be enough.
-- RuleEngine - the object that connects the others together to function.
+*coming soon*
 
-## Live Example
+### Screenshot
 
-[Click here](http://192.237.167.233/rune-demo/) to try out the engine and interactive editor!
+*coming soon*
 
-## Screenshot
+### Example Code
 
-The following is a screenshot for the sample provided in [`example/` directory](https://github.com/uuf6429/rune/tree/master/example).
-![Screenshot](http://i.imgur.com/YLFAwxI.png)
-
-## Example Code
-
-This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the rule engine.
+The following code is a very simple example of how Rune can be used. It defines one model (Product), context (ProductContext) and uses CallbackAction to print out the rules that have been triggered.
 
 ```php
-namespace uuf6429\Rune;
+namespace MyApplication;
+
+use uuf6429\Rune\Action\CallbackAction;
+use uuf6429\Rune\Context\ClassContext;
+use uuf6429\Rune\Engine;
+use uuf6429\Rune\Rule\GenericRule;
 
 // A class whose instances will be available inside rule engine.
 class Product
@@ -76,7 +122,7 @@ class Product
 // A class that represents the rule engine execution context.
 // Note that public properties will be available in the rule expressions,
 // in this case rules will have access to "product" as a variable (and all of product's public properties).
-class ProductContext extends Context\ClassContext
+class ProductContext extends ClassContext
 {
     /** @var Product */
     public $product;
@@ -87,23 +133,8 @@ class ProductContext extends Context\ClassContext
     }
 }
 
-// Declare some sample rules.
-$rules = [
-    new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"'),
-    new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"'),
-    new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"'),
-    new Rule\GenericRule(4, 'Socks', 'product.name matches "/socks/" > 0'),
-];
-
-// Declare available products (to run rules against).
-$products = [
-    new Product('Bricks', 'red'),
-    new Product('Soft Socks', 'green'),
-    new Product('Sporty Socks', 'yellow'),
-];
-
 // Declare an action to be triggered when a rule matches against a product.
-$action = new Action\CallbackAction(
+$action = new CallbackAction(
     function ($eval, ProductContext $context, $rule)
     {
         printf(
@@ -115,11 +146,26 @@ $action = new Action\CallbackAction(
     }
 );
 
+// Declare some sample rules.
+$rules = [
+    new GenericRule(1, 'Red Products', 'product.colour == "red"', $action),
+    new GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"', $action),
+    new GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"', $action),
+    new GenericRule(4, 'Socks', 'product.name matches "/socks/" > 0', $action),
+];
+
+// Declare available products (to run rules against).
+$products = [
+    new Product('Bricks', 'red'),
+    new Product('Soft Socks', 'green'),
+    new Product('Sporty Socks', 'yellow'),
+];
+
 // Create rule engine.
 $engine = new Engine();
 
-// Run rules for each product. Note that each product exists in a separate context.
+// Run rules for each product. Note that each product should exist in a separate context.
 foreach ($products as $product) {
-    $engine->execute(new ProductContext($product), $rules, $action);
+    $engine->execute(new ProductContext($product), $rules);
 }
 ```

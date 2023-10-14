@@ -2,7 +2,13 @@
     "name": "uuf6429/rune",
     "type": "library",
     "description": "PHP Rule Engine.",
-    "keywords": ["rule", "engine", "expression", "uuf6429"],
+    "keywords": [
+        "business",
+        "rule",
+        "engine",
+        "expression",
+        "uuf6429"
+    ],
     "homepage": "https://github.com/uuf6429/rune",
     "license": "MIT",
     "authors": [
@@ -11,21 +17,30 @@
             "homepage": "https://christian.sciberras.me"
         }
     ],
+    "scripts": {
+        "php-cs-fixer-check": "php-cs-fixer check --diff",
+        "php-cs-fixer-fix": "php-cs-fixer fix",
+        "phpstan": "phpstan analyze src test",
+        "phpunit": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpunit --coverage-clover coverage.xml"
+        ]
+    },
     "require": {
         "php": "^7.4 || ^8",
-        "ext-json": "*",
         "symfony/expression-language": "^4 || ^5 || ^6",
         "phpdocumentor/reflection-docblock": "^5.3"
     },
     "require-dev": {
+        "ext-json": "*",
         "phpunit/phpunit": "^6 || ^9",
         "friendsofphp/php-cs-fixer": "^3",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "jetbrains/phpstorm-attributes": "^1.0"
     },
     "autoload": {
         "psr-4": {
-            "uuf6429\\Rune\\": "src/",
-            "uuf6429\\Rune\\Example\\": "resources/example/"
+            "uuf6429\\Rune\\": "src/"
         }
     },
     "autoload-dev": {

@@ -1,11 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune\Context;
 
-use uuf6429\Rune\Util\TypeAnalyser;
-use uuf6429\Rune\Util\TypeInfoMember;
+use uuf6429\Rune\TypeInfo\TypeAnalyser;
+use uuf6429\Rune\TypeInfo\TypeInfoMethod;
+use uuf6429\Rune\TypeInfo\TypeInfoProperty;
 
-class DynamicContextDescriptor extends AbstractContextDescriptor
+class DynamicContextDescriptor implements ContextDescriptorInterface
 {
     protected DynamicContext $context;
 
@@ -38,7 +39,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
         $result = [];
         foreach ($this->context->getVariables() as $name => $value) {
             $type = is_object($value) ? get_class($value) : gettype($value);
-            $result[$name] = new TypeInfoMember($name, [$type]);
+            $result[$name] = new TypeInfoProperty($name, [$type]);
         }
 
         return $result;
@@ -51,7 +52,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     {
         $result = [];
         foreach (array_keys($this->context->getFunctions()) as $name) {
-            $result[$name] = new TypeInfoMember($name, ['callable']);
+            $result[$name] = new TypeInfoMethod($name, []);
         }
 
         return $result;
@@ -64,7 +65,7 @@ class DynamicContextDescriptor extends AbstractContextDescriptor
     {
         $analyser = $analyser ?: new TypeAnalyser();
 
-        /** @var TypeInfoMember[] $members */
+        /** @var array<TypeInfoProperty|TypeInfoMethod> $members */
         $members = array_merge($this->getVariableTypeInfo($analyser), $this->getFunctionTypeInfo($analyser));
 
         foreach ($members as $member) {

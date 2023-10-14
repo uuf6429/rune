@@ -1,110 +1,52 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace uuf6429\Rune;
 
-use RuntimeException;
 use Throwable;
-use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Context\ContextInterface;
-use uuf6429\Rune\Exception\ContextErrorException;
-use uuf6429\Rune\Exception\ContextRuleActionException;
-use uuf6429\Rune\Exception\ContextRuleException;
-use uuf6429\Rune\Exception\ExceptionHandlerInterface;
-use uuf6429\Rune\Exception\ExceptionPropagatorHandler;
+use uuf6429\Rune\Engine\ActionExecutor;
+use uuf6429\Rune\Engine\ActionExecutorInterface;
+use uuf6429\Rune\Engine\ExceptionHandler\ThrowExceptions;
+use uuf6429\Rune\Engine\ExceptionHandlerInterface;
+use uuf6429\Rune\Engine\FilterAllMatchingRules;
+use uuf6429\Rune\Engine\RuleFilterInterface;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
 use uuf6429\Rune\Util\SymfonyEvaluator;
 
 class Engine
 {
+    protected RuleFilterInterface $ruleFilterHandler;
+    protected ActionExecutorInterface $actionExecutor;
     protected ExceptionHandlerInterface $exceptionHandler;
-
     protected EvaluatorInterface $evaluator;
 
-    public function __construct(?ExceptionHandlerInterface $exceptionHandler = null, ?EvaluatorInterface $evaluator = null)
-    {
-        $this->exceptionHandler = $exceptionHandler ?: new ExceptionPropagatorHandler();
-        $this->evaluator = $evaluator ?: new SymfonyEvaluator();
+    public function __construct(
+        ?RuleFilterInterface       $ruleFilterHandler = null,
+        ?ActionExecutorInterface   $actionExecutor = null,
+        ?ExceptionHandlerInterface $exceptionHandler = null,
+        ?EvaluatorInterface        $evaluator = null
+    ) {
+        $this->exceptionHandler = $exceptionHandler
+            ?? new ThrowExceptions();
+        $this->evaluator = $evaluator
+            ?? new SymfonyEvaluator();
+        $this->ruleFilterHandler = $ruleFilterHandler
+            ?? new FilterAllMatchingRules($this->evaluator, $this->exceptionHandler);
+        $this->actionExecutor = $actionExecutor
+            ?? new ActionExecutor($this->evaluator, $this->exceptionHandler);
     }
 
     /**
-     * @param RuleInterface[] $rules
-     * @return int|false
+     * @param iterable<RuleInterface> $rules
      * @throws Throwable
      */
-    public function execute(ContextInterface $context, array $rules, ActionInterface $action)
+    public function execute(ContextInterface $context, iterable $rules): int
     {
         $descriptor = $context->getContextDescriptor();
         $this->evaluator->setVariables($descriptor->getVariables());
         $this->evaluator->setFunctions($descriptor->getFunctions());
 
-        $matchingRules = [];
-
-        $this->findMatches($matchingRules, $context, $rules);
-
-        // TODO implement this some time in the future
-        //$this->validateMatches($matchingRules);
-
-        $this->executeActionForRules($action, $context, $matchingRules);
-
-        return count($matchingRules);
-    }
-
-    /**
-     * @param RuleInterface[] $result
-     * @param RuleInterface[] $rules
-     * @throws Throwable
-     */
-    protected function findMatches(array &$result, ContextInterface $context, array $rules): void
-    {
-        foreach ($rules as $rule) {
-            try {
-                $this->findMatchesForContextRule($result, $rule);
-            } catch (Throwable $ex) {
-                $this->exceptionHandler->handle(
-                    new ContextRuleException($context, $rule, null, $ex)
-                );
-            }
-        }
-    }
-
-    /**
-     * @param RuleInterface[] $result
-     * @throws ContextErrorException
-     */
-    protected function findMatchesForContextRule(array &$result, RuleInterface $rule): void
-    {
-        $cond = $rule->getCondition();
-        $match = ($cond === '') ?: $this->evaluator->evaluate($rule->getCondition());
-
-        if (!is_bool($match)) {
-            throw new RuntimeException(sprintf(
-                'The condition result for rule %s (%s) should be boolean, not %s.',
-                $rule->getId(),
-                $rule->getName(),
-                gettype($match)
-            ));
-        }
-
-        if ($match) {
-            $result[] = $rule;
-        }
-    }
-
-    /**
-     * @param RuleInterface[] $rules
-     * @throws Throwable
-     */
-    protected function executeActionForRules(ActionInterface $action, ContextInterface $context, array $rules): void
-    {
-        foreach ($rules as $rule) {
-            try {
-                $action->execute($this->evaluator, $context, $rule);
-            } catch (Throwable $ex) {
-                $this->exceptionHandler->handle(
-                    new ContextRuleActionException($context, $rule, $action, null, $ex)
-                );
-            }
-        }
+        return $this->actionExecutor->execute($context, $this->ruleFilterHandler->filterRules($context, $rules));
     }
 }

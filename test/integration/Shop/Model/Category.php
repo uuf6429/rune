@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace uuf6429\Rune\Example\Model;
+namespace uuf6429\Rune\Shop\Model;
 
 use uuf6429\Rune\Util\LazyProperties;
 
 /**
- * @property null|\uuf6429\Rune\Example\Model\Category $parent
+ * @property null|Category $parent
  */
 class Category
 {
@@ -36,7 +36,7 @@ class Category
     }
 
     /**
-     * Returns true if category name or any of its parents are identical to $name.
+     * Returns true if category name or any of its parents are identical to `$name`.
      */
     public function in(string $name): bool
     {

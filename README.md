@@ -52,18 +52,18 @@ The library is made up of the following main parts:
 ```mermaid
 flowchart LR
     A("
-<b>Rules</b>
+<center><b>Rules</b></center>
 Rule 1:
-- Condition: <code>product.color=='green'</code>
+- Condition: <code>product.color == #quot;green#quot;</code>
 - Action: <code>applyDiscount(10)</code>
+
 Rule 2:
-- Condition: <code>product.color=='red'</code>
+- Condition: <code>product.color == #quot;red#quot;</code>
 - Action: <code>applyDiscount(20)</code>
     ") --> C
 
     B("
-<b>Context</b>
-<pre><code>{
+<center><b>Context</b></center><pre><code>{
     product: {
         name: #quot;Scarf#quot;,
         color: #quot;red#quot;
@@ -93,11 +93,15 @@ style B text-align: left
 
 ### Example Code
 
-This is a [simple example](https://github.com/uuf6429/rune/tree/master/example/simple.php) on the practical use of the
-rule engine.
+The following code is a very simple example of how Rune can be used. It defines one model (Product), context (ProductContext) and uses CallbackAction to print out the rules that have been triggered.
 
 ```php
-namespace uuf6429\Rune;
+namespace MyApplication;
+
+use uuf6429\Rune\Action\CallbackAction;
+use uuf6429\Rune\Context\ClassContext;
+use uuf6429\Rune\Engine;
+use uuf6429\Rune\Rule\GenericRule;
 
 // A class whose instances will be available inside rule engine.
 class Product
@@ -118,7 +122,7 @@ class Product
 // A class that represents the rule engine execution context.
 // Note that public properties will be available in the rule expressions,
 // in this case rules will have access to "product" as a variable (and all of product's public properties).
-class ProductContext extends Context\ClassContext
+class ProductContext extends ClassContext
 {
     /** @var Product */
     public $product;
@@ -130,7 +134,7 @@ class ProductContext extends Context\ClassContext
 }
 
 // Declare an action to be triggered when a rule matches against a product.
-$action = new Action\CallbackAction(
+$action = new CallbackAction(
     function ($eval, ProductContext $context, $rule)
     {
         printf(
@@ -144,10 +148,10 @@ $action = new Action\CallbackAction(
 
 // Declare some sample rules.
 $rules = [
-    new Rule\GenericRule(1, 'Red Products', 'product.colour == "red"', $action),
-    new Rule\GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"', $action),
-    new Rule\GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"', $action),
-    new Rule\GenericRule(4, 'Socks', 'product.name matches "/socks/" > 0', $action),
+    new GenericRule(1, 'Red Products', 'product.colour == "red"', $action),
+    new GenericRule(2, 'Red Socks', 'product.colour == "red" and product.name matches "/socks/i"', $action),
+    new GenericRule(3, 'Green Socks', 'product.colour == "green" and product.name matches "/socks/i"', $action),
+    new GenericRule(4, 'Socks', 'product.name matches "/socks/" > 0', $action),
 ];
 
 // Declare available products (to run rules against).
@@ -160,7 +164,7 @@ $products = [
 // Create rule engine.
 $engine = new Engine();
 
-// Run rules for each product. Note that each product exists in a separate context.
+// Run rules for each product. Note that each product should exist in a separate context.
 foreach ($products as $product) {
     $engine->execute(new ProductContext($product), $rules);
 }

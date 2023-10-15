@@ -9,6 +9,7 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 max_line_length = 120
 ij_php_space_before_short_closure_left_parenthesis = true
+ij_formatter_tags_enabled = true
 
 [*.{yml,yaml}]
 indent_size = 2

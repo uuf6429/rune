@@ -10,8 +10,7 @@
 
 Rune - A PHP <b>Ru</b>le Engi<b>ne</b> Toolkit.
 
-This library is an implementation of a [Business Rule Engine](https://en.wikipedia.org/wiki/Business_rules_engine) (a
-type of Business Process Automation software).
+This library is an implementation of a [Business Rule Engine] (a type of Business Process Automation software).
 
 ## Table Of Contents
 
@@ -26,7 +25,7 @@ type of Business Process Automation software).
 
 ## Installation
 
-The recommended and easiest way to install Rune is through [Composer](https://getcomposer.org/):
+The recommended and easiest way to install Rune is through [Composer]:
 
 ```bash
 composer require uuf6429/rune "^3"
@@ -36,19 +35,16 @@ composer require uuf6429/rune "^3"
 
 The library is made up of the following main parts:
 
-- **Rule** - object representing a business rule. It must
-  implement [`Rule\RuleInterface`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/RuleInterface.php)).
-  For most cases, one can just
-  use [`Rule\GenericRule`](https://github.com/uuf6429/rune/blob/master/src/Rune/Rule/GenericRule.php). Each rule must
-  have a unique id, descriptive name, the condition (as an expression) of when the rule is triggered and the action
-  (see below) to trigger.
-- **Action** - an object that does something when the associated rule is met. Actions in general can be reused by
-  multiple
-  rules.
-- **Context** - an object that provides data to the rule engine and action to work with.
+- **Rule** (impl. [`Rule\RuleInterface`]) - object representing a business rule. For most use-cases, one can just
+  use [`Rule\GenericRule`]. Each rule must have a unique id, descriptive name, the condition (as an expression) of when
+  the rule is triggered and the action (see below) to trigger.
+- **Action** (impl. [`Action\ActionInterface`]) - an object that does something when the associated rule is met. Actions in
+  general can be reused by multiple rules.
+- **Context** (impl. [`Context\ContextInterface`]) - an object that provides data to the rule engine and action to work with.
   You almost always have to implement your own context since this always depends on your scenario.
 - **RuleEngine** - essentially, the object that connects the others together to function.
 
+<!-- @formatter:off -->
 ```mermaid
 flowchart LR
     A("
@@ -80,6 +76,7 @@ Rule 2:
 style A text-align: left
 style B text-align: left
 ```
+<!-- @formatter:on -->
 
 ## Usage
 
@@ -93,7 +90,8 @@ style B text-align: left
 
 ### Example Code
 
-The following code is a very simple example of how Rune can be used. It defines one model (Product), context (ProductContext) and uses CallbackAction to print out the rules that have been triggered.
+The following code is a very simple example of how Rune can be used. It defines one model (Product),
+context (ProductContext) and uses CallbackAction to print out the rules that have been triggered.
 
 ```php
 namespace MyApplication;
@@ -169,3 +167,15 @@ foreach ($products as $product) {
     $engine->execute(new ProductContext($product), $rules);
 }
 ```
+
+[Business Rule Engine]: https://en.wikipedia.org/wiki/Business_rules_engine
+
+[Composer]: https://getcomposer.org/
+
+[`Rule\RuleInterface`]: src/Rule/RuleInterface.php
+
+[`Rule\GenericRule`]: src/Rule/GenericRule.php
+
+[`Action\ActionInterface`]: src/Action/ActionInterface.php
+
+[`Context\ContextInterface`]: src/Context/ContextInterface.php

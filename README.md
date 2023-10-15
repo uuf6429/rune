@@ -27,8 +27,8 @@ This library is an implementation of a [Business Rule Engine] (a type of Busines
 
 The recommended and easiest way to install Rune is through [Composer]:
 
-```bash
-composer require uuf6429/rune "^3"
+```shell
+composer require uuf6429/rune
 ```
 
 ## Architecture

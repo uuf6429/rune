@@ -82,11 +82,7 @@ style B text-align: left
 
 ### Live Example
 
-*coming soon*
-
-### Screenshot
-
-*coming soon*
+[![Try it out](https://uuf6429.github.io/rune-examples/shop/screenshot.png)](https://uuf6429.github.io/rune-examples/shop/)
 
 ### Example Code
 

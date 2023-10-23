@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class ReadmeTest extends TestCase
 {
+    /**
+     * @requires PHP >= 8.1
+     */
     public function testThatReadmeExampleWorks(): void
     {
         $markdown = file_get_contents(__DIR__ . '/../../README.md');

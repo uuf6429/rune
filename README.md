@@ -36,11 +36,14 @@ composer require uuf6429/rune
 The library is made up of the following main parts:
 
 - **Rule** (impl. [`Rule\RuleInterface`]) - object representing a business rule. For most use-cases, one can just
-  use [`Rule\GenericRule`]. Each rule must have a unique id, descriptive name, the condition (as an expression) of when
-  the rule is triggered and the action (see below) to trigger.
-- **Action** (impl. [`Action\ActionInterface`]) - an object that does something when the associated rule is met. Actions in
-  general can be reused by multiple rules.
-- **Context** (impl. [`Context\ContextInterface`]) - an object that provides data to the rule engine and action to work with.
+  use [`Rule\GenericRule`]. Each rule must have a unique id, descriptive name, a condition (as an expression that
+  returns true or false) and the action (see below) to trigger when said condition returns true.
+- **Action** (impl. [`Action\ActionInterface`]) - an object that does something when the associated rule is met.
+  Actions in general can be reused by multiple rules.
+- **Context** (impl. [`Context\ContextInterface`]) - an object that provides data to the rule engine and action to work
+  with. This can be thought of as a collection of all the available data for the current situation. For example, when
+  the current situation relates to a use buying a product, you would have data about the user, the product, campaigns,
+  but also higher level information such as time, locality etc.
   You almost always have to implement your own context since this always depends on your scenario.
 - **RuleEngine** - essentially, the object that connects the others together to function.
 
@@ -67,7 +70,7 @@ Rule 2:
 }</code></pre>
     ") --> C
 
-    subgraph RuleEngine ["<h2>Rule Engine</h2>"]
+    subgraph RuleEngine ["<br><h2>Rule Engine</h2>"]
         C{"Filter Rules"} --> D(["Execute Action(s)"])
     end
 
@@ -88,8 +91,8 @@ Various examples can be found in [uuf6429/rune-examples](https://github.com/uuf6
 
 ### Example Code
 
-The following code is a very simple example of how Rune can be used. It defines one model (Product),
-context (ProductContext) and uses CallbackAction to print out the rules that have been triggered.
+The following code is a very simple example of how Rune can be used. It defines one model (`Product`),
+context (`ProductContext`) and uses [`CallbackAction`] to print out the rules that have been triggered.
 
 ```php
 namespace MyApplication;
@@ -98,20 +101,15 @@ use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ClassContext;
 use uuf6429\Rune\Engine;
 use uuf6429\Rune\Rule\GenericRule;
+use uuf6429\Rune\Rule\RuleInterface;
 
-// A class whose instances will be available inside rule engine.
+// A class whose instances will be available inside the rule engine.
 class Product
 {
-    /** @var string */
-    public $name;
-
-    /** @var string */
-    public $colour;
-
-    public function __construct($name, $colour)
-    {
-        $this->name = $name;
-        $this->colour = $colour;
+    public function __construct(
+        public readonly string $name,
+        public readonly string $colour,
+    ) {
     }
 }
 
@@ -120,26 +118,20 @@ class Product
 // in this case rules will have access to "product" as a variable (and all of product's public properties).
 class ProductContext extends ClassContext
 {
-    /** @var Product */
-    public $product;
-
-    public function __construct(Product $product)
-    {
-        $this->product = $product;
+    public function __construct(
+        public readonly Product $product
+    ) {
     }
 }
 
 // Declare an action to be triggered when a rule matches against a product.
 $action = new CallbackAction(
-    function ($eval, ProductContext $context, $rule)
-    {
-        printf(
-            "Rule %s triggered for %s %s\n",
-            $rule->getId(),
-            ucwords($context->product->colour),
-            $context->product->name
-        );
-    }
+    static fn ($eval, ProductContext $context, RuleInterface $rule) => printf(
+        "Rule %s triggered for %s %s\n",
+        $rule->getId(),
+        ucwords($context->product->colour),
+        $context->product->name
+    )
 );
 
 // Declare some sample rules.
@@ -177,3 +169,5 @@ foreach ($products as $product) {
 [`Action\ActionInterface`]: src/Action/ActionInterface.php
 
 [`Context\ContextInterface`]: src/Context/ContextInterface.php
+
+[`CallbackAction`]: src/Action/CallbackAction.php

@@ -80,6 +80,8 @@ style B text-align: left
 
 ## Usage
 
+Various examples can be found in [uuf6429/rune-examples](https://github.com/uuf6429/rune-examples).
+
 ### Live Example
 
 [![Try it out](https://uuf6429.github.io/rune-examples/shop/screenshot.png)](https://uuf6429.github.io/rune-examples/shop/)

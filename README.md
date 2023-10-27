@@ -87,7 +87,12 @@ Various examples can be found in [uuf6429/rune-examples](https://github.com/uuf6
 
 ### Live Example
 
-[![Try it out](https://uuf6429.github.io/rune-examples/shop/screenshot.png)](https://uuf6429.github.io/rune-examples/shop/)
+<a href="https://uuf6429.github.io/rune-examples/shop/">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://uuf6429.github.io/rune-examples/shop/screenshot-dark.png">
+        <img alt="Try it out" src="https://uuf6429.github.io/rune-examples/shop/screenshot-light.png">
+    </picture>
+</a>
 
 ### Example Code
 

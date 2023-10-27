@@ -4,8 +4,9 @@ namespace uuf6429\Rune\Util;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use stdClass;
+use uuf6429\Rune\Exception\MissingGetterException;
+use uuf6429\Rune\Exception\PropertyNotWritableException;
 
 class LazyPropertiesTest extends TestCase
 {
@@ -36,10 +37,10 @@ class LazyPropertiesTest extends TestCase
         /** @var MockObject&stdClass $model */
         $model = $this->getMockForTrait(LazyProperties::class);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(MissingGetterException::class);
         $this->expectExceptionMessage(
             sprintf(
-                'Missing property %s and method %s in class %s.',
+                'Neither property %s nor (getter) method %s were defined in class %s.',
                 'someVar',
                 'getSomeVar',
                 get_class($model)
@@ -54,15 +55,69 @@ class LazyPropertiesTest extends TestCase
         /** @var MockObject&stdClass $model */
         $model = $this->getMockForTrait(LazyProperties::class);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(PropertyNotWritableException::class);
         $this->expectExceptionMessage(
             sprintf(
-                'Property %s in class %s is read only and cannot be set.',
+                'Property %s in class %s is not writable',
                 'someVar',
                 get_class($model)
             )
         );
 
         $model->someVar = 123;
+    }
+
+    public function testResettingWorks(): void
+    {
+        /** @var MockObject&stdClass $model */
+        $model = $this->getMockForTrait(
+            LazyProperties::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['getSomeVar']
+        );
+        $model->expects($this->exactly(2))
+            ->method('getSomeVar')
+            ->willReturn(11, 22);
+
+        $result1 = $model->someVar;
+        $result2 = $model->someVar;
+        unset($model->someVar);
+        $result3 = $model->someVar;
+
+        $this->assertEquals(
+            [11, 11, 22],
+            [$result1, $result2, $result3]
+        );
+    }
+
+    public function testIssetOnMissingGetter(): void
+    {
+        /** @var MockObject&stdClass $model */
+        $model = $this->getMockForTrait(LazyProperties::class);
+
+        $this->assertFalse(isset($model->someVar));
+    }
+
+    public function testIssetOnNullReturningGetter(): void
+    {
+        /** @var MockObject&stdClass $model */
+        $model = $this->getMockForTrait(
+            LazyProperties::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['getSomeVar']
+        );
+        $model->expects($this->once())
+            ->method('getSomeVar')
+            ->willReturn(null);
+
+        $this->assertFalse(isset($model->someVar));
     }
 }

@@ -2,7 +2,8 @@
 
 namespace uuf6429\Rune\Util;
 
-use RuntimeException;
+use uuf6429\Rune\Exception\MissingGetterException;
+use uuf6429\Rune\Exception\PropertyNotWritableException;
 
 /**
  * This trait will delay loading of properties, helping in performance.
@@ -13,6 +14,7 @@ trait LazyProperties
 
     /**
      * @return mixed
+     * @throws MissingGetterException
      */
     public function __get(string $name)
     {
@@ -22,9 +24,7 @@ trait LazyProperties
 
         $method = 'get' . ucfirst($name);
         if (!method_exists($this, $method)) {
-            throw new RuntimeException(
-                sprintf('Missing property %s and method %s in class %s.', $name, $method, get_class($this))
-            );
+            throw new MissingGetterException(static::class, $name, $method);
         }
 
         return $this->lazyPropertyData[$name] = $this->$method();
@@ -32,18 +32,25 @@ trait LazyProperties
 
     /**
      * @param mixed $value
+     * @thorws PropertyNotWritableException
      */
     public function __set(string $name, $value): void
     {
-        throw new RuntimeException(
-            sprintf('Property %s in class %s is read only and cannot be set.', $name, get_class($this))
-        );
+        throw new PropertyNotWritableException(static::class, $name);
     }
 
     public function __isset(string $name): bool
     {
-        $method = 'get' . ucfirst($name);
+        try {
+            $value = $this->__get($name);
+            return isset($value);
+        } catch (MissingGetterException $ex) {
+            return false;
+        }
+    }
 
-        return method_exists($this, $method) && isset($this->lazyPropertyData[$name]);
+    public function __unset(string $name): void
+    {
+        unset($this->lazyPropertyData[$name]);
     }
 }

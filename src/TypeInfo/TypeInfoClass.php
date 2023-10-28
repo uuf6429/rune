@@ -2,6 +2,8 @@
 
 namespace uuf6429\Rune\TypeInfo;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 class TypeInfoClass extends TypeInfoBase
 {
     /**
@@ -39,13 +41,16 @@ class TypeInfoClass extends TypeInfoBase
         return $this->members;
     }
 
-    public function toArray(): array
+    #[ArrayShape(['name' => 'string', 'hint' => 'null|string', 'link' => 'null|string', 'members' => 'array'])]
+    public function toArray(?callable $serializer = null): array
     {
-        return array_merge(parent::toArray(), [
+        $result = array_merge(parent::toArray($serializer), [
             'members' => array_map(
-                static fn ($member) => $member->toArray(),
+                static fn ($member) => $member->toArray($serializer),
                 $this->getMembers()
             ),
         ]);
+
+        return $serializer ? $serializer($this, $result) : $result;
     }
 }

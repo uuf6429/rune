@@ -5,8 +5,9 @@ namespace uuf6429\Rune\TypeInfo;
 use ArrayAccess;
 use Closure;
 use JetBrains\PhpStorm\ArrayShape;
+use uuf6429\Rune\Util\ArrayableInterface;
 
-abstract class TypeInfoBase
+abstract class TypeInfoBase implements ArrayableInterface
 {
     protected string $name;
 
@@ -79,13 +80,15 @@ abstract class TypeInfoBase
     }
 
     #[ArrayShape(['name' => 'string', 'hint' => 'null|string', 'link' => 'null|string'])]
-    public function toArray(): array
+    public function toArray(?callable $serializer = null): array
     {
-        return [
+        $result = [
             'name' => $this->getName(),
             'hint' => $this->getHint(),
             'link' => $this->getLink(),
             'types' => $this->getTypes(),
         ];
+
+        return $serializer ? $serializer($this, $result) : $result;
     }
 }

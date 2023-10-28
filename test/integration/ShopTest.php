@@ -99,11 +99,8 @@ class ShopTest extends TestCase
                             [
                                 new TypeInfo\TypeInfoParameter('name', ['string'], null, null),
                             ],
-                            <<<'HTML'
-                            <div class="cm-signature">
-                                <span class="name">in</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$name</span></span></span>): <span class="type">boolean</span>
-                            </div>Returns true if category name or any of its parents are identical to `$name`.
-                            HTML
+                            ['boolean'],
+                            'Returns true if category name or any of its parents are identical to `$name`.'
                         ),
                         'parent' => new TypeInfo\TypeInfoProperty('parent', ['null', Category::class]),
                     ]
@@ -116,22 +113,16 @@ class ShopTest extends TestCase
                             [
                                 new TypeInfo\TypeInfoParameter('text', ['mixed'], null, null),
                             ],
-                            <<<'HTML'
-                            <div class="cm-signature">
-                                <span class="name">lower</span>(<span class="args"><span class="arg" title=""><span class="type">mixed </span>$text</span></span></span>): <span class="type">string</span>
-                            </div>Lowercases some text.
-                            HTML
+                            ['string'],
+                            'Lower-cases some text.'
                         ),
                         'upper' => new TypeInfo\TypeInfoMethod(
                             'upper',
                             [
                                 new TypeInfo\TypeInfoParameter('text', ['string'], null, null),
                             ],
-                            <<<'HTML'
-                            <div class="cm-signature">
-                                <span class="name">upper</span>(<span class="args"><span class="arg" title=""><span class="type">string </span>$text</span></span></span>): <span class="type">string</span>
-                            </div>Uppercases some text.
-                            HTML
+                            ['string'],
+                            'Upper-cases some text.'
                         ),
                     ]
                 ),

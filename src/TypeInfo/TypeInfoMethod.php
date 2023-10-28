@@ -10,13 +10,20 @@ class TypeInfoMethod extends TypeInfoBase
     protected array $params;
 
     /**
-     * @param TypeInfoParameter[] $params
+     * @var string[]
      */
-    public function __construct(string $name, array $params, ?string $hint = null, ?string $link = null)
+    protected array $return;
+
+    /**
+     * @param TypeInfoParameter[] $params
+     * @param string[] $return
+     */
+    public function __construct(string $name, array $params, array $return, ?string $hint = null, ?string $link = null)
     {
         parent::__construct($name, ['method'], $hint, $link);
 
         $this->params = $params;
+        $this->return = $return;
     }
 
     /**
@@ -27,6 +34,14 @@ class TypeInfoMethod extends TypeInfoBase
         return $this->params;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getReturnTypes(): array
+    {
+        return $this->return;
+    }
+
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
@@ -34,6 +49,7 @@ class TypeInfoMethod extends TypeInfoBase
                 static fn (TypeInfoParameter $param) => $param->toArray(),
                 $this->getParameters()
             ),
+            'return' => $this->getReturnTypes(),
         ]);
     }
 }

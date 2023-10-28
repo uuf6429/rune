@@ -9,10 +9,12 @@ use uuf6429\Rune\TypeInfo\TypeInfoProperty;
 class DynamicContextDescriptor implements ContextDescriptorInterface
 {
     protected DynamicContext $context;
+    protected TypeAnalyser $analyser;
 
-    public function __construct(DynamicContext $context)
+    public function __construct(DynamicContext $context, ?TypeAnalyser $analyser = null)
     {
         $this->context = $context;
+        $this->analyser = $analyser ?: new TypeAnalyser();
     }
 
     /**
@@ -34,7 +36,7 @@ class DynamicContextDescriptor implements ContextDescriptorInterface
     /**
      * {@inheritdoc}
      */
-    public function getVariableTypeInfo(?TypeAnalyser $analyser = null): array
+    public function getVariableTypeInfo(): array
     {
         $result = [];
         foreach ($this->context->getVariables() as $name => $value) {
@@ -48,11 +50,12 @@ class DynamicContextDescriptor implements ContextDescriptorInterface
     /**
      * {@inheritdoc}
      */
-    public function getFunctionTypeInfo(?TypeAnalyser $analyser = null): array
+    public function getFunctionTypeInfo(): array
     {
         $result = [];
-        foreach (array_keys($this->context->getFunctions()) as $name) {
-            $result[$name] = new TypeInfoMethod($name, []);
+        foreach ($this->context->getFunctions() as $name => $call) {
+            // TODO extract param/return info from $call
+            $result[$name] = new TypeInfoMethod($name, [], []);
         }
 
         return $result;
@@ -61,17 +64,18 @@ class DynamicContextDescriptor implements ContextDescriptorInterface
     /**
      * {@inheritdoc}
      */
-    public function getDetailedTypeInfo(?TypeAnalyser $analyser = null): array
+    public function getDetailedTypeInfo(): array
     {
-        $analyser = $analyser ?: new TypeAnalyser();
-
         /** @var array<TypeInfoProperty|TypeInfoMethod> $members */
-        $members = array_merge($this->getVariableTypeInfo($analyser), $this->getFunctionTypeInfo($analyser));
+        $members = array_merge(
+            $this->getVariableTypeInfo(),
+            $this->getFunctionTypeInfo()
+        );
 
         foreach ($members as $member) {
-            $analyser->analyse($member->getTypes());
+            $this->analyser->analyse($member->getTypes());
         }
 
-        return $analyser->getTypes();
+        return $this->analyser->getTypes();
     }
 }

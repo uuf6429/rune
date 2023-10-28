@@ -5,7 +5,7 @@ namespace uuf6429\Rune\Shop\Model;
 class StringUtils
 {
     /**
-     * Lowercases some text.
+     * Lower-cases some text.
      *
      * @param mixed $text
      *
@@ -17,7 +17,7 @@ class StringUtils
     }
 
     /**
-     * Uppercases some text.
+     * Upper-cases some text.
      */
     public function upper(string $text): string
     {

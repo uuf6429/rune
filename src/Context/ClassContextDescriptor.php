@@ -18,10 +18,12 @@ class ClassContextDescriptor implements ContextDescriptorInterface
     protected ?array $memberTypeInfo = null;
 
     protected ClassContext $context;
+    protected TypeAnalyser $analyser;
 
-    public function __construct(ClassContext $context)
+    public function __construct(ClassContext $context, ?TypeAnalyser $analyser = null)
     {
         $this->context = $context;
+        $this->analyser = $analyser ?: new TypeAnalyser();
     }
 
     /**
@@ -58,33 +60,32 @@ class ClassContextDescriptor implements ContextDescriptorInterface
      * @return array<TypeInfoProperty|TypeInfoMethod>
      * @throws ReflectionException
      */
-    protected function getMemberTypeInfo(TypeAnalyser $analyser): array
+    protected function getMemberTypeInfo(): array
     {
         if ($this->memberTypeInfo !== null) {
             return $this->memberTypeInfo;
         }
 
         $class = get_class($this->context);
-        $analyser->analyse([$class], false);
-        $types = $analyser->getTypes();
+        $types = $this->analyser
+            ->analyse([$class])
+            ->getTypes();
+
         $this->memberTypeInfo = array_filter(
             isset($types[$class]) ? $types[$class]->getMembers() : [],
-            static function (TypeInfoBase $member) {
-                return $member->getName() !== self::CONTEXT_DESCRIPTOR_METHOD;
-            }
+            static fn (TypeInfoBase $member) => $member->getName() !== self::CONTEXT_DESCRIPTOR_METHOD
         );
+
         return $this->memberTypeInfo;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getVariableTypeInfo(?TypeAnalyser $analyser = null): array
+    public function getVariableTypeInfo(): array
     {
-        $analyser = $analyser ?: new TypeAnalyser();
-
         return array_filter(
-            $this->getMemberTypeInfo($analyser),
+            $this->getMemberTypeInfo(),
             static function (TypeInfoBase $member) {
                 return !$member->isInvokable();
             }
@@ -94,12 +95,10 @@ class ClassContextDescriptor implements ContextDescriptorInterface
     /**
      * {@inheritdoc}
      */
-    public function getFunctionTypeInfo(?TypeAnalyser $analyser = null): array
+    public function getFunctionTypeInfo(): array
     {
-        $analyser = $analyser ?: new TypeAnalyser();
-
         return array_filter(
-            $this->getMemberTypeInfo($analyser),
+            $this->getMemberTypeInfo(),
             static function (TypeInfoBase $member) {
                 return $member->isInvokable();
             }
@@ -109,11 +108,10 @@ class ClassContextDescriptor implements ContextDescriptorInterface
     /**
      * {@inheritdoc}
      */
-    public function getDetailedTypeInfo(?TypeAnalyser $analyser = null): array
+    public function getDetailedTypeInfo(): array
     {
-        $analyser = $analyser ?: new TypeAnalyser();
-        $analyser->analyse([get_class($this->context)]);
-
-        return $analyser->getTypes();
+        return $this->analyser
+            ->analyse([get_class($this->context)])
+            ->getTypes();
     }
 }

@@ -43,11 +43,6 @@ class TypeAnalyser
      */
     protected array $types = [];
 
-    /**
-     * Enables deep analysis (recursively analyses class members and their types).
-     */
-    protected bool $deep = false;
-
     private PhpDoc\DocBlockFactory $docBlockFactory;
 
     private PhpDoc\Types\ContextFactory $docBlockContextFactory;
@@ -62,14 +57,16 @@ class TypeAnalyser
 
     /**
      * @param string[] $types
+     * @return $this
      * @throws ReflectionException
      */
-    public function analyse(array $types, bool $deep = true): void
+    public function analyse(array $types): self
     {
-        $this->deep = $deep;
         foreach ($types as $type) {
             $this->analyseType($type);
         }
+
+        return $this;
     }
 
     /**
@@ -87,25 +84,26 @@ class TypeAnalyser
     {
         $type = $this->normalise($type);
 
-        if ($type && !isset($this->types[$type]) && !in_array($type, static::$basicTypes, true)) {
-            switch (true) {
-                case @interface_exists($type):
-                case @class_exists($type):
-                    $this->analyseClassOrInterface($type);
-                    break;
+        switch (true) {
+            case trim($type) === '':
+            case isset($this->types[$type]):
+            case in_array($type, static::$basicTypes, true):
+            case $type === 'callable':
+            case $type === 'resource':
+                break;
 
-                case $type === 'callable':
-                case $type === 'resource':
-                    break;
+            case @interface_exists($type):
+            case @class_exists($type):
+                $this->analyseClassOrInterface($type);
+                break;
 
-                default:
-                    throw new RuntimeException(
-                        sprintf(
-                            'Type information for "%s" cannot be retrieved (unsupported type).',
-                            $type
-                        )
-                    );
-            }
+            default:
+                throw new RuntimeException(
+                    sprintf(
+                        'Type information for "%s" cannot be retrieved (unsupported type).',
+                        $type
+                    )
+                );
         }
     }
 
@@ -244,25 +242,22 @@ class TypeAnalyser
                             ),
                         static fn ($item) => $item instanceof TypeInfoParameter,
                     ),
-                    implode(
-                        '|',
-                        array_filter(
-                            array_map(
-                                [$this, 'handleType'],
-                                $docb->hasTag('return')
-                                    ? // detect return from docblock
-                                    array_map(
-                                        static fn ($tag) => $tag instanceof PhpDoc\DocBlock\Tags\Return_ ? (string)$tag->getType() : null,
-                                        $docb->getTagsByName('return')
-                                    )
-                                    : // detect return from reflection
-                                    [
-                                        ($type = $element->getReturnType()) instanceof ReflectionNamedType ? $type->getName() : null,
-                                        $type && $type->allowsNull() ? 'null' : null,
-                                    ]
-                            )
+                    array_filter(
+                        array_map(
+                            [$this, 'handleType'],
+                            $docb->hasTag('return')
+                                ? // detect return from docblock
+                                array_map(
+                                    static fn ($tag) => $tag instanceof PhpDoc\DocBlock\Tags\Return_ ? (string)$tag->getType() : null,
+                                    $docb->getTagsByName('return')
+                                )
+                                : // detect return from reflection
+                                [
+                                    ($type = $element->getReturnType()) instanceof ReflectionNamedType ? $type->getName() : null,
+                                    $type && $type->allowsNull() ? 'null' : null,
+                                ]
                         )
-                    )
+                    ) ?: ['mixed']
                 );
 
             case $element instanceof ReflectionParameter:
@@ -300,7 +295,7 @@ class TypeAnalyser
                         ),
                         $element->getArguments()
                     )),
-                    $this->handleType((string)$element->getReturnType()) ?? 'mixed'
+                    [$this->handleType((string)$element->getReturnType()) ?? 'mixed']
                 );
 
             case $element instanceof PhpDoc\DocBlock\Tags\Property:
@@ -339,53 +334,20 @@ class TypeAnalyser
 
     /**
      * @param TypeInfoParameter[] $params
+     * Qparam string[] $return
      */
     private function handleMethod(
         string  $name,
         ?string $description,
         ?string $link,
         array   $params,
-        string  $return
+        array   $return
     ): ?TypeInfoMethod {
         if (substr($name, 0, 2) === '__') {
             return null;
         }
 
-        return new TypeInfoMethod(
-            $name,
-            $params,
-            sprintf(
-                <<<'HTML'
-                <div class="cm-signature">
-                    <span class="name">%s</span>(<span class="args">%s</span>): <span class="type">%s</span>
-                </div>%s
-                HTML,
-                $name,
-                implode(
-                    ', ',
-                    array_map(
-                        static function (TypeInfoParameter $param) {
-                            return sprintf(
-                                <<<'HTML'
-                                <span class="%s" title="%s"><span class="type">%s</span>$%s</span>%s</span>
-                                HTML,
-                                $param->hasHint() ? 'arg hint' : 'arg',
-                                $param->getHint(),
-                                implode('|', $param->getTypes()) . ' ',
-                                $param->getName(),
-                                $param->hasLink()
-                                    ? "<a href=\"{$param->getLink()}\" target='_blank'>🔗</a>"
-                                    : '',
-                            );
-                        },
-                        $params
-                    )
-                ),
-                $return ?: 'void',
-                $description
-            ),
-            $link
-        );
+        return new TypeInfoMethod($name, $params, $return, $description, $link);
     }
 
     /**
@@ -398,10 +360,7 @@ class TypeAnalyser
         }
 
         $name = $this->normalise($name);
-
-        if ($this->deep) {
-            $this->analyseType($name);
-        }
+        $this->analyseType($name);
 
         return $name;
     }

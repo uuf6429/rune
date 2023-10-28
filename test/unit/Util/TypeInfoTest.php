@@ -22,6 +22,7 @@ class TypeInfoTest extends TestCase
                 new TypeInfoMethod(
                     'fun1',
                     [],
+                    ['mixed'],
                     null,
                     'https://example.com/2'
                 )
@@ -48,6 +49,7 @@ class TypeInfoTest extends TestCase
                         'hint' => null,
                         'link' => 'https://example.com/2',
                         'params' => [],
+                        'return' => ['mixed'],
                     ],
                 ],
                 'hint' => 'Class summary',

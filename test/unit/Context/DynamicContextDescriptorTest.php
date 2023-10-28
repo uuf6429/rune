@@ -52,8 +52,8 @@ class DynamicContextDescriptorTest extends TestCase
                 ],
                 '$expectedVTI' => [],
                 '$expectedFTI' => [
-                    'round' => new TypeInfoMethod('round', []),
-                    'now' => new TypeInfoMethod('now', []),
+                    'round' => new TypeInfoMethod('round', [], []),
+                    'now' => new TypeInfoMethod('now', [], []),
                 ],
                 '$expectedDTI' => [],
             ],

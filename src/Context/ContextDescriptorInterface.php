@@ -2,7 +2,6 @@
 
 namespace uuf6429\Rune\Context;
 
-use uuf6429\Rune\TypeInfo\TypeAnalyser;
 use uuf6429\Rune\TypeInfo\TypeInfoBase;
 use uuf6429\Rune\TypeInfo\TypeInfoClass;
 
@@ -21,17 +20,15 @@ interface ContextDescriptorInterface
     /**
      * @return array<string,TypeInfoBase> an array of type metadata of all variables available in the context, indexed by member name
      */
-    public function getVariableTypeInfo(?TypeAnalyser $analyser = null): array;
+    public function getVariableTypeInfo(): array;
 
     /**
      * @return array<string,TypeInfoBase> an array of type metadata of all functions available in the context, indexed by member name
      */
-    public function getFunctionTypeInfo(?TypeAnalyser $analyser = null): array;
+    public function getFunctionTypeInfo(): array;
 
     /**
-     * @param TypeAnalyser|null $analyser
-     *
      * @return array<string,TypeInfoClass> an array of type metadata of all types available in the context, indexed by FQN
      */
-    public function getDetailedTypeInfo(?TypeAnalyser $analyser = null): array;
+    public function getDetailedTypeInfo(): array;
 }

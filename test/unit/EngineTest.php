@@ -1,24 +1,17 @@
 <?php declare(strict_types=1);
 
-/**
- * @noinspection PhpUnhandledExceptionInspection
- */
-
 namespace uuf6429\Rune;
 
 use LogicException;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
-use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Throwable;
-use TypeError;
 use uuf6429\Rune\Action\ActionInterface;
 use uuf6429\Rune\Action\CallbackAction;
 use uuf6429\Rune\Context\ContextInterface;
 use uuf6429\Rune\Context\DynamicContext;
 use uuf6429\Rune\Engine\ExceptionHandler\CollectExceptions;
 use uuf6429\Rune\Engine\FilterAllMatchingRules;
-use uuf6429\Rune\Exception\ContextErrorException;
+use uuf6429\Rune\Exception\InvalidExpressionException;
 use uuf6429\Rune\Rule\GenericRule;
 use uuf6429\Rune\Rule\RuleInterface;
 use uuf6429\Rune\Util\EvaluatorInterface;
@@ -34,7 +27,6 @@ class EngineTest extends TestCase
     {
         return array_merge(
             [
-                new GenericRule('0', 'Empty condition (true by default)', '', $action),
                 new GenericRule('1', 'Blue Products', 'COLOR == "blue"', $action),
                 new GenericRule('2', 'Medium or Big, Green Products', 'SIZE in ["XL","XXL"] and COLOR == "green"', $action),
                 new GenericRule('3', 'Small, Blue Products', 'SIZE in ["S"] and COLOR == "blue"', $action),
@@ -45,6 +37,7 @@ class EngineTest extends TestCase
                 new GenericRule('6', 'Bad Rule - Syntax Error', 'SIZE =  = "hm', $action),
                 new GenericRule('7', 'Bad Rule - Property on a Non-Object', 'SIZE.TEST == 12', $action),
                 new GenericRule('8', 'Bad Rule - Triggers error', 'ERROR("some error")', $action),
+                new GenericRule('9', 'Bad Rule - Empty condition', '', $action),
             ] : []
         );
     }
@@ -76,8 +69,7 @@ class EngineTest extends TestCase
         bool  $withBadRules,
         array $productData,
         array $expectedRules,
-        array $expectedErrors,
-        int   $expectedResult
+        array $expectedErrors
     ): void {
         $this->matchingRules = array_fill_keys(array_keys($productData), []);
 
@@ -105,13 +97,13 @@ class EngineTest extends TestCase
             $this->assertEquals($expectedErrors, $errorMsgs, 'Engine errors were not as expected.');
         }
         $this->assertEquals($expectedRules, $this->matchingRules);
-        $this->assertSame($expectedResult, $result);
+        $this->assertSame(array_sum(array_map('count', $expectedRules)), $result);
     }
 
     public static function sampleValuesDataProvider(): iterable
     {
         return [
-            'empty condition' => [
+            'no matches' => [
                 'withBadRules' => false,
                 'productData' => [
                     'Product 1' => [
@@ -122,31 +114,9 @@ class EngineTest extends TestCase
                     ],
                 ],
                 'expectedRules' => [
-                    'Product 1' => [
-                        'Empty condition (true by default)',
-                    ],
+                    'Product 1' => [],
                 ],
                 'expectedErrors' => [],
-                'expectedResult' => 1,
-            ],
-
-            'no matches (except empty condition)' => [
-                'withBadRules' => false,
-                'productData' => [
-                    'Product 1' => [
-                        'NAME' => 'Product 1',
-                        'COLOR' => 'red',
-                        'SIZE' => 'XS',
-                        'IS_SUPPORTED' => true,
-                    ],
-                ],
-                'expectedRules' => [
-                    'Product 1' => [
-                        'Empty condition (true by default)',
-                    ],
-                ],
-                'expectedErrors' => [],
-                'expectedResult' => 1,
             ],
 
             'simple match' => [
@@ -166,16 +136,12 @@ class EngineTest extends TestCase
                     ],
                 ],
                 'expectedRules' => [
-                    'Product 1' => [
-                        'Empty condition (true by default)',
-                    ],
+                    'Product 1' => [],
                     'Product 2' => [
-                        'Empty condition (true by default)',
                         'Unsupported Products',
                     ],
                 ],
                 'expectedErrors' => [],
-                'expectedResult' => 3,
             ],
 
             'alternating match' => [
@@ -190,12 +156,10 @@ class EngineTest extends TestCase
                 ],
                 'expectedRules' => [
                     'Product 1' => [
-                        'Empty condition (true by default)',
                         'Medium or Big, Green Products',
                     ],
                 ],
                 'expectedErrors' => [],
-                'expectedResult' => 2,
             ],
 
             'multiple matches - common variables' => [
@@ -210,13 +174,11 @@ class EngineTest extends TestCase
                 ],
                 'expectedRules' => [
                     'Product 1' => [
-                        'Empty condition (true by default)',
                         'Blue Products',
                         'Small, Blue Products',
                     ],
                 ],
                 'expectedErrors' => [],
-                'expectedResult' => 3,
             ],
 
             'multiple matches - unrelated variables' => [
@@ -231,13 +193,11 @@ class EngineTest extends TestCase
                 ],
                 'expectedRules' => [
                     'Product 1' => [
-                        'Empty condition (true by default)',
                         'Blue Products',
                         'Unsupported Products',
                     ],
                 ],
                 'expectedErrors' => [],
-                'expectedResult' => 3,
             ],
 
             'multiple matches - same variable' => [
@@ -264,19 +224,15 @@ class EngineTest extends TestCase
                 ],
                 'expectedRules' => [
                     'Product 1' => [
-                        'Empty condition (true by default)',
                         'Unsupported Products',
                     ],
                     'Product 2' => [
-                        'Empty condition (true by default)',
                     ],
                     'Product 3' => [
-                        'Empty condition (true by default)',
                         'Unsupported Products',
                     ],
                 ],
                 'expectedErrors' => [],
-                'expectedResult' => 5,
             ],
 
             'trigger errors' => [
@@ -292,34 +248,41 @@ class EngineTest extends TestCase
                 ],
                 'expectedRules' => [
                     'Product 1' => [
-                        'Empty condition (true by default)',
                     ],
                 ],
                 'expectedErrors' => [
                     [
-                        8 => TypeError::class . ' encountered while processing rule 5 '
+                        8 => InvalidExpressionException::class . ' encountered while processing rule 5 '
                             . '(Bad Rule - Result Type) within ' . DynamicContext::class
+                            . ': Expression `SIZE` could not be evaluated'
                             . ': ' . FilterAllMatchingRules::class . '::filterRule()'
                             . ': Return value must be of type bool, string returned',
-                        7 => TypeError::class . ' encountered while processing rule 5 '
+                        7 => InvalidExpressionException::class . ' encountered while processing rule 5 '
                             . '(Bad Rule - Result Type) within ' . DynamicContext::class
+                            . ': Expression `SIZE` could not be evaluated'
                             . ': Return value of ' . FilterAllMatchingRules::class . '::filterRule()'
                             . ' must be of the type bool, string returned',
                     ][PHP_MAJOR_VERSION],
 
-                    SyntaxError::class . ' encountered while processing rule 6 '
+                    InvalidExpressionException::class . ' encountered while processing rule 6 '
                     . '(Bad Rule - Syntax Error) within ' . DynamicContext::class
+                    . ': Expression `SIZE =  = "hm` could not be evaluated'
                     . ': Unexpected character "=" around position 5 for expression `SIZE =  = "hm`.',
 
-                    RuntimeException::class . ' encountered while processing rule 7 '
+                    InvalidExpressionException::class . ' encountered while processing rule 7 '
                     . '(Bad Rule - Property on a Non-Object) within ' . DynamicContext::class
+                    . ': Expression `SIZE.TEST == 12` could not be evaluated'
                     . ': Unable to get property "TEST" of non-object "SIZE".',
 
-                    ContextErrorException::class . ' encountered while processing rule 8 '
+                    InvalidExpressionException::class . ' encountered while processing rule 8 '
                     . '(Bad Rule - Triggers error) within ' . DynamicContext::class
+                    . ': Expression `ERROR("some error")` could not be evaluated'
                     . ': some error',
+
+                    InvalidExpressionException::class . ' encountered '
+                    . 'while processing rule 9 (Bad Rule - Empty condition) within ' . DynamicContext::class
+                    . ': Condition expression of 9 must not be empty.',
                 ],
-                'expectedResult' => 1,
             ],
         ];
     }
@@ -343,16 +306,19 @@ class EngineTest extends TestCase
             'Product 3' => ['Good Rule 3'],
         ];
         $expectedExceptions = [
-            'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+            InvalidExpressionException::class . ' encountered '
             . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
+            . ': Expression `COLOR == black` could not be evaluated'
             . ': Variable "black" is not valid around position 10 for expression `COLOR == black`.',
 
-            'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+            InvalidExpressionException::class . ' encountered '
             . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
+            . ': Expression `COLOR == black` could not be evaluated'
             . ': Variable "black" is not valid around position 10 for expression `COLOR == black`.',
 
-            'Symfony\Component\ExpressionLanguage\SyntaxError encountered '
+            InvalidExpressionException::class . ' encountered '
             . 'while processing rule 2 (Bad Rule) within ' . DynamicContext::class
+            . ': Expression `COLOR == black` could not be evaluated'
             . ': Variable "black" is not valid around position 10 for expression `COLOR == black`.',
         ];
 

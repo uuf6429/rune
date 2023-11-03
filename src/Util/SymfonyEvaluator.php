@@ -27,33 +27,29 @@ class SymfonyEvaluator implements EvaluatorInterface
         $this->exprLang->setFunctions($functions);
     }
 
-    /**
-     * @throws ContextErrorException
-     */
     public function compile(string $expression): string
     {
-        set_error_handler(static function (int $code, string $message, string $file = 'unknown', int $line = 0, array $context = []): void {
-            restore_error_handler();
-            throw new ContextErrorException($message, 0, $code, $file, $line, $context);
-        });
-        $result = $this->exprLang->compile($expression, array_keys($this->variables));
-        restore_error_handler();
+        try {
+            set_error_handler(static function (int $code, string $message, string $file = 'unknown', int $line = 0, array $context = []): void {
+                throw new ContextErrorException($message, 0, $code, $file, $line, $context);
+            });
 
-        return $result;
+            return $this->exprLang->compile($expression, array_keys($this->variables));
+        } finally {
+            restore_error_handler();
+        }
     }
 
-    /**
-     * @throws ContextErrorException
-     */
     public function evaluate(string $expression)
     {
-        set_error_handler(static function (int $code, string $message, string $file = 'unknown', int $line = 0, array $context = []): void {
-            restore_error_handler();
-            throw new ContextErrorException($message, 0, $code, $file, $line, $context);
-        });
-        $result = $this->exprLang->evaluate($expression, $this->variables);
-        restore_error_handler();
+        try {
+            set_error_handler(static function (int $code, string $message, string $file = 'unknown', int $line = 0, array $context = []): void {
+                throw new ContextErrorException($message, 0, $code, $file, $line, $context);
+            });
 
-        return $result;
+            return $this->exprLang->evaluate($expression, $this->variables);
+        } finally {
+            restore_error_handler();
+        }
     }
 }

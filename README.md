@@ -20,7 +20,6 @@ This library is an implementation of a [Business Rule Engine] (a type of Busines
     - [Architecture](#architecture)
     - [Usage](#usage)
         - [Live Example](#live-example)
-        - [Screenshot](#screenshot)
         - [Example Code](#example-code)
 
 ## Installation
@@ -37,14 +36,16 @@ The library is made up of the following main parts:
 
 - **Rule** (impl. [`Rule\RuleInterface`]) - object representing a business rule. For most use-cases, one can just
   use [`Rule\GenericRule`]. Each rule must have a unique id, descriptive name, a condition (as an expression that
-  returns true or false) and the action (see below) to trigger when said condition returns true.
-- **Action** (impl. [`Action\ActionInterface`]) - an object that does something when the associated rule is met.
+  returns `true` or `false`) and the action (see below) to be triggered when the condition is met.
+- **Action** (impl. [`Action\ActionInterface`]) - an object that does something when the associated rule is triggered.
   Actions in general can be reused by multiple rules.
+  For example, if you're using the rule engine in product sales, an action might automatically add a fee to the bill
+  when a certain condition applies (e.g. a fee for specific delivery countries, or a negative fee for a discount).
 - **Context** (impl. [`Context\ContextInterface`]) - an object that provides data to the rule engine and action to work
   with. This can be thought of as a collection of all the available data for the current situation. For example, when
-  the current situation relates to a use buying a product, you would have data about the user, the product, campaigns,
-  but also higher level information such as time, locality etc.
-  You almost always have to implement your own context since this always depends on your scenario.
+  the current situation is about a user buying a product, you would have data about the user, the product, offers,
+  and perhaps also higher level information such as time, locality etc.
+  You almost always have to implement your own context since this always depends on your (business) scenario.
 - **RuleEngine** - essentially, the object that connects the others together to function.
 
 <!-- @formatter:off -->
